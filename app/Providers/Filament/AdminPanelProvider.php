@@ -8,6 +8,7 @@ use Filament\Auth\Pages\Login;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
@@ -35,6 +36,12 @@ class AdminPanelProvider extends PanelProvider
                 __('Users'),
                 __('Products'),
                 __('Features'),
+            ])
+            ->navigationItems([
+                NavigationItem::make(__('Go to Shop'))
+                    ->url('/')
+                    ->openUrlInNewTab(false)
+                    ->icon('heroicon-o-building-storefront'),
             ])
             ->middleware([
                 EncryptCookies::class,
