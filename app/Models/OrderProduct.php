@@ -10,11 +10,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrderProduct extends Pivot
 {
     /** @use HasFactory<OrderProductFactory> */
     use HasFactory;
+
+    use SoftDeletes;
 
     /**
      * @var string
@@ -51,6 +54,6 @@ class OrderProduct extends Pivot
 
     public function orderable(): MorphTo
     {
-        return $this->morphTo();
+        return $this->morphTo()->withTrashed();
     }
 }

@@ -25,7 +25,7 @@ class OrderConfirmationNotification extends Notification
 
     public function toMail(object $notifiable): MailMessage
     {
-        $order = $this->order->load('user', 'shippingAddress', 'billingAddress');
+        $order = $this->order->load(['user', 'shippingAddress', 'billingAddress']);
 
         // Load orderProducts with orderable relationship, bypassing PublishedScope
         // If we respect the scope, a product could be missing from the email

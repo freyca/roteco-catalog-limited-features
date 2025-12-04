@@ -8,7 +8,6 @@ use App\Casts\MoneyCast;
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Events\OrderCreated;
-use App\Events\OrderSaved;
 use App\Models\Scopes\OrderScope;
 use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
@@ -16,6 +15,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 /**
@@ -27,6 +27,8 @@ class Order extends Model
 {
     /** @use HasFactory<OrderFactory> */
     use HasFactory;
+
+    use SoftDeletes;
 
     protected $fillable = [
         'purchase_cost',
@@ -72,7 +74,7 @@ class Order extends Model
      */
     public function shippingAddress(): BelongsTo
     {
-        return $this->belongsTo(Address::class);
+        return $this->belongsTo(Address::class)->withTrashed();
     }
 
     /**
@@ -80,7 +82,7 @@ class Order extends Model
      */
     public function billingAddress(): BelongsTo
     {
-        return $this->belongsTo(Address::class);
+        return $this->belongsTo(Address::class)->withTrashed();
     }
 
     /**
@@ -88,7 +90,7 @@ class Order extends Model
      */
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     /**
