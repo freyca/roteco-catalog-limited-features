@@ -21,45 +21,53 @@ beforeEach(function () {
 it('validates required fields on create', function () {
     $user = test()->user;
     test()->actingAs($user);
-
-    Livewire::test(CreateAddress::class)
-        ->fillForm([])
-        ->call('create')
-        ->assertHasFormErrors([
-            'name' => 'required',
-            'surname' => 'required',
-            'address' => 'required',
-            'city' => 'required',
-            'state' => 'required',
-            'zip_code' => 'required',
-            'country' => 'required',
-            'phone' => 'required',
-            'address_type' => 'required',
-            'email' => 'required',
-        ]);
+    $component = Livewire::test(CreateAddress::class);
+    $component->fillForm([
+        'name' => '',
+        'surname' => '',
+        'address' => '',
+        'city' => '',
+        'state' => '',
+        'zip_code' => '',
+        'country' => '',
+        'phone' => '',
+        'address_type' => '',
+        'email' => '',
+    ])->call('create');
+    $component->assertHasFormErrors([
+        'name' => 'required',
+        'surname' => 'required',
+        'address' => 'required',
+        'city' => 'required',
+        'state' => 'required',
+        'zip_code' => 'required',
+        'country' => 'required',
+        'phone' => 'required',
+        'address_type' => 'required',
+        'email' => 'required',
+    ]);
 });
 
 it('can create address with livewire form with all fields', function () {
     $user = test()->user;
     test()->actingAs($user);
 
-    Livewire::test(CreateAddress::class)
-        ->fillForm([
-            'name' => 'John Doe',
-            'surname' => 'Smith',
-            'address_type' => 'shipping',
-            'bussiness_name' => 'ACME Corp',
-            'financial_number' => '12345678A',
-            'phone' => '+34912345678',
-            'email' => 'john@example.com',
-            'address' => '123 Main Street',
-            'city' => 'Madrid',
-            'state' => 'Madrid',
-            'zip_code' => '28001',
-            'country' => 'Spain',
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
+    $component = Livewire::test(CreateAddress::class);
+    $component->fillForm([
+        'name' => 'John Doe',
+        'surname' => 'Smith',
+        'address_type' => 'shipping',
+        'bussiness_name' => 'ACME Corp',
+        'financial_number' => '12345678A',
+        'phone' => '+34912345678',
+        'email' => 'john@example.com',
+        'address' => '123 Main Street',
+        'city' => 'Madrid',
+        'state' => 'Madrid',
+        'zip_code' => '28001',
+        'country' => 'Spain',
+    ])->call('create');
+    $component->assertHasNoFormErrors();
 
     expect(Address::count())->toBe(1);
     $address = Address::first();
@@ -140,6 +148,6 @@ it('user_cannot_access_another_users_address', function () {
     expect($userAddresses)->toHaveCount(1);
     expect($userAddresses->first()->id)->toBe($myAddress->id);
 
-    expect(fn () => Livewire::test(EditAddress::class, ['record' => $otherAddress->id]))
+    expect(fn() => Livewire::test(EditAddress::class, ['record' => $otherAddress->id]))
         ->toThrow(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
 });

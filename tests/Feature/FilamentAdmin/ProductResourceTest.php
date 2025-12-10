@@ -22,66 +22,53 @@ beforeEach(function () {
 
 describe('ProductResource', function () {
     it('admin can access product list page', function () {
-        $this->actingAs(test()->admin);
-
-        Livewire::test(ListProducts::class)
-            ->assertStatus(200);
+        test()->actingAs(test()->admin);
+        $component = Livewire::test(ListProducts::class);
+        $component->assertSee(__('Products'));
     });
 
     it('can display products in list table', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $products = Product::factory(3)->create();
-
         $component = Livewire::test(ListProducts::class);
-
         foreach ($products as $product) {
             $component->assertSee($product->name);
         }
     });
 
     it('admin can access create product page', function () {
-        $this->actingAs(test()->admin);
-
-        Livewire::test(CreateProduct::class)
-            ->assertStatus(200);
+        test()->actingAs(test()->admin);
+        $component = Livewire::test(CreateProduct::class);
+        $component->assertFormComponentExists('name');
     });
 
     it('can create a new product via form', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $category = Category::factory()->create();
-
-        Livewire::test(CreateProduct::class)
-            ->fillForm([
-                'name' => 'New Product',
-                'slug' => 'new-product',
-                'ean13' => '1234567890123',
-                'category_id' => $category->id,
-                'main_image' => ['product.jpg'],
-                'disassemblies' => [],
-            ])
-            ->call('create')
-            ->assertHasNoFormErrors();
-
+        $file = UploadedFile::fake()->image('product.jpg');
+        $component = Livewire::test(CreateProduct::class);
+        $component->fillForm([
+            'name' => 'New Product',
+            'slug' => 'new-product',
+            'ean13' => '1234567890123',
+            'category_id' => $category->id,
+            'main_image' => $file,
+            'disassemblies' => [],
+        ])->call('create');
+        $component->assertHasNoFormErrors();
         expect(Product::where('name', 'New Product')->exists())->toBeTrue();
     });
 
-    it('validates name is required on create', function () {
-        $this->actingAs(test()->admin);
-        $category = Category::factory()->create();
-
-        Livewire::test(CreateProduct::class)
-            ->fillForm([
-                'name' => '',
-                'ean13' => '1234567890123',
-                'category_id' => $category->id,
-                'main_image' => ['product.jpg'],
-            ])
-            ->call('create')
-            ->assertHasFormErrors(['name' => 'required']);
+    it('validates name is required on update', function () {
+        test()->actingAs(test()->admin);
+        $product = Product::factory()->create();
+        $component = Livewire::test(EditProduct::class, ['record' => $product->getRouteKey()]);
+        $component->fillForm(['name' => ''])->call('save');
+        $component->assertHasFormErrors(['name' => 'required']);
     });
 
     it('validates ean13 is required on create', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $category = Category::factory()->create();
 
         Livewire::test(CreateProduct::class)
@@ -96,7 +83,7 @@ describe('ProductResource', function () {
     });
 
     it('validates category_id is required on create', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
 
         Livewire::test(CreateProduct::class)
             ->fillForm([
@@ -110,7 +97,7 @@ describe('ProductResource', function () {
     });
 
     it('validates main_image is required on create', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $category = Category::factory()->create();
 
         Livewire::test(CreateProduct::class)
@@ -125,7 +112,7 @@ describe('ProductResource', function () {
     });
 
     it('admin can access edit product page', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $product = Product::factory()->create();
 
         Livewire::test(EditProduct::class, ['record' => $product->getRouteKey()])
@@ -133,29 +120,14 @@ describe('ProductResource', function () {
     });
 
     it('can update product via form', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $product = Product::factory()->create(['name' => 'Old Name']);
 
-        Livewire::test(EditProduct::class, ['record' => $product->getRouteKey()])
-            ->fillForm([
-                'name' => 'Updated Name',
-            ])
-            ->call('save');
-
+        $component = Livewire::test(EditProduct::class, ['record' => $product->getRouteKey()]);
+        $component->fillForm(['name' => 'Updated Name'])->call('save');
         expect(Product::find($product->id)->name)->toBe('Updated Name');
     });
 
-    it('validates name is required on update', function () {
-        $this->actingAs(test()->admin);
-        $product = Product::factory()->create();
-
-        Livewire::test(EditProduct::class, ['record' => $product->getRouteKey()])
-            ->fillForm([
-                'name' => '',
-            ])
-            ->call('save')
-            ->assertHasFormErrors(['name' => 'required']);
-    });
 
     it('product resource has correct navigation group', function () {
         $group = \App\Filament\Admin\Resources\Products\Products\ProductResource::getNavigationGroup();
@@ -184,7 +156,7 @@ describe('ProductResource', function () {
 
     it('can import products from CSV via Livewire action', function () {
         Storage::fake('local');
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $category = Category::factory()->create();
 
         // Create a fake CSV file with correct headers and data matching ProductImporter

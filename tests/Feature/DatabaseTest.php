@@ -21,7 +21,7 @@ test('db has items after been seeded', function () {
     User::factory()->admin()->create();
 
     // Run the seeder
-    $this->seed();
+    test()->seed();
 
     // Verify seeding created expected data
     expect(Category::count())->toBeGreaterThan(0);

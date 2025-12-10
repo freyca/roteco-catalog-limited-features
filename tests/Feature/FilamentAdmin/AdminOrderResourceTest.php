@@ -18,14 +18,14 @@ beforeEach(function () {
 
 describe('AdminOrderResource', function () {
     it('admin can access order list page', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
 
         Livewire::test(ListOrders::class)
             ->assertStatus(200);
     });
 
     it('can display orders in list table', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $orders = Order::factory(3)->create();
 
         $component = Livewire::test(ListOrders::class);
@@ -38,7 +38,7 @@ describe('AdminOrderResource', function () {
     });
 
     it('admin can access edit order page', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $order = Order::factory()->create();
 
         Livewire::test(EditOrder::class, ['record' => $order->getRouteKey()])
@@ -72,7 +72,7 @@ describe('AdminOrderResource', function () {
     });
 
     it('can export orders via table action', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         Order::factory(3)->create();
 
         // Test the export action through Livewire
