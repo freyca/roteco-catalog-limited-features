@@ -23,9 +23,8 @@ beforeEach(function () {
 describe('DisassemblyResource', function () {
     it('admin can access disassembly list page', function () {
         test()->actingAs(test()->admin);
-
-        Livewire::test(ListDisassemblies::class)
-            ->assertStatus(200);
+        $component = Livewire::test(ListDisassemblies::class);
+        $component->assertSee(__('Disassemblies'));
     });
 
     it('can display disassemblies in list table', function () {
@@ -41,9 +40,8 @@ describe('DisassemblyResource', function () {
 
     it('admin can access create disassembly page', function () {
         test()->actingAs(test()->admin);
-
-        Livewire::test(CreateDisassembly::class)
-            ->assertStatus(200);
+        $component = Livewire::test(CreateDisassembly::class);
+        $component->assertFormComponentExists('name');
     });
 
     it('can create a new disassembly via form', function () {

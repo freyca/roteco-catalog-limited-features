@@ -23,9 +23,8 @@ beforeEach(function () {
 describe('ProductSparePartResource', function () {
     it('admin can access product spare part list page', function () {
         test()->actingAs(test()->admin);
-
-        Livewire::test(ListProductSpareParts::class)
-            ->assertStatus(200);
+        $component = Livewire::test(ListProductSpareParts::class);
+        $component->assertSee(__('Spare parts'));
     });
 
     it('can display product spare parts in list table', function () {
@@ -40,9 +39,8 @@ describe('ProductSparePartResource', function () {
 
     it('admin can access create product spare part page', function () {
         test()->actingAs(test()->admin);
-
-        Livewire::test(CreateProductSparePart::class)
-            ->assertStatus(200);
+        $component = Livewire::test(CreateProductSparePart::class);
+        $component->assertFormComponentExists('name');
     });
 
     it('can create a new product spare part via form', function () {

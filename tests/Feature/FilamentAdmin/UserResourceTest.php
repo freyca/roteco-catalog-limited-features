@@ -19,9 +19,8 @@ beforeEach(function () {
 describe('UserResource', function () {
     it('admin can access user list page', function () {
         test()->actingAs(test()->admin);
-
-        Livewire::test(ListUsers::class)
-            ->assertStatus(200);
+        $component = Livewire::test(ListUsers::class);
+        $component->assertSee(__('User'));
     });
 
     it('can display users in list table', function () {
@@ -37,9 +36,8 @@ describe('UserResource', function () {
 
     it('admin can access create user page', function () {
         test()->actingAs(test()->admin);
-
-        Livewire::test(CreateUser::class)
-            ->assertStatus(200);
+        $component = Livewire::test(CreateUser::class);
+        $component->assertFormComponentExists('name');
     });
 
     it('can create a new user via form', function () {

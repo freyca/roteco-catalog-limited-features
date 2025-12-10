@@ -23,8 +23,8 @@ beforeEach(function () {
 describe('ProductResource', function () {
     it('admin can access product list page', function () {
         test()->actingAs(test()->admin);
-        Livewire::test(ListProducts::class)
-            ->assertStatus(200);
+        $component = Livewire::test(ListProducts::class);
+        $component->assertSee(__('Products'));
     });
 
     it('can display products in list table', function () {
@@ -38,8 +38,8 @@ describe('ProductResource', function () {
 
     it('admin can access create product page', function () {
         test()->actingAs(test()->admin);
-        Livewire::test(CreateProduct::class)
-            ->assertStatus(200);
+        $component = Livewire::test(CreateProduct::class);
+        $component->assertFormComponentExists('name');
     });
 
     it('can create a new product via form', function () {

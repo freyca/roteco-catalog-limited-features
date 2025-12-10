@@ -22,9 +22,8 @@ beforeEach(function () {
 describe('CategoryResource', function () {
     it('admin can access category list page', function () {
         test()->actingAs(test()->admin);
-
-        Livewire::test(ListCategories::class)
-            ->assertStatus(200);
+        $component = Livewire::test(ListCategories::class);
+        $component->assertSee(__('Categories'));
     });
 
     it('can display categories in list table', function () {
@@ -40,9 +39,8 @@ describe('CategoryResource', function () {
 
     it('admin can access create category page', function () {
         test()->actingAs(test()->admin);
-
-        Livewire::test(CreateCategory::class)
-            ->assertStatus(200);
+        $component = Livewire::test(CreateCategory::class);
+        $component->assertSee(__('Create'));
     });
 
     it('can create a new category via form', function () {
@@ -86,9 +84,8 @@ describe('CategoryResource', function () {
     it('admin can access edit category page', function () {
         test()->actingAs(test()->admin);
         $category = Category::factory()->create();
-
-        Livewire::test(EditCategory::class, ['record' => $category->getRouteKey()])
-            ->assertStatus(200);
+        $component = Livewire::test(EditCategory::class, ['record' => $category->getRouteKey()]);
+        $component->assertFormComponentExists('name');
     });
 
     it('can update category via form', function () {

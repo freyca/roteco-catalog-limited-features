@@ -17,9 +17,8 @@ beforeEach(function () {
 describe('EditProfile Page', function () {
     it('user can access edit profile page', function () {
         test()->actingAs(test()->user);
-
-        Livewire::test(EditProfile::class)
-            ->assertStatus(200);
+        $component = Livewire::test(EditProfile::class);
+        $component->assertFormComponentExists('name');
     });
 
     it('user can update profile name', function () {
