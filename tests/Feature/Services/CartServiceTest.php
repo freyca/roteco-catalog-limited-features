@@ -13,7 +13,7 @@ beforeEach(function () {
 
 describe('Cart Service', function () {
     it('can add product to cart', function () {
-        $this->actingAs(test()->user);
+        test()->actingAs(test()->user);
         $cart = app(Cart::class);
 
         $result = $cart->add(test()->product1, 1);
@@ -23,7 +23,7 @@ describe('Cart Service', function () {
     });
 
     it('can remove product from cart', function () {
-        $this->actingAs(test()->user);
+        test()->actingAs(test()->user);
         $cart = app(Cart::class);
 
         $cart->add(test()->product1, 1);
@@ -35,7 +35,7 @@ describe('Cart Service', function () {
     });
 
     it('returns total quantity for product', function () {
-        $this->actingAs(test()->user);
+        test()->actingAs(test()->user);
         $cart = app(Cart::class);
 
         $cart->add(test()->product1, 3);
@@ -44,7 +44,7 @@ describe('Cart Service', function () {
     });
 
     it('returns total cost for product', function () {
-        $this->actingAs(test()->user);
+        test()->actingAs(test()->user);
         $cart = app(Cart::class);
 
         $cart->add(test()->product1, 2);
@@ -54,7 +54,7 @@ describe('Cart Service', function () {
     });
 
     it('can format product cost', function () {
-        $this->actingAs(test()->user);
+        test()->actingAs(test()->user);
         $cart = app(Cart::class);
 
         $cart->add(test()->product1, 1);
@@ -65,7 +65,7 @@ describe('Cart Service', function () {
     });
 
     it('can get total quantity in cart', function () {
-        $this->actingAs(test()->user);
+        test()->actingAs(test()->user);
         $cart = app(Cart::class);
 
         $cart->add(test()->product1, 2);
@@ -75,7 +75,7 @@ describe('Cart Service', function () {
     });
 
     it('can get total cost in cart', function () {
-        $this->actingAs(test()->user);
+        test()->actingAs(test()->user);
         $cart = app(Cart::class);
 
         $cart->add(test()->product1, 1);
@@ -86,7 +86,7 @@ describe('Cart Service', function () {
     });
 
     it('can check if cart is empty', function () {
-        $this->actingAs(test()->user);
+        test()->actingAs(test()->user);
         $cart = app(Cart::class);
 
         expect($cart->isEmpty())->toBeTrue();
@@ -97,7 +97,7 @@ describe('Cart Service', function () {
     });
 
     it('can get all cart items', function () {
-        $this->actingAs(test()->user);
+        test()->actingAs(test()->user);
         $cart = app(Cart::class);
 
         $cart->add(test()->product1, 1);

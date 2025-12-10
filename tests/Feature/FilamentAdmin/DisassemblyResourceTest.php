@@ -47,15 +47,16 @@ describe('DisassemblyResource', function () {
     });
 
     it('can create a new disassembly via form', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $product = Product::factory()->create();
         $file = UploadedFile::fake()->image('disasm.jpg');
         $component = Livewire::test(CreateDisassembly::class);
-        $component->set('data.name', 'New Disassembly');
-        $component->set('data.product_id', $product->id);
-        $component->set('data.main_image', $file);
-        $component->set('data.productSpareParts', []);
-        $component->call('create');
+        $component->fillForm([
+            'name' => 'New Disassembly',
+            'product_id' => $product->id,
+            'main_image' => $file,
+            'productSpareParts' => [],
+        ])->call('create');
         $component->assertHasNoFormErrors();
         expect(Disassembly::where('name', 'New Disassembly')->exists())->toBeTrue();
     });
@@ -64,13 +65,12 @@ describe('DisassemblyResource', function () {
         test()->actingAs(test()->admin);
         $disassembly = Disassembly::factory()->create();
         $component = Livewire::test(EditDisassembly::class, ['record' => $disassembly->getRouteKey()]);
-        $component->set('data.name', '');
-        $component->call('save');
+        $component->fillForm(['name' => ''])->call('save');
         $component->assertHasFormErrors(['name' => 'required']);
     });
 
     it('validates product_id is required on create', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
 
         Livewire::test(CreateDisassembly::class)
             ->fillForm([
@@ -83,7 +83,7 @@ describe('DisassemblyResource', function () {
     });
 
     it('validates main_image is required on create', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $product = Product::factory()->create();
 
         Livewire::test(CreateDisassembly::class)
@@ -97,7 +97,7 @@ describe('DisassemblyResource', function () {
     });
 
     it('admin can access edit disassembly page', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $disassembly = Disassembly::factory()->create();
 
         Livewire::test(EditDisassembly::class, ['record' => $disassembly->getRouteKey()])
@@ -105,13 +105,11 @@ describe('DisassemblyResource', function () {
     });
 
     it('can update disassembly via form', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $disassembly = Disassembly::factory()->create(['name' => 'Old Name']);
 
         $component = Livewire::test(EditDisassembly::class, ['record' => $disassembly->getRouteKey()]);
-        $component->set('data.name', 'Updated Name');
-        $component->call('save');
-
+        $component->fillForm(['name' => 'Updated Name'])->call('save');
         expect(Disassembly::find($disassembly->id)->name)->toBe('Updated Name');
     });
 
@@ -143,7 +141,7 @@ describe('DisassemblyResource', function () {
 
     it('can import disassemblies from CSV via table action', function () {
         Storage::fake('local');
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $product = Product::factory()->create();
 
         // Create a fake CSV file with correct headers and data matching DisassemblyImporter

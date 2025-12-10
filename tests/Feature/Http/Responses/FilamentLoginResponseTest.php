@@ -18,7 +18,7 @@ describe('FilamentLoginResponse', function () {
     });
 
     it('redirects admin to admin panel', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $response = new FilamentLoginResponse();
         $request = Request::create('/login', 'POST');
 
@@ -28,7 +28,7 @@ describe('FilamentLoginResponse', function () {
     });
 
     it('redirects customer to home', function () {
-        $this->actingAs(test()->customer);
+        test()->actingAs(test()->customer);
         $response = new FilamentLoginResponse();
         $request = Request::create('/login', 'POST');
 
@@ -38,7 +38,7 @@ describe('FilamentLoginResponse', function () {
     });
 
     it('returns redirect response', function () {
-        $this->actingAs(test()->customer);
+        test()->actingAs(test()->customer);
         $response = new FilamentLoginResponse();
         $request = Request::create('/login', 'POST');
 

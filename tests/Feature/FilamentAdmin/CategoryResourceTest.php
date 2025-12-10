@@ -53,9 +53,10 @@ describe('CategoryResource', function () {
         $file = UploadedFile::fake()->image('test-image.jpg');
 
         $component = Livewire::test(CreateCategory::class);
-        $component->set('data.name', 'New Electronics');
-        $component->set('data.big_image', $file);
-        $component->call('create');
+        $component->fillForm([
+            'name' => 'New Electronics',
+            'big_image' => $file,
+        ])->call('create');
 
         expect(Category::count())->toBeGreaterThan($initialCount);
         expect(Category::where('name', 'New Electronics')->exists())->toBeTrue();
@@ -65,18 +66,20 @@ describe('CategoryResource', function () {
         test()->actingAs(test()->admin);
         $file = UploadedFile::fake()->image('test.jpg');
         $component = Livewire::test(CreateCategory::class);
-        $component->set('data.name', '');
-        $component->set('data.big_image', $file);
-        $component->call('create');
+        $component->fillForm([
+            'name' => '',
+            'big_image' => $file,
+        ])->call('create');
         $component->assertHasFormErrors(['name' => 'required']);
     });
 
     it('validates big_image is required on create', function () {
         test()->actingAs(test()->admin);
         $component = Livewire::test(CreateCategory::class);
-        $component->set('data.name', 'Test Category');
-        $component->set('data.big_image', null);
-        $component->call('create');
+        $component->fillForm([
+            'name' => 'Test Category',
+            'big_image' => null,
+        ])->call('create');
         $component->assertHasFormErrors(['big_image' => 'required']);
     });
 
@@ -93,8 +96,7 @@ describe('CategoryResource', function () {
         $category = Category::factory()->create(['name' => 'Old Name']);
 
         $component = Livewire::test(EditCategory::class, ['record' => $category->getRouteKey()]);
-        $component->set('data.name', 'Updated Name');
-        $component->call('save');
+        $component->fillForm(['name' => 'Updated Name'])->call('save');
         expect(Category::find($category->id)->name)->toBe('Updated Name');
     });
 
@@ -103,8 +105,7 @@ describe('CategoryResource', function () {
         $category = Category::factory()->create();
 
         $component = Livewire::test(EditCategory::class, ['record' => $category->getRouteKey()]);
-        $component->set('data.name', '');
-        $component->call('save');
+        $component->fillForm(['name' => ''])->call('save');
         $component->assertHasFormErrors(['name' => 'required']);
     });
 

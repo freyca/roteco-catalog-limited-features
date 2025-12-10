@@ -23,7 +23,6 @@ beforeEach(function () {
 describe('ProductResource', function () {
     it('admin can access product list page', function () {
         test()->actingAs(test()->admin);
-
         Livewire::test(ListProducts::class)
             ->assertStatus(200);
     });
@@ -31,9 +30,7 @@ describe('ProductResource', function () {
     it('can display products in list table', function () {
         test()->actingAs(test()->admin);
         $products = Product::factory(3)->create();
-
         $component = Livewire::test(ListProducts::class);
-
         foreach ($products as $product) {
             $component->assertSee($product->name);
         }
@@ -41,7 +38,6 @@ describe('ProductResource', function () {
 
     it('admin can access create product page', function () {
         test()->actingAs(test()->admin);
-
         Livewire::test(CreateProduct::class)
             ->assertStatus(200);
     });
@@ -51,13 +47,14 @@ describe('ProductResource', function () {
         $category = Category::factory()->create();
         $file = UploadedFile::fake()->image('product.jpg');
         $component = Livewire::test(CreateProduct::class);
-        $component->set('data.name', 'New Product');
-        $component->set('data.slug', 'new-product');
-        $component->set('data.ean13', '1234567890123');
-        $component->set('data.category_id', $category->id);
-        $component->set('data.main_image', $file);
-        $component->set('data.disassemblies', []);
-        $component->call('create');
+        $component->fillForm([
+            'name' => 'New Product',
+            'slug' => 'new-product',
+            'ean13' => '1234567890123',
+            'category_id' => $category->id,
+            'main_image' => $file,
+            'disassemblies' => [],
+        ])->call('create');
         $component->assertHasNoFormErrors();
         expect(Product::where('name', 'New Product')->exists())->toBeTrue();
     });
@@ -66,13 +63,12 @@ describe('ProductResource', function () {
         test()->actingAs(test()->admin);
         $product = Product::factory()->create();
         $component = Livewire::test(EditProduct::class, ['record' => $product->getRouteKey()]);
-        $component->set('data.name', '');
-        $component->call('save');
+        $component->fillForm(['name' => ''])->call('save');
         $component->assertHasFormErrors(['name' => 'required']);
     });
 
     it('validates ean13 is required on create', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $category = Category::factory()->create();
 
         Livewire::test(CreateProduct::class)
@@ -87,7 +83,7 @@ describe('ProductResource', function () {
     });
 
     it('validates category_id is required on create', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
 
         Livewire::test(CreateProduct::class)
             ->fillForm([
@@ -101,7 +97,7 @@ describe('ProductResource', function () {
     });
 
     it('validates main_image is required on create', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $category = Category::factory()->create();
 
         Livewire::test(CreateProduct::class)
@@ -116,7 +112,7 @@ describe('ProductResource', function () {
     });
 
     it('admin can access edit product page', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $product = Product::factory()->create();
 
         Livewire::test(EditProduct::class, ['record' => $product->getRouteKey()])
@@ -124,13 +120,11 @@ describe('ProductResource', function () {
     });
 
     it('can update product via form', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $product = Product::factory()->create(['name' => 'Old Name']);
 
         $component = Livewire::test(EditProduct::class, ['record' => $product->getRouteKey()]);
-        $component->set('data.name', 'Updated Name');
-        $component->call('save');
-
+        $component->fillForm(['name' => 'Updated Name'])->call('save');
         expect(Product::find($product->id)->name)->toBe('Updated Name');
     });
 
@@ -162,7 +156,7 @@ describe('ProductResource', function () {
 
     it('can import products from CSV via Livewire action', function () {
         Storage::fake('local');
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $category = Category::factory()->create();
 
         // Create a fake CSV file with correct headers and data matching ProductImporter

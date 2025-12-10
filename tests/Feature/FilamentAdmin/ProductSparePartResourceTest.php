@@ -48,20 +48,22 @@ describe('ProductSparePartResource', function () {
     it('can create a new product spare part via form', function () {
         test()->actingAs(test()->admin);
         $disassembly = \App\Models\Disassembly::factory()->create();
-        $component = Livewire::test(CreateProductSparePart::class);
-        $component->set('data.name', 'New Spare Part');
-        $component->set('data.ean13', 1234567890123);
-        $component->set('data.slug', 'new-spare-part');
-        $component->set('data.price', 100);
-        $component->set('data.published', true);
-        $component->set('data.disassembly_id', $disassembly->id);
-        $component->call('create');
-        $component->assertHasNoFormErrors();
+        Livewire::test(CreateProductSparePart::class)
+            ->fillForm([
+                'name' => 'New Spare Part',
+                'ean13' => 1234567890123,
+                'slug' => 'new-spare-part',
+                'price' => 100,
+                'published' => true,
+                'disassembly_id' => $disassembly->id,
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
         expect(ProductSparePart::where('name', 'New Spare Part')->exists())->toBeTrue();
     });
 
     it('validates name is required on create', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $product = Product::factory()->create();
 
         Livewire::test(CreateProductSparePart::class)
@@ -75,7 +77,7 @@ describe('ProductSparePartResource', function () {
     });
 
     it('validates ean13 is required on create', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $disassembly = \App\Models\Disassembly::factory()->create();
 
         Livewire::test(CreateProductSparePart::class)
@@ -92,7 +94,7 @@ describe('ProductSparePartResource', function () {
     });
 
     it('validates disassembly is required on create', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
 
         Livewire::test(CreateProductSparePart::class)
             ->fillForm([
@@ -108,7 +110,7 @@ describe('ProductSparePartResource', function () {
     });
 
     it('admin can access edit product spare part page', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $sparePart = ProductSparePart::factory()->create();
 
         Livewire::test(EditProductSparePart::class, ['record' => $sparePart->getRouteKey()])
@@ -116,24 +118,28 @@ describe('ProductSparePartResource', function () {
     });
 
     it('can update product spare part via form', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $sparePart = ProductSparePart::factory()->create(['name' => 'Old Name']);
 
-        $component = Livewire::test(EditProductSparePart::class, ['record' => $sparePart->getRouteKey()]);
-        $component->set('data.name', 'Updated Name');
-        $component->call('save');
+        Livewire::test(EditProductSparePart::class, ['record' => $sparePart->getRouteKey()])
+            ->fillForm([
+                'name' => 'Updated Name',
+            ])
+            ->call('save');
 
         expect(ProductSparePart::find($sparePart->id)->name)->toBe('Updated Name');
     });
 
     it('validates name is required on update', function () {
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $sparePart = ProductSparePart::factory()->create();
 
-        $component = Livewire::test(EditProductSparePart::class, ['record' => $sparePart->getRouteKey()]);
-        $component->set('data.name', '');
-        $component->call('save');
-        $component->assertHasFormErrors(['name' => 'required']);
+        Livewire::test(EditProductSparePart::class, ['record' => $sparePart->getRouteKey()])
+            ->fillForm([
+                'name' => '',
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['name' => 'required']);
     });
 
     it('product spare part resource has correct navigation group', function () {
@@ -163,7 +169,7 @@ describe('ProductSparePartResource', function () {
 
     it('can import product spare parts from CSV via table action', function () {
         Storage::fake('local');
-        $this->actingAs(test()->admin);
+        test()->actingAs(test()->admin);
         $disassembly = \App\Models\Disassembly::factory()->create();
 
         // Create a fake CSV file with correct headers and data matching ProductSparePartImporter

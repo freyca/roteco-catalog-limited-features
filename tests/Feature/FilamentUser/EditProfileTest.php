@@ -25,10 +25,11 @@ describe('EditProfile Page', function () {
     it('user can update profile name', function () {
         test()->actingAs(test()->user);
         $component = Livewire::test(EditProfile::class);
-        $component->set('data.name', 'Updated Name');
-        $component->set('data.surname', test()->user->surname);
-        $component->set('data.email', test()->user->email);
-        $component->call('save');
+        $component->fillForm([
+            'name' => 'Updated Name',
+            'surname' => test()->user->surname,
+            'email' => test()->user->email,
+        ])->call('save');
         expect(test()->user->fresh()->name)->toBe('Updated Name');
     });
 
@@ -36,10 +37,11 @@ describe('EditProfile Page', function () {
         test()->actingAs(test()->user);
 
         $component = Livewire::test(EditProfile::class);
-        $component->set('data.name', test()->user->name);
-        $component->set('data.surname', 'Updated Surname');
-        $component->set('data.email', test()->user->email);
-        $component->call('save');
+        $component->fillForm([
+            'name' => test()->user->name,
+            'surname' => 'Updated Surname',
+            'email' => test()->user->email,
+        ])->call('save');
         expect(test()->user->fresh()->surname)->toBe('Updated Surname');
     });
 
@@ -47,10 +49,11 @@ describe('EditProfile Page', function () {
         test()->actingAs(test()->user);
 
         $component = Livewire::test(EditProfile::class);
-        $component->set('data.name', test()->user->name);
-        $component->set('data.surname', test()->user->surname);
-        $component->set('data.email', 'newemail@example.com');
-        $component->call('save');
+        $component->fillForm([
+            'name' => test()->user->name,
+            'surname' => test()->user->surname,
+            'email' => 'newemail@example.com',
+        ])->call('save');
         expect(test()->user->fresh()->email)->toBe('newemail@example.com');
     });
 
@@ -59,12 +62,13 @@ describe('EditProfile Page', function () {
         $oldPassword = test()->user->password;
 
         $component = Livewire::test(EditProfile::class);
-        $component->set('data.name', test()->user->name);
-        $component->set('data.surname', test()->user->surname);
-        $component->set('data.email', test()->user->email);
-        $component->set('data.password', 'newpassword123');
-        $component->set('data.passwordConfirmation', 'newpassword123');
-        $component->call('save');
+        $component->fillForm([
+            'name' => test()->user->name,
+            'surname' => test()->user->surname,
+            'email' => test()->user->email,
+            'password' => 'newpassword123',
+            'passwordConfirmation' => 'newpassword123',
+        ])->call('save');
         expect(test()->user->fresh()->password)->not()->toBe($oldPassword);
     });
 
@@ -72,10 +76,11 @@ describe('EditProfile Page', function () {
         test()->actingAs(test()->user);
 
         $component = Livewire::test(EditProfile::class);
-        $component->set('data.name', '');
-        $component->set('data.surname', test()->user->surname);
-        $component->set('data.email', test()->user->email);
-        $component->call('save');
+        $component->fillForm([
+            'name' => '',
+            'surname' => test()->user->surname,
+            'email' => test()->user->email,
+        ])->call('save');
         $component->assertHasFormErrors(['name' => 'required']);
     });
 
@@ -83,10 +88,11 @@ describe('EditProfile Page', function () {
         test()->actingAs(test()->user);
 
         $component = Livewire::test(EditProfile::class);
-        $component->set('data.name', test()->user->name);
-        $component->set('data.surname', '');
-        $component->set('data.email', test()->user->email);
-        $component->call('save');
+        $component->fillForm([
+            'name' => test()->user->name,
+            'surname' => '',
+            'email' => test()->user->email,
+        ])->call('save');
         $component->assertHasFormErrors(['surname' => 'required']);
     });
 
@@ -94,35 +100,40 @@ describe('EditProfile Page', function () {
         test()->actingAs(test()->user);
 
         $component = Livewire::test(EditProfile::class);
-        $component->set('data.name', test()->user->name);
-        $component->set('data.surname', test()->user->surname);
-        $component->set('data.email', '');
-        $component->call('save');
+        $component->fillForm([
+            'name' => test()->user->name,
+            'surname' => test()->user->surname,
+            'email' => '',
+        ])->call('save');
         $component->assertHasFormErrors(['email' => 'required']);
     });
 
     it('validates email format', function () {
         test()->actingAs(test()->user);
 
-        $component = Livewire::test(EditProfile::class);
-        $component->set('data.name', test()->user->name);
-        $component->set('data.surname', test()->user->surname);
-        $component->set('data.email', 'not-an-email');
-        $component->call('save');
-        $component->assertHasFormErrors(['email']);
+        Livewire::test(EditProfile::class)
+            ->fillForm([
+                'name' => test()->user->name,
+                'surname' => test()->user->surname,
+                'email' => 'not-an-email',
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['email']);
     });
 
     it('password and confirmation can be different when no password change', function () {
         test()->actingAs(test()->user);
 
-        $component = Livewire::test(EditProfile::class);
-        $component->set('data.name', test()->user->name);
-        $component->set('data.surname', test()->user->surname);
-        $component->set('data.email', test()->user->email);
-        $component->set('data.password', '');
-        $component->set('data.passwordConfirmation', '');
-        $component->call('save');
-        $component->assertHasNoFormErrors();
+        Livewire::test(EditProfile::class)
+            ->fillForm([
+                'name' => test()->user->name,
+                'surname' => test()->user->surname,
+                'email' => test()->user->email,
+                'password' => '',
+                'passwordConfirmation' => '',
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
     });
 
     it('form has name component', function () {

@@ -44,27 +44,31 @@ describe('UserResource', function () {
 
     it('can create a new user via form', function () {
         test()->actingAs(test()->admin);
-        $component = Livewire::test(CreateUser::class);
-        $component->set('data.name', 'New User');
-        $component->set('data.surname', 'Test Surname');
-        $component->set('data.email', 'newuser@test.com');
-        $component->set('data.password', 'password123');
-        $component->set('data.role', Role::Customer->value);
-        $component->call('create');
-        $component->assertHasNoFormErrors();
+        Livewire::test(CreateUser::class)
+            ->fillForm([
+                'name' => 'New User',
+                'surname' => 'Test Surname',
+                'email' => 'newuser@test.com',
+                'password' => 'password123',
+                'role' => Role::Customer->value,
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
         expect(User::where('email', 'newuser@test.com')->exists())->toBeTrue();
     });
 
     it('can create an admin user via form', function () {
         test()->actingAs(test()->admin);
-        $component = Livewire::test(CreateUser::class);
-        $component->set('data.name', 'Admin User');
-        $component->set('data.surname', 'Admin Surname');
-        $component->set('data.email', 'adminuser@test.com');
-        $component->set('data.password', 'adminpassword');
-        $component->set('data.role', Role::Admin->value);
-        $component->call('create');
-        $component->assertHasNoFormErrors();
+        Livewire::test(CreateUser::class)
+            ->fillForm([
+                'name' => 'Admin User',
+                'surname' => 'Admin Surname',
+                'email' => 'adminuser@test.com',
+                'password' => 'adminpassword',
+                'role' => Role::Admin->value,
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
         expect(User::where('email', 'adminuser@test.com')->where('role', Role::Admin->value)->exists())->toBeTrue();
     });
 
@@ -115,14 +119,16 @@ describe('UserResource', function () {
 
     it('can create user without password', function () {
         test()->actingAs(test()->admin);
-        $component = Livewire::test(CreateUser::class);
-        $component->set('data.name', 'Test User');
-        $component->set('data.surname', 'Test Surname');
-        $component->set('data.email', 'test@test.com');
-        $component->set('data.password', '');
-        $component->set('data.role', Role::Customer->value);
-        $component->call('create');
-        $component->assertHasNoFormErrors();
+        Livewire::test(CreateUser::class)
+            ->fillForm([
+                'name' => 'Test User',
+                'surname' => 'Test Surname',
+                'email' => 'test@test.com',
+                'password' => '',
+                'role' => Role::Customer->value,
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
         expect(User::where('email', 'test@test.com')->exists())->toBeTrue();
     });
 
@@ -137,19 +143,23 @@ describe('UserResource', function () {
     it('can update user via form', function () {
         test()->actingAs(test()->admin);
         $user = User::factory()->create(['name' => 'Old Name']);
-        $component = Livewire::test(EditUser::class, ['record' => $user->getRouteKey()]);
-        $component->set('data.name', 'Updated Name');
-        $component->call('save');
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->fillForm([
+                'name' => 'Updated Name',
+            ])
+            ->call('save');
         expect(User::find($user->id)->name)->toBe('Updated Name');
     });
 
     it('validates name is required on update', function () {
         test()->actingAs(test()->admin);
         $user = User::factory()->create();
-        $component = Livewire::test(EditUser::class, ['record' => $user->getRouteKey()]);
-        $component->set('data.name', '');
-        $component->call('save');
-        $component->assertHasFormErrors(['name' => 'required']);
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
+            ->fillForm([
+                'name' => '',
+            ])
+            ->call('save')
+            ->assertHasFormErrors(['name' => 'required']);
     });
 
     it('user resource has correct navigation group', function () {

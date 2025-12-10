@@ -12,7 +12,7 @@ describe('Products Page - ProductCard Component', function () {
     it('renders product cards on products page', function () {
         $product = Product::factory()->create(['published' => true]);
 
-        $response = $this->actingAs(test()->user)->get('/productos');
+        $response = test()->actingAs(test()->user)->get('/productos');
 
         expect($response->status())->toBe(200);
         $response->assertSee($product->name);
@@ -21,7 +21,7 @@ describe('Products Page - ProductCard Component', function () {
     it('displays product information in card', function () {
         $product = Product::factory()->create(['name' => 'Test Product', 'published' => true]);
 
-        $response = $this->actingAs(test()->user)->get('/productos');
+        $response = test()->actingAs(test()->user)->get('/productos');
 
         $response->assertSee('Test Product');
     });
@@ -29,7 +29,7 @@ describe('Products Page - ProductCard Component', function () {
     it('displays product with price', function () {
         $product = Product::factory()->create(['published' => true]);
 
-        $response = $this->actingAs(test()->user)->get('/productos');
+        $response = test()->actingAs(test()->user)->get('/productos');
 
         expect($response->status())->toBe(200);
     });
@@ -37,7 +37,7 @@ describe('Products Page - ProductCard Component', function () {
     it('handles multiple products on page', function () {
         Product::factory()->count(3)->create(['published' => true]);
 
-        $response = $this->actingAs(test()->user)->get('/productos');
+        $response = test()->actingAs(test()->user)->get('/productos');
 
         expect($response->status())->toBe(200);
     });
@@ -46,7 +46,7 @@ describe('Products Page - ProductCard Component', function () {
         $product1 = Product::factory()->create(['name' => 'Product 1', 'published' => true]);
         $product2 = Product::factory()->create(['name' => 'Product 2', 'published' => true]);
 
-        $response = $this->actingAs(test()->user)->get('/productos');
+        $response = test()->actingAs(test()->user)->get('/productos');
 
         expect($response->status())->toBe(200);
         expect($response->content())->toContain('Product 1');
@@ -56,7 +56,7 @@ describe('Products Page - ProductCard Component', function () {
     it('shows page with single product', function () {
         $product = Product::factory()->create(['published' => true]);
 
-        $response = $this->actingAs(test()->user)->get('/productos');
+        $response = test()->actingAs(test()->user)->get('/productos');
 
         expect($response->status())->toBe(200);
     });

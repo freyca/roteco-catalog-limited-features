@@ -22,17 +22,18 @@ it('validates required fields on create', function () {
     $user = test()->user;
     test()->actingAs($user);
     $component = Livewire::test(CreateAddress::class);
-    $component->set('data.name', '');
-    $component->set('data.surname', '');
-    $component->set('data.address', '');
-    $component->set('data.city', '');
-    $component->set('data.state', '');
-    $component->set('data.zip_code', '');
-    $component->set('data.country', '');
-    $component->set('data.phone', '');
-    $component->set('data.address_type', '');
-    $component->set('data.email', '');
-    $component->call('create');
+    $component->fillForm([
+        'name' => '',
+        'surname' => '',
+        'address' => '',
+        'city' => '',
+        'state' => '',
+        'zip_code' => '',
+        'country' => '',
+        'phone' => '',
+        'address_type' => '',
+        'email' => '',
+    ])->call('create');
     $component->assertHasFormErrors([
         'name' => 'required',
         'surname' => 'required',
@@ -52,19 +53,20 @@ it('can create address with livewire form with all fields', function () {
     test()->actingAs($user);
 
     $component = Livewire::test(CreateAddress::class);
-    $component->set('data.name', 'John Doe');
-    $component->set('data.surname', 'Smith');
-    $component->set('data.address_type', 'shipping');
-    $component->set('data.bussiness_name', 'ACME Corp');
-    $component->set('data.financial_number', '12345678A');
-    $component->set('data.phone', '+34912345678');
-    $component->set('data.email', 'john@example.com');
-    $component->set('data.address', '123 Main Street');
-    $component->set('data.city', 'Madrid');
-    $component->set('data.state', 'Madrid');
-    $component->set('data.zip_code', '28001');
-    $component->set('data.country', 'Spain');
-    $component->call('create');
+    $component->fillForm([
+        'name' => 'John Doe',
+        'surname' => 'Smith',
+        'address_type' => 'shipping',
+        'bussiness_name' => 'ACME Corp',
+        'financial_number' => '12345678A',
+        'phone' => '+34912345678',
+        'email' => 'john@example.com',
+        'address' => '123 Main Street',
+        'city' => 'Madrid',
+        'state' => 'Madrid',
+        'zip_code' => '28001',
+        'country' => 'Spain',
+    ])->call('create');
     $component->assertHasNoFormErrors();
 
     expect(Address::count())->toBe(1);
@@ -80,19 +82,21 @@ it('can create address with optional fields empty', function () {
     $user = test()->user;
     test()->actingAs($user);
 
-    $component = Livewire::test(CreateAddress::class);
-    $component->set('data.name', 'Jane Doe');
-    $component->set('data.surname', 'Johnson');
-    $component->set('data.address_type', 'billing');
-    $component->set('data.phone', '+34987654321');
-    $component->set('data.email', 'jane@example.com');
-    $component->set('data.address', '456 Oak Avenue');
-    $component->set('data.city', 'Barcelona');
-    $component->set('data.state', 'Catalonia');
-    $component->set('data.zip_code', 8002);
-    $component->set('data.country', 'Spain');
-    $component->call('create');
-    $component->assertHasNoFormErrors();
+    Livewire::test(CreateAddress::class)
+        ->fillForm([
+            'name' => 'Jane Doe',
+            'surname' => 'Johnson',
+            'address_type' => 'billing',
+            'phone' => '+34987654321',
+            'email' => 'jane@example.com',
+            'address' => '456 Oak Avenue',
+            'city' => 'Barcelona',
+            'state' => 'Catalonia',
+            'zip_code' => 8002,
+            'country' => 'Spain',
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
 
     expect(Address::count())->toBe(1);
     $address = Address::first();
@@ -109,11 +113,13 @@ it('can edit address through livewire form', function () {
         'address' => 'Old Street 1',
     ]);
 
-    $component = Livewire::test(EditAddress::class, ['record' => $address->id]);
-    $component->set('data.city', 'Barcelona');
-    $component->set('data.address', 'New Street 2');
-    $component->call('save');
-    $component->assertHasNoFormErrors();
+    Livewire::test(EditAddress::class, ['record' => $address->id])
+        ->fillForm([
+            'city' => 'Barcelona',
+            'address' => 'New Street 2',
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
 
     expect($address->fresh()->city)->toBe('Barcelona');
     expect($address->fresh()->address)->toBe('New Street 2');
