@@ -4,6 +4,7 @@ use App\Enums\Role;
 use App\Filament\Admin\Resources\Products\ProductSpareParts\Pages\CreateProductSparePart;
 use App\Filament\Admin\Resources\Products\ProductSpareParts\Pages\EditProductSparePart;
 use App\Filament\Admin\Resources\Products\ProductSpareParts\Pages\ListProductSpareParts;
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductSparePart;
 use App\Models\User;
@@ -168,10 +169,16 @@ describe('ProductSparePartResource', function () {
     it('can import product spare parts from CSV via table action', function () {
         Storage::fake('local');
         test()->actingAs(test()->admin);
-        $disassembly = \App\Models\Disassembly::factory()->create();
+        $category = Category::factory()->create();
+        $product = Product::factory()->create([
+            'category_id' => $category->id,
+        ]);
+        $disassembly = \App\Models\Disassembly::factory()->create([
+            'product_id' => $product->id,
+        ]);
 
         // Create a fake CSV file with correct headers and data matching ProductSparePartImporter
-        $csvContent = "ean13,name,slug,price,price_with_discount,published,disassembly\n1111111111111,Imported Spare 1,imported-spare-1,100,,true,{$disassembly->id}\n2222222222222,Imported Spare 2,imported-spare-2,200,,true,{$disassembly->id}\n";
+        $csvContent = "ean13,name,price,price_with_discount,published,disassembly_id\n1111111111111,Imported Spare 1,100,,1,{$disassembly->id}\n2222222222222,Imported Spare 2,200,,1,{$disassembly->id}\n";
         $fileOnDisk = UploadedFile::fake()->createWithContent('sp.csv', $csvContent);
 
         // Test the import action through Livewire
@@ -181,5 +188,8 @@ describe('ProductSparePartResource', function () {
                 'file' => $fileOnDisk,
             ])->callMountedTableAction()
             ->assertHasNoTableActionErrors();
+
+        expect(ProductSparePart::where('name', 'Imported Spare 1')->where('disassembly_id', $disassembly->id)->exists())->toBeTrue();
+        expect(ProductSparePart::where('name', 'Imported Spare 2')->where('disassembly_id', $disassembly->id)->exists())->toBeTrue();
     });
 });

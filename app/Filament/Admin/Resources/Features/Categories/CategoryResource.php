@@ -39,8 +39,6 @@ class CategoryResource extends Resource
                         ->label(__('Name'))
                         ->required()
                         ->maxLength(255),
-                    TextInput::make('slug')
-                        ->disabled(),
                 ])->columns(2),
 
                 FileUpload::make('big_image')

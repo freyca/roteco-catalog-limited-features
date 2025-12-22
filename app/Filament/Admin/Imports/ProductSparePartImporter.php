@@ -24,24 +24,21 @@ class ProductSparePartImporter extends Importer
             ImportColumn::make('name')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
-            ImportColumn::make('slug')
-                ->requiredMapping()
-                ->rules(['required', 'max:255']),
             ImportColumn::make('price')
                 ->requiredMapping()
                 ->numeric()
                 ->rules(['required', 'integer']),
             ImportColumn::make('price_with_discount')
                 ->numeric()
-                ->rules(['integer']),
+                ->rules(['nullable', 'integer']),
             ImportColumn::make('published')
                 ->requiredMapping()
                 ->boolean()
                 ->rules(['required', 'boolean']),
-            ImportColumn::make('disassembly')
+            ImportColumn::make('disassembly_id')
                 ->requiredMapping()
-                ->relationship()
-                ->rules(['required']),
+                ->numeric()
+                ->rules(['required', 'integer', 'exists:disassemblies,id']),
         ];
     }
 

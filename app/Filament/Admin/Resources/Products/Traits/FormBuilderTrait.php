@@ -35,9 +35,6 @@ trait FormBuilderTrait
                 ->required()
                 ->maxLength(255),
 
-            TextInput::make('slug')
-                ->disabled(),
-
         ])->columns(2);
     }
 

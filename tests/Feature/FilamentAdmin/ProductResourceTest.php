@@ -160,7 +160,7 @@ describe('ProductResource', function () {
         $category = Category::factory()->create();
 
         // Create a fake CSV file with correct headers and data matching ProductImporter
-        $csvContent = "ean13,name,slug,published,main_image,category\n1234567890001,Imported Product 1,imported-product-1,1,product1.jpg,{$category->id}\n1234567890002,Imported Product 2,imported-product-2,1,product2.jpg,{$category->id}\n";
+        $csvContent = "ean13,name,published,main_image,category\n1234567890001,Imported Product 1,1,product1.jpg,{$category->id}\n1234567890002,Imported Product 2,1,product2.jpg,{$category->id}\n";
         $fileOnDisk = UploadedFile::fake()->createWithContent('prod.csv', $csvContent);
 
         // Test the import action through Livewire (queue processes synchronously by default in tests)
@@ -170,5 +170,8 @@ describe('ProductResource', function () {
                 'file' => $fileOnDisk,
             ])->callMountedTableAction()
             ->assertHasNoTableActionErrors();
+
+        expect(Product::where('name', 'Imported Product 1')->where('main_image', 'product1.jpg')->where('category_id', $category->id)->exists())->toBeTrue();
+        expect(Product::where('name', 'Imported Product 2')->where('main_image', 'product2.jpg')->where('category_id', $category->id)->exists())->toBeTrue();
     });
 });

@@ -147,7 +147,7 @@ describe('CategoryResource', function () {
         test()->actingAs(test()->admin);
 
         // Create a fake CSV file with correct headers and data
-        $csvContent = "name,slug,big_image\nImported Electronics,imported-electronics,electronics.jpg\nImported Clothing,imported-clothing,clothing.jpg\n";
+        $csvContent = "name,big_image\nImported Electronics,electronics.jpg\nImported Clothing,imported-clothing,clothing.jpg\n";
         $fileOnDisk = UploadedFile::fake()->createWithContent('cat.csv', $csvContent);
 
         // Test the import action through Livewire
@@ -157,7 +157,7 @@ describe('CategoryResource', function () {
                 'file' => $fileOnDisk,
             ])->callMountedTableAction()
             ->assertHasNoTableActionErrors();
-        // Assert imported categories exist in DB
+
         expect(Category::where('name', 'Imported Electronics')->where('slug', 'imported-electronics')->exists())->toBeTrue();
         expect(Category::where('name', 'Imported Clothing')->where('slug', 'imported-clothing')->exists())->toBeTrue();
     });
