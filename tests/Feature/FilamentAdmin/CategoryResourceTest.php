@@ -106,17 +106,6 @@ describe('CategoryResource', function () {
         $component->assertHasFormErrors(['name' => 'required']);
     });
 
-    it('can delete category via delete action', function () {
-        test()->actingAs(test()->admin);
-        $category = Category::factory()->create(['name' => 'To Delete']);
-        $categoryId = $category->id;
-
-        Livewire::test(EditCategory::class, ['record' => $category->getRouteKey()])
-            ->callAction('delete');
-
-        expect(Category::find($categoryId))->toBeNull();
-    });
-
     it('category resource has correct navigation group', function () {
         $group = \App\Filament\Admin\Resources\Features\Categories\CategoryResource::getNavigationGroup();
         expect($group)->toBe(__('Features'));

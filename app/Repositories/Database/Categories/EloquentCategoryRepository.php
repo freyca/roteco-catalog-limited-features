@@ -23,7 +23,7 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
          * @var Collection<int, Category>
          */
         return Cache::remember($cacheKey, 3600, function () {
-            return Category::all();
+            return Category::where('published', true)->get();
         });
     }
 

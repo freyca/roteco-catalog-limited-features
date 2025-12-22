@@ -10,11 +10,11 @@ use App\Filament\Admin\Resources\Features\Categories\Pages\EditCategory;
 use App\Filament\Admin\Resources\Features\Categories\Pages\ListCategories;
 use App\Models\Category;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -48,6 +48,10 @@ class CategoryResource extends Resource
                     ->preserveFilenames()
                     ->orientImagesFromExif(false)
                     ->directory(config('custom.category-image-storage')),
+
+                // Published toggle
+                Toggle::make('published')
+                    ->label(__('Published')),
             ]);
     }
 
@@ -70,6 +74,10 @@ class CategoryResource extends Resource
                     ->label(__('Name'))
                     ->sortable()
                     ->searchable(),
+
+                \Filament\Tables\Columns\IconColumn::make('published')
+                    ->boolean()
+                    ->label(__('Published')),
             ])
             ->filters([
                 //
@@ -78,9 +86,7 @@ class CategoryResource extends Resource
                 EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([]),
             ]);
     }
 
