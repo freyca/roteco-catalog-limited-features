@@ -64,7 +64,7 @@ class CategoryResource extends Resource
                 TextColumn::make('id')
                     ->sortable(),
 
-                ImageColumn::make('small_image')
+                ImageColumn::make('big_image')
                     ->circular()
                     ->label(__('Image')),
 
