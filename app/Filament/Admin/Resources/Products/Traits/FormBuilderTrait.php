@@ -25,10 +25,11 @@ trait FormBuilderTrait
             TextInput::make('id')
                 ->disabled(),
 
-            TextInput::make('ean13')
-                ->label(__('Ean13'))
+            TextInput::make('reference')
+                ->label(__('Reference'))
                 ->required()
-                ->numeric(),
+                ->unique()
+                ->maxLength(255),
 
             TextInput::make('name')
                 ->label(__('Name'))

@@ -50,7 +50,7 @@ describe('ProductSparePartResource', function () {
         Livewire::test(CreateProductSparePart::class)
             ->fillForm([
                 'name' => 'New Spare Part',
-                'ean13' => 1234567890123,
+                'reference' => 'REF-12345678',
                 'slug' => 'new-spare-part',
                 'price' => 100,
                 'published' => true,
@@ -75,21 +75,21 @@ describe('ProductSparePartResource', function () {
             ->assertHasFormErrors(['name' => 'required']);
     });
 
-    it('validates ean13 is required on create', function () {
+    it('validates reference is required on create', function () {
         test()->actingAs(test()->admin);
         $disassembly = \App\Models\Disassembly::factory()->create();
 
         Livewire::test(CreateProductSparePart::class)
             ->fillForm([
                 'name' => 'Test Spare Part',
-                'ean13' => null,
+                'reference' => '',
                 'slug' => 'test-spare-part',
                 'price' => 100,
                 'published' => true,
                 'disassembly_id' => $disassembly->id,
             ])
             ->call('create')
-            ->assertHasFormErrors(['ean13' => 'required']);
+            ->assertHasFormErrors(['reference' => 'required']);
     });
 
     it('validates disassembly is required on create', function () {
@@ -98,7 +98,7 @@ describe('ProductSparePartResource', function () {
         Livewire::test(CreateProductSparePart::class)
             ->fillForm([
                 'name' => 'Test Spare Part',
-                'ean13' => 1234567890123,
+                'reference' => 'REF-12345678',
                 'slug' => 'test-spare-part',
                 'price' => 100,
                 'published' => true,
@@ -178,7 +178,7 @@ describe('ProductSparePartResource', function () {
         ]);
 
         // Create a fake CSV file with correct headers and data matching ProductSparePartImporter
-        $csvContent = "ean13,name,price,price_with_discount,published,disassembly_id\n1111111111111,Imported Spare 1,100,,1,{$disassembly->id}\n2222222222222,Imported Spare 2,200,,1,{$disassembly->id}\n";
+        $csvContent = "reference,name,price,price_with_discount,published,disassembly_id\nREF-1111,Imported Spare 1,100,,1,{$disassembly->id}\nREF-2222,Imported Spare 2,200,,1,{$disassembly->id}\n";
         $fileOnDisk = UploadedFile::fake()->createWithContent('sp.csv', $csvContent);
 
         // Test the import action through Livewire
