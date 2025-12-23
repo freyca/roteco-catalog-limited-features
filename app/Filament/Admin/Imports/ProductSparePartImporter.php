@@ -31,10 +31,10 @@ class ProductSparePartImporter extends Importer
             ImportColumn::make('price')
                 ->requiredMapping()
                 ->numeric()
-                ->rules(['required', 'integer']),
+                ->rules(['required', 'numeric']),
             ImportColumn::make('price_with_discount')
                 ->numeric()
-                ->rules(['integer']),
+                ->rules(['numeric', 'required']),
             ImportColumn::make('published')
                 ->requiredMapping()
                 ->boolean()
