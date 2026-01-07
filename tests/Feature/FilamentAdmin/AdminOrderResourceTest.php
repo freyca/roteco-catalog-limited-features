@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\Role;
 use App\Filament\Admin\Resources\Users\Orders\Pages\EditOrder;
 use App\Filament\Admin\Resources\Users\Orders\Pages\ListOrders;
 use App\Models\Order;
@@ -10,7 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
 beforeEach(function () {
-    test()->admin = User::factory()->create(['role' => Role::Admin]);
+    test()->admin = User::factory()->admin_notifiable()->create();
 
     Filament::setCurrentPanel(
         Filament::getPanel('admin')

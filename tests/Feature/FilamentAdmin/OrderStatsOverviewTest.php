@@ -1,13 +1,12 @@
 <?php
 
 use App\Enums\OrderStatus;
-use App\Enums\Role;
 use App\Filament\Admin\Widgets\OrderStatsOverview;
 use App\Models\Order;
 use App\Models\User;
 
 beforeEach(function () {
-    test()->admin = User::factory()->create(['role' => Role::Admin]);
+    test()->admin = User::factory()->admin_notifiable()->create();
 });
 
 describe('OrderStatsOverview Widget', function () {

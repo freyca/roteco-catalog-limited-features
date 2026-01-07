@@ -1,13 +1,12 @@
 <?php
 
-use App\Enums\Role;
 use App\Http\Responses\FilamentLoginResponse;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 beforeEach(function () {
-    test()->admin = User::factory()->create(['role' => Role::Admin]);
-    test()->customer = User::factory()->create(['role' => Role::Customer]);
+    test()->admin = User::factory()->admin_notifiable()->create();
+    test()->customer = User::factory()->customer()->create();
 });
 
 describe('FilamentLoginResponse', function () {

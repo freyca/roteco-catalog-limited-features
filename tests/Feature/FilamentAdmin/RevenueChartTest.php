@@ -1,13 +1,12 @@
 <?php
 
-use App\Enums\Role;
 use App\Filament\Admin\Widgets\RevenueChart;
 use App\Models\Order;
 use App\Models\User;
 use Carbon\Carbon;
 
 beforeEach(function () {
-    test()->admin = User::factory()->create(['role' => Role::Admin]);
+    test()->admin = User::factory()->admin_notifiable()->create();
 });
 
 describe('RevenueChart Widget', function () {

@@ -1,8 +1,10 @@
 <?php
 
+use App\Models\User;
+
 describe('Payment Service', function () {
     beforeEach(function () {
-        \App\Models\User::factory()->create(['role' => \App\Enums\Role::Admin]);
+        test()->admin = User::factory()->admin_notifiable()->create();
         test()->order = \App\Models\Order::factory()->create([
             'payment_method' => \App\Enums\PaymentMethod::BankTransfer,
         ]);

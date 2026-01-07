@@ -65,7 +65,7 @@ return [
     /**
      * Mail destination addresses
      */
-    'admin_email' => env('MAIL_ADMIN_EMAIL'),
+    'admin_email' => env('MAIL_ADMIN_ADDRESS'),
 
     /**
      * Web logo
@@ -77,9 +77,4 @@ return [
      * Stock safety
      */
     'stock-safety' => 3,
-
-    /**
-     * Mail where admin notifications will be sent
-     */
-    'mail_admin_address' => env('MAIL_ADMIN_ADDRESS'),
 ];

@@ -7,7 +7,7 @@ use App\Models\Order;
 use App\Models\User;
 
 beforeEach(function () {
-    User::factory()->create(['role' => Role::Admin]);
+    test()->admin = User::factory()->admin_notifiable()->create();
     test()->user = User::factory()->create(['role' => Role::Customer]);
 });
 
