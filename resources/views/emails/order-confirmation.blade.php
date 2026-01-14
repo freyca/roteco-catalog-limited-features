@@ -12,6 +12,7 @@
 - **{{ __('Total Amount') }}:** €{{ number_format($order->purchase_cost / 100, 2) }}
 - **{{ __('Payment Method') }}:** {{ $order->payment_method->value }}
 
+
 ## {{ __('Products') }}
 
 @foreach ($products as $product)
@@ -22,13 +23,12 @@
 
 ## {{ __('Shipping Address') }}
 
-{{ $order->shippingAddress->name }} {{ $order->shippingAddress->surname }}
-{{ $order->shippingAddress->address }}
-{{ $order->shippingAddress->zip_code }} {{ $order->shippingAddress->city }}
-{{ $order->shippingAddress->state }}, {{ $order->shippingAddress->country }}
+{{ $order->shippingAddress->name }} {{ $order->shippingAddress->surname }}<br/>
+{{ $order->shippingAddress->address }}<br/>
+{{ $order->shippingAddress->zip_code }} {{ $order->shippingAddress->city }}<br/>
+{{ $order->shippingAddress->state }}, {{ $order->shippingAddress->country }}<br/>
 
 {{ __('If you have any questions, please contact us.') }}
 
 {{ __('Best regards') }},
-{{ config('app.name') }}
 @endcomponent

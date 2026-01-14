@@ -18,24 +18,23 @@
 | {{ $product->orderable->name }} | {{ $product->quantity }} | €{{ number_format($product->unit_price / 100, 2) }} | €{{ number_format(($product->unit_price * $product->quantity) / 100, 2) }} |
 @endforeach
 
+
 ## {{ __('Shipping Address') }}
 
-{{ $order->shippingAddress->name }} {{ $order->shippingAddress->surname }}
-{{ $order->shippingAddress->address }}
-{{ $order->shippingAddress->zip_code }} {{ $order->shippingAddress->city }}
-{{ $order->shippingAddress->state }}, {{ $order->shippingAddress->country }}
+{{ $order->shippingAddress->name }} {{ $order->shippingAddress->surname }} <br/>
+{{ $order->shippingAddress->address }} <br/>
+{{ $order->shippingAddress->zip_code }} {{ $order->shippingAddress->city }} <br/>
+{{ $order->shippingAddress->state }}, {{ $order->shippingAddress->country }} <br/>
 
 @if ($order->billingAddress && $order->billingAddress->id !== $order->shippingAddress->id)
 ## {{ __('Billing Address') }}
 
-{{ $order->billingAddress->name }} {{ $order->billingAddress->surname }}
-{{ $order->billingAddress->address }}
-{{ $order->billingAddress->zip_code }} {{ $order->billingAddress->city }}
-{{ $order->billingAddress->state }}, {{ $order->billingAddress->country }}
-@endif
+{{ $order->billingAddress->name }} {{ $order->billingAddress->surname }}<br/>
+{{ $order->billingAddress->address }}<br/>
+{{ $order->billingAddress->zip_code }} {{ $order->billingAddress->city }}<br/>
+{{ $order->billingAddress->state }}, {{ $order->billingAddress->country }}<br/>
 
 ---
 
 {{ __('Best regards') }},
-{{ config('app.name') }}
 @endcomponent
