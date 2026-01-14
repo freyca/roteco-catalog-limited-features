@@ -33,6 +33,7 @@
 {{ $order->billingAddress->address }}<br/>
 {{ $order->billingAddress->zip_code }} {{ $order->billingAddress->city }}<br/>
 {{ $order->billingAddress->state }}, {{ $order->billingAddress->country }}<br/>
+@endif
 
 ---
 
