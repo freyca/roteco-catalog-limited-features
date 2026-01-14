@@ -15,9 +15,9 @@
 
 ## {{ __('Products') }}
 
-@foreach ($products as $product)
 | {{ __('Product') }} | {{ __('Quantity') }} | {{ __('Price') }} |
 |---------|----------|-------|
+@foreach ($products as $product)
 | {{ $product->orderable->name }} | {{ $product->quantity }} | {{ number_format($product->unit_price , 2) }}€ |
 @endforeach
 
