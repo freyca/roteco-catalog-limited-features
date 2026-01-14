@@ -67,6 +67,12 @@ class DisassemblyResource extends Resource
                         ->schema([
                             self::mainSection(),
 
+                            TextInput::make('number_in_image')
+                                ->label(__('Number in image'))
+                                ->required()
+                                ->integer()
+                                ->minValue(1),
+
                             self::priceSectionWithParentProduct(),
                         ]),
                 ]),
