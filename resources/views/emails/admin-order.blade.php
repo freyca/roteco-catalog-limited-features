@@ -15,7 +15,7 @@
 | {{ __('Product') }} | {{ __('Quantity') }} | {{ __('Unit Price') }} | {{ __('Total') }} |
 |---------|----------|---------|-------|
 @foreach ($products as $product)
-| {{ $product->orderable->name }} | {{ $product->quantity }} | €{{ number_format($product->unit_price / 100, 2) }} | €{{ number_format(($product->unit_price * $product->quantity) / 100, 2) }} |
+| {{ $product->orderable->name }} | {{ $product->quantity }} | {{ $product->unit_price }}€ | {{ number_format(($product->unit_price * $product->quantity), 2) }}€ |
 @endforeach
 
 
