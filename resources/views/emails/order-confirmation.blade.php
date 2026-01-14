@@ -9,7 +9,7 @@
 
 - **{{ __('Order ID') }}:** {{ $order->id }}
 - **{{ __('Order Status') }}:** {{ $order->status->getLabel() }}
-- **{{ __('Total Amount') }}:** €{{ number_format($order->purchase_cost / 100, 2) }}
+- **{{ __('Total Amount') }}:** €{{ number_format($order->purchase_cost, 2) }}
 - **{{ __('Payment Method') }}:** {{ $order->payment_method->value }}
 
 
