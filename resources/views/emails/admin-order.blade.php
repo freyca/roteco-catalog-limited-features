@@ -29,10 +29,11 @@
 @if ($order->billingAddress && $order->billingAddress->id !== $order->shippingAddress->id)
 ## {{ __('Billing Address') }}
 
-{{ $order->billingAddress->name }} {{ $order->billingAddress->surname }}<br/>
-{{ $order->billingAddress->address }}<br/>
-{{ $order->billingAddress->zip_code }} {{ $order->billingAddress->city }}<br/>
-{{ $order->billingAddress->state }}, {{ $order->billingAddress->country }}<br/>
+{{ $order->billingAddress->name }} {{ $order->billingAddress->surname }} <br/>
+{{ $order->billingAddress->address }} <br/>
+{{ $order->billingAddress->zip_code }} {{ $order->billingAddress->city }} <br/>
+{{ $order->billingAddress->state }}, {{ $order->billingAddress->country }} <br/>
+@endif
 
 ---
 
