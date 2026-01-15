@@ -9,6 +9,7 @@ use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Events\OrderCreated;
 use App\Models\Scopes\OrderScope;
+use App\Traits\CurrencyFormatter;
 use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -25,9 +26,10 @@ use Illuminate\Support\Str;
 #[ScopedBy([OrderScope::class])]
 class Order extends Model
 {
+    use CurrencyFormatter;
+
     /** @use HasFactory<OrderFactory> */
     use HasFactory;
-
     use SoftDeletes;
 
     protected $fillable = [
