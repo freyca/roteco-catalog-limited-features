@@ -29,7 +29,7 @@ class OrderConfirmationNotification extends Notification
 
         // Load orderProducts with orderable relationship, bypassing PublishedScope
         // If we respect the scope, a product could be missing from the email
-        $order->orderProducts = $order->orderProducts()
+        $orderProducts = $order->orderProducts()
             ->with(['orderable' => fn ($query) => $query->withoutGlobalScopes()])
             ->get();
 
@@ -41,10 +41,9 @@ class OrderConfirmationNotification extends Notification
             ->line(__('Order Status').': '.$order->status->getLabel())
             ->line(__('Total Amount').': €'.number_format($order->purchase_cost / 100, 2))
             ->line(__('Products'.':'))
-            ->with('products', $order->orderProducts)
             ->markdown('emails.order-confirmation', [
                 'order' => $order,
-                'products' => $order->orderProducts,
+                'products' => $orderProducts,
             ]);
     }
 

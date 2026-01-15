@@ -28,11 +28,11 @@
 </div>
 
 <script>
-    function changeImage( $disassembly) {
-        let disassembly_image = $disassembly.main_image;
-
-        let image_url = window.location.origin + '/storage/' + disassembly_image;
-
-        document.getElementById('product-image').src = image_url;
+    function changeImage(disassembly) {
+        window.dispatchEvent(
+            new CustomEvent('set-product-image', {
+                detail: window.location.origin + '/storage/' + disassembly.main_image
+            })
+        )
     }
 </script>

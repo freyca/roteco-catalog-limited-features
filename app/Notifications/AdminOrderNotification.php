@@ -29,7 +29,7 @@ class AdminOrderNotification extends Notification
 
         // Load orderProducts with orderable relationship, bypassing PublishedScope
         // If we respect the scope, a product could be missing from the email
-        $order->orderProducts = $order->orderProducts()
+        $orderProducts = $order->orderProducts()
             ->with(['orderable' => fn ($query) => $query->withoutGlobalScopes()])
             ->get();
 
@@ -44,7 +44,7 @@ class AdminOrderNotification extends Notification
             ->line(__('Products'.':'))
             ->markdown('emails.admin-order', [
                 'order' => $order,
-                'products' => $order->orderProducts,
+                'products' => $orderProducts,
             ]);
     }
 
