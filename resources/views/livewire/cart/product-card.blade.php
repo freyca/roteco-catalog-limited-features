@@ -4,7 +4,7 @@
     <div class="rounded-lg border bg-white p-2 shadow-sm md:p-6 space-x-6">
         <div class="space-y-4 grid grid-cols-3 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0 ">
 
-            <a href="{{ $path . '/' . $product->slug }}" class="shrink-0 md:order-1">
+            <a href="{{ $path . '/' . $related_product->slug }}" class="shrink-0 md:order-1">
                 <img class="mx-auto h-20 w-20 xl:h-32 xl:w-32 object-contain"
                     src="{{ @asset('/storage/' . $related_product->main_image) }}" alt=""
                 />
