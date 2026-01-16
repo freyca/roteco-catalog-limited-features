@@ -1,56 +1,68 @@
 <x-layouts.app> {{-- :seotags="$seotags"> --}}
     @inject(cart, '\App\Services\Cart')
 
-    <x-bread-crumbs :breadcrumbs="$breadcrumbs" />
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <x-bread-crumbs :breadcrumbs="$breadcrumbs" class="py-6" />
 
-    <div class="mx-4 my-4">
-        <h1 class="text-3xl font-bold mt-16 mb-10 text-center">{{ $product->name }}</h1>
-        <h2 class="mb-4">{{ $product->slogan }}</h2>
+        <!-- Product Hero Section -->
+        <header class="mt-6 mb-12">
+            <h1 class="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter mb-4">
+                {{ $product->name }}
+            </h1>
+        </header>
 
-        <div class="grid gap-4 md:gap-14 lg:grid-cols-1 xl:grid-cols-2">
-            <x-product.product-image-gallery :image="$product->main_image" />
-
-            <div class="text-primary-700 text-justify">
-                <x-disassembly-list :relatedDisassemblies="$relatedDisassemblies" />
-                {{--
-                <div id="product-short-description" class="mb-4">
-                    {!! $product->short_description !!}
+        <div class="grid gap-12 lg:grid-cols-12 items-start">
+            <!-- Left: Gallery (Sticky) -->
+            <div class="lg:col-span-5 xl:col-span-5 lg:sticky lg:top-24">
+                <div class="bg-white rounded-3xl p-4 shadow-xl shadow-slate-200/50 ring-1 ring-slate-100">
+                    <x-product.product-image-gallery :image="$product->main_image" />
                 </div>
 
-                @livewire('buttons.product-cart-buttons', ['product' => $product, 'variants' => isset($variants) ? $variants : collect() ])
+                @if($product->short_description)
+                <div id="product-short-description" class="mt-8 prose prose-slate prose-sm text-slate-600 max-w-none px-2">
+                    {!! $product->short_description !!}
+                </div>
+                @endif
+            </div>
 
-                <x-product.payment-banners />
-                --}}
+            <!-- Right: Content & Disassembly -->
+            <div class="lg:col-span-7 xl:col-span-7 space-y-10">
+                <section>
+                    <div class="flex items-center justify-end mb-6 px-2">
+                        <span class="text-[10px] font-bold px-2 py-1 bg-slate-100 text-slate-500 rounded-md">
+                            {{ count($relatedDisassemblies) }} {{ __('Disassemblies') }}
+                        </span>
+                    </div>
+
+                    <x-disassembly-list :relatedDisassemblies="$relatedDisassemblies" />
+                </section>
             </div>
         </div>
 
-        {{--
-        <div class="container mx-auto my-6">
-            <div class="flex justify-center items-center">
-                <h3 class="text-center my-6 bg-primary-800 p-4 rounded-xl max-w-2xl">
-                    <span class="font-bold text-lg text-primary-100">
-                        {{ mb_strtoupper( __('Extended description of') . ' ' . $product->name) }}
-                    </span>
+        <!-- Long Description Section -->
+        @if($product->description)
+        <div class="mt-24 mb-16 border-t border-slate-100 pt-16">
+            <div class="max-w-3xl mx-auto">
+                <h3 class="text-2xl font-black text-slate-900 mb-8 text-center uppercase tracking-tight">
+                    {{ __('Full Specifications') }}
                 </h3>
-            </div>
-
-            <div id="product-long-description" class="text-primary-700 text-justify">
-                {!! $product->description !!}
+                <div id="product-long-description" class="prose prose-slate prose-lg text-slate-600 text-justify max-w-none">
+                    {!! $product->description !!}
+                </div>
             </div>
         </div>
-
-        @if(isset($featuredProducts) && $featuredProducts->count() > 0)
-            <div class="flex justify-center items-center">
-                <p class="text-center my-6 bg-primary-800 p-4 rounded-xl max-w-2xl">
-                    <span class="font-bold text-lg text-primary-100">
-                        {{ mb_strtoupper( __('Featured products') )}}
-                    </span>
-                </p>
-            </div>
-
-            <x-product-grid :products="$featuredProducts" />
         @endif
-        --}}
+
+        <!-- Featured Products -->
+        @if(isset($featuredProducts) && $featuredProducts->count() > 0)
+            <div class="mt-24 mb-12">
+                <h3 class="text-xl font-black text-slate-900 mb-10 flex items-center gap-4 uppercase tracking-tighter">
+                    {{ __('You might also need') }}
+                    <span class="flex-1 h-px bg-slate-100"></span>
+                </h3>
+                <x-product-grid :products="$featuredProducts" />
+            </div>
+        @endif
     </div>
 
     <x-buttons.whats-app-button />
