@@ -145,7 +145,7 @@ describe('Order Notifications', function () {
             expect(str_contains($rendered, __('Thank you for your order!')))->toBeTrue();
             expect(str_contains($rendered, $sparePart->name))->toBeTrue();
             expect(str_contains($rendered, '2'))->toBeTrue(); // quantity
-            expect(str_contains($rendered, number_format($sparePart->price, 2)))->toBeTrue(); // price
+            expect(str_contains($rendered, $sparePart->getFormattedPrice()))->toBeTrue(); // price
         });
     });
 
@@ -219,7 +219,7 @@ describe('Order Notifications', function () {
             expect(str_contains($rendered, $sparePart->name))->toBeTrue();
             expect(str_contains($rendered, '3'))->toBeTrue(); // quantity
             expect(str_contains($rendered, __('Products')))->toBeTrue();
-            expect(str_contains($rendered, number_format($sparePart->price, 2)))->toBeTrue(); // price
+            expect(str_contains($rendered, $sparePart->getFormattedPrice()))->toBeTrue(); // price
         });
     });
 
