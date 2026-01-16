@@ -5,11 +5,11 @@
         aria-label="{{ __('Remove') }}"
         wire:loading.attr="disabled"
     >
-        <span wire:loading.remove>
+        <span wire:loading.remove wire:target="remove,increment,decrement">
             @svg('heroicon-s-trash', 'h-5 w-5')
         </span>
 
-        <span wire:loading>
+        <span wire:loading wire:target="remove,increment,decrement">
             <x-filament::loading-indicator class="h-5 w-5" />
         </span>
     </button>

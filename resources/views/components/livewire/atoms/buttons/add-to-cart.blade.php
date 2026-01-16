@@ -13,7 +13,7 @@
         </span>
 
         <!-- Loading Content -->
-        <span wire:loading class="flex items-center gap-2">
+        <span wire:loading wire:target="add" class="flex items-center gap-2">
             <x-filament::loading-indicator class="h-5 w-5" />
         </span>
     </button>
