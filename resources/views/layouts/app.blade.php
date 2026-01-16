@@ -13,7 +13,6 @@
     <x-footer.footer />
 
     @vite('resources/js/app.js')
-    @livewire('notifications')
     @filamentScripts
     @livewireScripts
 </body>
