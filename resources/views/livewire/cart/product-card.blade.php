@@ -1,70 +1,71 @@
 @inject('cart', 'App\Services\Cart')
 
-<div class="mx-auto mt-6 max-w-4xl flex-1 space-y-6 xl:mb-2 lg:w-full">
-    <div class="rounded-lg border bg-white p-2 shadow-sm md:p-6 space-x-6">
-        <div class="space-y-4 grid grid-cols-3 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0 ">
+<div class="w-full bg-white border border-gray-100 rounded-xl shadow-sm px-4 py-3 md:p-6">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2 md:gap-4">
 
-            <a href="{{ $path . '/' . $product->slug }}" class="shrink-0 md:order-1">
-                <img class="mx-auto h-20 w-20 xl:h-32 xl:w-32 object-contain"
-                    src="{{ @asset('/storage/' . $related_product->main_image) }}" alt=""
-                />
+        <!-- SECTION 1: Image & Title Info -->
+        <div class="flex items-center flex-1 gap-3 min-w-0">
+            <a href="{{ $path . '/' . $related_product->slug }}" class="shrink-0">
+                <div class="bg-gray-50 rounded-lg p-1.5 flex items-center justify-center border border-gray-100">
+                    <img class="h-16 w-16 md:h-24 md:w-24 object-contain mx-auto rounded-md"
+                        src="{{ asset('/storage/' . $related_product->main_image) }}"
+                        alt="{{ $product->name }}"
+                    />
+                </div>
             </a>
 
-            <div class="ml-2 sm:ml-0 w-full min-w-0 flex-1 space-y-4 col-span-2 md:order-2 md:max-w-md">
-                <div>
-                    <a href="{{ $path . '/'}}{{$related_product->slug}}"
-                        class="text-base font-medium text-primary-900 hover:underline">
-                        <p>
-                            {{ $product->name }}
-                        </p>
-                    </a>
-                    <p class="text-base text-primary-900 truncate">
-                        {{ $related_product->slogan }}
-                    </p>
-                </div>
+            <div class="min-w-0 flex-1">
+                <a href="{{ $path . '/' . $related_product->slug }}"
+                    class="text-sm md:text-lg font-semibold text-gray-900 hover:text-primary-700 leading-tight uppercase">
+                    {{ $product->name }}
+                </a>
             </div>
+        </div>
 
-            <hr class="col-span-3" md:hidden>
+        <hr class="md:hidden border-gray-100 my-1">
 
-            <div class="flex col-span-2 justify-around md:order-4 md:grid">
-                <div class="flex items-center justify-between md:justify-center ">
+        <!-- SECTION 2: Controls & Pricing -->
+        <div class="flex items-center justify-between md:justify-end gap-4 md:gap-12">
+
+            <!-- Quantity Controls and Trash Bin -->
+            <div class="flex items-center md:gap-2">
+                <div class="flex items-center scale-90 md:scale-100 origin-left">
                     <x-livewire.atoms.buttons.increment-decrement-cart
                         :product="$product"
                         :product-quantity="$quantity"
                     />
                 </div>
 
-                <div class="flex items-center gap-4">
+                <div class="flex items-center text-gray-400 hover:text-red-600 transition-colors">
                     <x-livewire.atoms.buttons.remove-from-cart
                         :product="$product"
                     />
                 </div>
             </div>
 
-            <div class="text-center self-center md:order-3 md:w-32">
+            <!-- Price Display -->
+            <div class="text-right flex flex-col justify-center min-w-[100px]">
                 @php
-                    $has_discount = ! is_null($product->price_with_discount);
+                    $has_discount = !is_null($product->price_with_discount);
                 @endphp
-                @if ($has_discount)
-                    <p class="text-base line-through font-medium text-primary-900 inline-block">
-                        @if($cart->hasProduct($product))
-                            {{ $cart->getTotalCostforProductWithoutDiscount($product, true) }}
-                        @endif
-                    </p>
+
+                @if ($has_discount && $cart->hasProduct($product))
+                    <span class="text-[10px] md:text-sm line-through text-gray-500 block leading-none">
+                        {{ $cart->getTotalCostforProductWithoutDiscount($product, true) }}
+                    </span>
                 @endif
 
-                    <p @class([
-                        'text-base',
-                        'font-bold',
-                        'inline-block',
-                        'text-primary-800' => !$has_discount,
-                        'text-success-600' => $has_discount,
-                    ])>
-                        @if($cart->hasProduct($product))
-                            {{ $cart->getTotalCostforProduct($product, true) }}
-                        @endif
-                    </p>
+                <span @class([
+                    'text-base md:text-lg font-semibold block leading-tight',
+                    'text-gray-600' => !$has_discount,
+                    'text-green-600' => $has_discount,
+                ])>
+                    @if($cart->hasProduct($product))
+                        {{ $cart->getTotalCostforProduct($product, true) }}
+                    @endif
+                </span>
             </div>
         </div>
+
     </div>
 </div>

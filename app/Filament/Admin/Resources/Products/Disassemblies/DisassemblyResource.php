@@ -11,7 +11,6 @@ use App\Filament\Admin\Resources\Products\Disassemblies\Pages\ListDisassemblies;
 use App\Filament\Admin\Resources\Products\Traits\FormBuilderTrait;
 use App\Models\Disassembly;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Repeater;
@@ -105,9 +104,7 @@ class DisassemblyResource extends Resource
                 EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([]),
             ]);
     }
 

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Filament\Admin\Resources\Products\Products\Pages;
 
 use App\Filament\Admin\Resources\Products\Products\ProductResource;
-use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditProduct extends EditRecord
@@ -14,8 +13,6 @@ class EditProduct extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [
-            DeleteAction::make(),
-        ];
+        return [];
     }
 }

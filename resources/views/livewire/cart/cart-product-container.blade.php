@@ -1,15 +1,13 @@
-<div>
+<div class="max-w-4xl mx-auto px-4 py-8">
     @if($cart->isEmpty())
-        @php
-            redirect(route('checkout.cart'));
-        @endphp
+        @php redirect(route('checkout.cart')); @endphp
     @endif
 
-    <p class="py-2 text-2xl font-semibold text-center text-primary-900 ">
+    <h2 class="mb-8 text-3xl font-extrabold text-center text-gray-900">
         {{ __('Products') }}
-    </p>
+    </h2>
 
-    <div>
+    <div class="flex flex-col gap-4">
         @foreach ($cart->getCart() as $cart_item)
             @livewire(
                 'cart.product-card',
