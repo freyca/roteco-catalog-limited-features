@@ -1,20 +1,32 @@
-{{-- resources/views/components/livewire/atoms/buttons/increment-decrement-cart.blade.php --}}
-<div class="flex items-center">
-    <button wire:click="decrement" type="button"
-        class="p-1 text-primary-800 hover:text-primary-600 disabled:opacity-30"
-        @if ($productQuantity <= 1) disabled @endif>
+<div class="flex items-center gap-1">
+    @php $cart = app(\App\Services\Cart::class); @endphp
+
+    <!-- Decrement -->
+    <button
+        wire:click="decrement"
+        type="button"
+        class="flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all disabled:opacity-20"
+        @disabled($productQuantity <= 1)
+        aria-label="{{ __('Decrease') }}"
+    >
         @svg($productQuantity <= 1 ? 'heroicon-o-minus-circle' : 'heroicon-s-minus-circle', 'w-6 h-6')
     </button>
 
-    <span class="w-8 text-center text-sm font-bold text-gray-900">
-        {{ $productQuantity }}
-    </span>
+    <!-- Quantity Display -->
+    <div class="min-w-[2rem] px-1 text-center">
+        <span class="text-sm font-black text-slate-900 tabular-nums">
+            {{ $productQuantity }}
+        </span>
+    </div>
 
-    @php $cart = app(\App\Services\Cart::class); @endphp
-
-    <button wire:click="increment" type="button"
-        class="p-1 text-primary-800 hover:text-primary-600 disabled:opacity-30"
-        @if (!$cart->canBeIncremented($product)) disabled @endif>
+    <!-- Increment -->
+    <button
+        wire:click="increment"
+        type="button"
+        class="flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all disabled:opacity-20"
+        @disabled(!$cart->canBeIncremented($product))
+        aria-label="{{ __('Increase') }}"
+    >
         @svg(!$cart->canBeIncremented($product) ? 'heroicon-o-plus-circle' : 'heroicon-s-plus-circle', 'w-6 h-6')
     </button>
 </div>
