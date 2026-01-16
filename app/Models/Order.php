@@ -30,6 +30,7 @@ class Order extends Model
 
     /** @use HasFactory<OrderFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     protected $fillable = [
