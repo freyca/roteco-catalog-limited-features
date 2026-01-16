@@ -1,45 +1,23 @@
-<form wire:submit="add">
+<form wire:submit="add" class="m-0">
     <button type="submit"
         @class([
-            'inline',
-            'text-primary-100',
-            'text-sm',
-            'p-2',
-            'px-4',
-            'rounded',
-            'shadow' => $product->stock > 0,
-            'border-2' => $product->stock > 0,
-            'border-primary-800' => $product->stock > 0,
-            'bg-white' => $product->stock > 0,
-            'hover:bg-primary-200' => $product->stock > 0,
-            'bg-gray-300' => $product->stock <= 0,
-            ])
-        {{--
-        @if($product->stock <= 0) {{ 'disabled' }} @endif
-         --}}
-    >
+            'flex items-center justify-center transition-all rounded-lg border-2 shadow-sm h-10',
+            'px-3 md:px-4',
+            'border-primary-800 bg-white text-primary-800 hover:bg-primary-50'
+        ])>
 
-        @php
-            // $icon = $this->product->stock > config('custom.stock-safety') ? 'heroicon-o-shopping-bag' : 'heroicon-m-x-mark'
-            $icon = 'heroicon-o-shopping-bag'
-        @endphp
-
-        <span wire:loading.remove class="flex items-center whitespace-nowrap text-primary-800 font-semibold text-md">
-            @svg( $icon, 'w-5 h-5') &nbsp;
-            {{--
-            @if ($product->stock > 0)
-            --}}
-                {{ '' }}
-            {{--
-            @else
-                {{ __('Not enough stock' )}}
-            {{--
-            @endif
-            --}}
+        <span wire:loading.remove class="flex items-center gap-1.5 md:gap-2">
+            @svg('heroicon-o-shopping-bag', 'w-4 h-4 md:w-5 h-5')
+            <span class="font-bold text-[11px] md:text-xs uppercase tracking-tight">
+                {{  __('Add') }}
+            </span>
         </span>
 
-        <span wire:loading class="flex items-center whitespace-nowrap text-primary-800 font-semibold text-md">
-            {{ '...' }}
+        <span wire:loading>
+            <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
         </span>
     </button>
 </form>

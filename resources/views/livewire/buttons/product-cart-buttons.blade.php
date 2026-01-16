@@ -1,4 +1,4 @@
-<div class="flex flex-col gap-6">
+<div class="flex items-center justify-end m-0">
     {{--
     @if(is_a($product, App\Models\ProductSparePart::class))
         @if($product->price_when_user_owns_product != null)
@@ -20,23 +20,21 @@
     @else
         <x-livewire.atoms.product-price :product="$product" />
     @endif
- --}}
+    --}}
     @inject(cart, '\App\Services\Cart')
 
-    <div class="flex">
-        @if(!$cart->hasProduct($product))
-            <x-livewire.atoms.buttons.add-to-cart
-                :product="$product"
-            />
-        @else
-            <x-livewire.atoms.buttons.remove-from-cart
-                :product="$product"
-            />
+    @if(!$cart->hasProduct($product))
+        <x-livewire.atoms.buttons.add-to-cart :product="$product" />
+    @else
+        <div class="flex items-center bg-gray-100 border border-gray-200 rounded-lg p-1">
+            <x-livewire.atoms.buttons.remove-from-cart :product="$product" />
+
+            <div class="h-6 w-px bg-gray-300 mx-1"></div>
 
             <x-livewire.atoms.buttons.increment-decrement-cart
                 :product="$product"
                 :product-quantity="$productQuantity"
             />
-        @endif
-    </div>
+        </div>
+    @endif
 </div>

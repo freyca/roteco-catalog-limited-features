@@ -1,12 +1,10 @@
-<form wire:submit="remove">
+{{-- resources/views/components/livewire/atoms/buttons/remove-from-cart.blade.php --}}
+<form wire:submit="remove" class="m-0 flex items-center">
     <button type="submit"
-        class="inline shadow bg-primary-100 border-2 border-primary-800 text-primary-800 text-sm py-2 px-4 rounded hover:bg-primary-300">
-        <span wire:loading.remove class="flex items-center">
-            @svg('heroicon-s-trash', 'h-4 w-4') &nbsp;
+        class="p-1.5 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors">
+        <span wire:loading.remove>
+            @svg('heroicon-s-trash', 'h-5 w-5')
         </span>
-
-        <span wire:loading class="flex items-center whitespace-nowrap text-primary-800 font-semibold text-md">
-            {{ '...' }}
-        </span>
+        <span wire:loading class="text-xs">...</span>
     </button>
 </form>
