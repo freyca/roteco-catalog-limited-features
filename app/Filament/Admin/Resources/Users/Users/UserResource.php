@@ -11,7 +11,6 @@ use App\Filament\Admin\Resources\Users\Users\Pages\ListUsers;
 use App\Filament\Admin\Resources\Users\Users\RelationManagers\AddressRelationManager;
 use App\Models\User;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
@@ -88,9 +87,7 @@ class UserResource extends Resource
                 EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([]),
             ]);
     }
 

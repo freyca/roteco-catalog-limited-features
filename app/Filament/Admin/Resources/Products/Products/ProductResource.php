@@ -12,7 +12,6 @@ use App\Filament\Admin\Resources\Products\Traits\FormBuilderTrait;
 use App\Models\Product;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
 use Filament\Forms\Components\FileUpload;
@@ -145,9 +144,7 @@ class ProductResource extends Resource
                 EditAction::make(),
             ])
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
+                BulkActionGroup::make([]),
             ])
             ->defaultSort('id', 'desc');
     }
