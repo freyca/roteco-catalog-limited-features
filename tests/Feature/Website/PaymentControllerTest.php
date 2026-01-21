@@ -27,13 +27,4 @@ describe('PaymentController', function () {
 
         expect($response->viewData('order')->id)->toBe((string) $order->id);
     });
-
-    it('passes noindex seotags to purchase complete view', function () {
-        $order = Order::factory()->for(test()->user)->create();
-
-        $response = test()->actingAs(test()->user)->get(route('payment.purchase-complete', $order));
-
-        $seotags = $response->viewData('seotags');
-        expect($seotags)->not()->toBeNull();
-    });
 });

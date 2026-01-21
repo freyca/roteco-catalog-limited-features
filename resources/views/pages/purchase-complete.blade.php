@@ -1,4 +1,4 @@
-<x-layouts.app :seotags="$seotags">
+<x-layouts.app>
 
     <div class="mx-10 flex flex-col items-center justify-center ">
         <div class="my-6 mt-20">

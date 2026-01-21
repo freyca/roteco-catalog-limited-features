@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 
-<x-head.head /> {{-- :seotags="$seotags" /> --}}
+<x-head.head />
 
 <body id="app-container" class="bg-white-100 text-primary-900 min-h-screen m-0 flex flex-col">
     <x-navbar.navbar />

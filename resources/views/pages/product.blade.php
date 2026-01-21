@@ -1,4 +1,4 @@
-<x-layouts.app> {{-- :seotags="$seotags"> --}}
+<x-layouts.app>
     @inject(cart, '\App\Services\Cart')
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

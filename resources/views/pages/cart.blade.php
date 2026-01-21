@@ -1,4 +1,4 @@
-<x-layouts.app :seotags="$seotags">
+<x-layouts.app>
     @inject('cart', 'App\Services\Cart')
 
     <x-bread-crumbs :breadcrumbs="$breadcrumbs" />

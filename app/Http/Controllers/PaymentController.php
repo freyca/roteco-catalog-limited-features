@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\DTO\SeoTags;
 use App\Enums\OrderStatus;
 use App\Models\Order;
 use App\Repositories\Database\Order\Order\OrderRepositoryInterface;
@@ -32,7 +31,6 @@ class PaymentController extends Controller
 
         return view('pages.purchase-complete', [
             'order' => $order,
-            'seotags' => new SeoTags('noindex'),
         ]);
     }
 
@@ -44,7 +42,6 @@ class PaymentController extends Controller
 
         return view('pages.purchase-complete', [
             'order' => $order,
-            'seotags' => new SeoTags('noindex'),
         ]);
     }
 }
