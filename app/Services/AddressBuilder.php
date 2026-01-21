@@ -219,8 +219,6 @@ class AddressBuilder
                 'password' => Str::password(),
                 'role' => Role::Customer,
             ]);
-
-            UserCreated::dispatch($this->user);
         } catch (UniqueConstraintViolationException $th) {
             throw $th;
         }
