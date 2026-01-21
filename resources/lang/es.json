@@ -231,5 +231,6 @@
     "Successfully delivered": "Entregados exitosamente",
     "Orders by Status": "Pedidos por Estado",
     "Revenue (Last 7 Days)": "Ingresos (Últimos 7 Días)",
-    "Revenue (€)": "Ingresos (€)"
+    "Revenue (€)": "Ingresos (€)",
+    "Will be applied after taxes": "Aplicado tras impuestos"
 }

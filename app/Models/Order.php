@@ -35,6 +35,7 @@ class Order extends Model
 
     protected $fillable = [
         'purchase_cost',
+        'discount',
         'payment_method',
         'status',
         'user_id',
