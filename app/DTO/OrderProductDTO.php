@@ -16,11 +16,7 @@ class OrderProductDTO
 
     private ?float $price_with_discount;
 
-    private ?float $price_when_user_owns_product;
-
     private string $reference;
-
-    private BaseProduct $product;
 
     public function __construct(
         private int $orderable_id,
@@ -32,7 +28,6 @@ class OrderProductDTO
         $this->reference = (string) $product->reference;
         $this->price_with_discount = $product->price_with_discount;
         $this->price_without_discount = $product->price;
-        $this->price_when_user_owns_product = ! isset($product->price_when_user_owns_product) ? null : $product->price_when_user_owns_product;
     }
 
     public function setQuantity(int $quantity): void
@@ -45,11 +40,7 @@ class OrderProductDTO
      */
     public function getProduct(): BaseProduct
     {
-        if (! isset($this->product)) {
-            $this->product = $this->orderable_type::find($this->orderable_id);
-        }
-
-        return $this->product;
+        return $this->orderable_type::find($this->orderable_id);
     }
 
     public function priceWithoutDiscount(): float
@@ -60,11 +51,6 @@ class OrderProductDTO
     public function priceWithDiscount(): ?float
     {
         return $this->price_with_discount;
-    }
-
-    public function priceWhenUserOwnsProduct(): ?float
-    {
-        return $this->price_when_user_owns_product;
     }
 
     public function reference(): string
