@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Repositories\Database\Order\Product;
 
+use App\DTO\OrderProductDTO;
 use App\Models\Order;
-use App\Models\OrderProduct;
 use Illuminate\Support\Collection;
 
 interface OrderProductRepositoryInterface
 {
     /**
-     * @param  Collection<int, OrderProduct>  $order_products
+     * @param  Collection<int, OrderProductDTO>  $order_products
      */
     public function save(Order $order, Collection $order_products): void;
 }

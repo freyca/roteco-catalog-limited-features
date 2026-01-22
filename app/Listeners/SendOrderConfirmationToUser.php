@@ -12,6 +12,12 @@ class SendOrderConfirmationToUser implements ShouldQueue
 {
     public function handle(OrderCreated $event): void
     {
-        $event->order->user->notify(new OrderConfirmationNotification($event->order));
+        $user = $event->order->user;
+
+        if ($user === null) {
+            throw new \LogicException('Cannot send order confirmation without a user.');
+        }
+
+        $user->notify(new OrderConfirmationNotification($event->order));
     }
 }

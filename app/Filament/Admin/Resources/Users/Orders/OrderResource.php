@@ -365,23 +365,38 @@ class OrderResource extends Resource
 
     public static function updateTotals(Get $get, Set $set): void
     {
-        $selected_products = collect($get('orderProducts'));
+        /** @var array<int, array<string, mixed>> $raw_products */
+        $raw_products = $get('orderProducts') ?? [];
 
+        /** @var Collection<int, array<string, mixed>> $selected_products */
+        $selected_products = collect($raw_products);
+
+        /** @var Collection<int, OrderProductDTO> $order_products */
         $order_products = new Collection;
 
         foreach ($selected_products as $selected_product) {
-            if (! isset($selected_product['orderable_id'])) {
+            if (! isset($selected_product['orderable_id'], $selected_product['orderable_type'])) {
                 continue;
             }
 
-            $p = $selected_product['orderable_type']::find($selected_product['orderable_id']);
+            $orderable_type = $selected_product['orderable_type'];
+
+            if (! is_string($orderable_type) || ! class_exists($orderable_type)) {
+                continue;
+            }
+
+            $p = $orderable_type::find($selected_product['orderable_id']);
+
+            if ($p === null) {
+                continue;
+            }
 
             $order_products->add(
                 new OrderProductDTO(
                     $p->id,
-                    get_class($p),
+                    $orderable_type,
                     $p->price_with_discount ?: $p->price,
-                    intval($selected_product['quantity']),
+                    (int) $selected_product['quantity'],
                     $p
                 )
             );

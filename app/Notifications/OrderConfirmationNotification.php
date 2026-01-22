@@ -27,6 +27,11 @@ class OrderConfirmationNotification extends Notification
     {
         $order = $this->order->load(['user', 'shippingAddress', 'billingAddress']);
 
+        $user = $order->user;
+        if ($user === null) {
+            throw new \LogicException('Order has no user.');
+        }
+
         // Load orderProducts with orderable relationship, bypassing PublishedScope
         // If we respect the scope, a product could be missing from the email
         $orderProducts = $order->orderProducts()
@@ -35,7 +40,7 @@ class OrderConfirmationNotification extends Notification
 
         return (new MailMessage)
             ->subject(__('Order Confirmation'))
-            ->greeting(__('Hello :name', ['name' => $order->user->name]))
+            ->greeting(__('Hello :name', ['name' => $user->name]))
             ->line(__('Thank you for your order!'))
             ->line(__('Order ID').': '.$order->id)
             ->line(__('Order Status').': '.$order->status->getLabel())

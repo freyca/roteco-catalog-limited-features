@@ -29,13 +29,8 @@ class ProductSparePart extends BaseProduct
         parent::__construct($attributes);
     }
 
-    public function setSelfReferenceAttribute($value)
-    {
-        $this->attributes['self_reference'] = $value === '' ? null : $value;
-    }
-
     /**
-     * @return BelongsTo<Product, $this>
+     * @return BelongsTo<Disassembly, $this>
      */
     public function disassembly(): BelongsTo
     {

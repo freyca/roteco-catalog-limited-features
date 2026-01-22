@@ -14,8 +14,6 @@ use App\Repositories\Database\Order\Product\EloquentOrderProductRepository;
 use App\Repositories\Database\Order\Product\OrderProductRepositoryInterface;
 use App\Repositories\Database\Product\Product\EloquentProductRepository;
 use App\Repositories\Database\Product\Product\ProductRepositoryInterface;
-use App\Repositories\Database\Product\ProductSparePart\EloquentProductSparePartRepository;
-use App\Repositories\Database\Product\ProductSparePart\ProductSparePartRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -35,11 +33,6 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             ProductRepositoryInterface::class,
             EloquentProductRepository::class,
-        );
-
-        $this->app->bind(
-            ProductSparePartRepositoryInterface::class,
-            EloquentProductSparePartRepository::class,
         );
 
         $this->app->bind(
