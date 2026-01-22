@@ -135,7 +135,7 @@ class OrderResource extends Resource
                 Section::make(__('Payment'))
                     ->schema([
                         TextInput::make('purchase_cost')
-                            ->label(__('Price'))
+                            ->label(__('Price'.' '.'with taxes'))
                             ->required()
                             ->numeric()
                             ->disabled(),
