@@ -9,6 +9,7 @@ use App\Filament\Admin\Resources\Users\Orders\OrderResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
+use Illuminate\Database\Eloquent\Builder;
 
 class ListOrders extends ListRecords
 {
@@ -25,13 +26,13 @@ class ListOrders extends ListRecords
     {
         return [
             null => Tab::make(__('All')),
-            __('Paid') => Tab::make()->query(fn ($query) => $query->where('status', OrderStatus::Paid)),
-            __('Payment Failed') => Tab::make()->query(fn ($query) => $query->where('status', OrderStatus::PaymentFailed)),
-            __('Payment Pending') => Tab::make()->query(fn ($query) => $query->where('status', OrderStatus::PaymentPending)),
-            __('Processing') => Tab::make()->query(fn ($query) => $query->where('status', OrderStatus::Processing)),
-            __('Shipped') => Tab::make()->query(fn ($query) => $query->where('status', OrderStatus::Shipped)),
-            __('Delivered') => Tab::make()->query(fn ($query) => $query->where('status', OrderStatus::Delivered)),
-            __('Cancelled') => Tab::make()->query(fn ($query) => $query->where('status', OrderStatus::Cancelled)),
+            __('Paid') => Tab::make()->query(fn (Builder $query) => $query->where('status', OrderStatus::Paid)),
+            __('Payment Failed') => Tab::make()->query(fn (Builder $query) => $query->where('status', OrderStatus::PaymentFailed)),
+            __('Payment Pending') => Tab::make()->query(fn (Builder $query) => $query->where('status', OrderStatus::PaymentPending)),
+            __('Processing') => Tab::make()->query(fn (Builder $query) => $query->where('status', OrderStatus::Processing)),
+            __('Shipped') => Tab::make()->query(fn (Builder $query) => $query->where('status', OrderStatus::Shipped)),
+            __('Delivered') => Tab::make()->query(fn (Builder $query) => $query->where('status', OrderStatus::Delivered)),
+            __('Cancelled') => Tab::make()->query(fn (Builder $query) => $query->where('status', OrderStatus::Cancelled)),
         ];
     }
 }

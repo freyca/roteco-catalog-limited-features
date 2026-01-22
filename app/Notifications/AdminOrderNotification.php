@@ -35,7 +35,7 @@ class AdminOrderNotification extends Notification
         // Load orderProducts with orderable relationship, bypassing PublishedScope
         // If we respect the scope, a product could be missing from the email
         $orderProducts = $order->orderProducts()
-            ->with(['orderable' => fn ($query) => $query->withoutGlobalScopes()])
+            ->with(['orderable' => fn (mixed $query) => $query->withoutGlobalScopes()])
             ->get();
 
         return (new MailMessage)

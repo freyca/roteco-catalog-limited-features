@@ -59,7 +59,7 @@ class OrderResource extends Resource
                                 ->label(__('Customer email'))
                                 ->searchable()
                                 ->preload()
-                                ->afterStateUpdated(function ($state, Set $set) {
+                                ->afterStateUpdated(function (mixed $state, Set $set) {
                                     $user_id = $state;
 
                                     if ($user_id === null) {
@@ -269,7 +269,7 @@ class OrderResource extends Resource
                     ->required()
                     ->live()
                     ->distinct()
-                    ->afterStateUpdated(function ($state, Get $get, Set $set) {
+                    ->afterStateUpdated(function (mixed $state, Get $get, Set $set) {
                         $class_name = $get('orderable_type');
                         $product = $class_name::find($state);
 

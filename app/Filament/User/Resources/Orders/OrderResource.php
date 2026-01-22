@@ -128,7 +128,7 @@ class OrderResource extends Resource
                     ->options(Product::query()->pluck('name', 'id'))
                     ->required()
                     ->reactive()
-                    ->afterStateUpdated(fn ($state, Set $set) => $set('unit_price', Product::find($state)->price ?? 0))
+                    ->afterStateUpdated(fn (mixed $state, Set $set) => $set('unit_price', Product::find($state)->price ?? 0))
                     ->distinct()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                     ->columnSpan([

@@ -9,7 +9,10 @@ use Illuminate\Http\RedirectResponse;
 
 class FilamentLogoutResponse implements LogoutResponse
 {
-    public function toResponse($request): RedirectResponse
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     */
+    public function toResponse($request): RedirectResponse  // @pest-ignore-type
     {
         return redirect()->route('home');
     }
