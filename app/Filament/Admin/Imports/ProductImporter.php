@@ -40,16 +40,15 @@ class ProductImporter extends Importer
     public function resolveRecord(): Product
     {
         if (isset($this->data['id'])) {
-            $record = Product::find($this->data['id']);
-            if ($record) {
+            $id = (int) $this->data['id'];
+            $record = Product::find($id);
+
+            if ($record !== null) {
                 return $record;
             }
         }
 
-        // Fallback to reference as unique key
-        return Product::firstOrNew([
-            'reference' => $this->data['reference'],
-        ]);
+        return Product::firstOrNew(['name' => $this->data['name']]);
     }
 
     public static function getCompletedNotificationBody(Import $import): string

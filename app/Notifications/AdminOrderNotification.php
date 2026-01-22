@@ -27,18 +27,23 @@ class AdminOrderNotification extends Notification
     {
         $order = $this->order->load(['user', 'shippingAddress', 'billingAddress']);
 
+        $user = $order->user;
+        if ($user === null) {
+            throw new \LogicException('Order has no associated user.');
+        }
+
         // Load orderProducts with orderable relationship, bypassing PublishedScope
         // If we respect the scope, a product could be missing from the email
         $orderProducts = $order->orderProducts()
-            ->with(['orderable' => fn ($query) => $query->withoutGlobalScopes()])
+            ->with(['orderable' => fn (mixed $query) => $query->withoutGlobalScopes()])
             ->get();
 
         return (new MailMessage)
             ->subject(__('New Order Created').' - #'.$order->id)
             ->line(__('A new order has been created'))
             ->line(__('Order ID').': '.$order->id)
-            ->line(__('Customer').': '.$order->user->name.' '.$order->user->surname)
-            ->line(__('Customer Email').': '.$order->user->email)
+            ->line(__('Customer').': '.$user->name.' '.$user->surname)
+            ->line(__('Customer Email').': '.$user->email)
             ->line(__('Total Amount').': €'.number_format($order->purchase_cost / 100, 2))
             ->line(__('Payment Method').': '.$order->payment_method->value)
             ->line(__('Products'.':'))

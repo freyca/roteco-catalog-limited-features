@@ -27,8 +27,8 @@
                     {{ $product->name }}
                 </a>
                 <div class="flex items-center gap-1.5">
-                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">Ref.</span>
-                    <span class="text-[10px] sm:text-xs text-slate-500 font-mono tracking-tight">{{ $related_product->reference }}</span>
+                    <span class="text-[9px] font-black uppercase tracking-widest text-slate-400">{{ __('Ref.') }}</span>
+                    <span class="text-[10px] sm:text-xs text-slate-500 font-mono tracking-tight">{{ $product->reference }}</span>
                 </div>
             </div>
 

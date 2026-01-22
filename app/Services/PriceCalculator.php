@@ -23,14 +23,14 @@ class PriceCalculator
         return $quantity * $price;
     }
 
-    public function getTotalCostForProductWithoutDiscount(OrderProductDTO $product, int $quantity, bool $assemble = false): float
+    public function getTotalCostForProductWithoutDiscount(OrderProductDTO $product, int $quantity): float
     {
         return $this->getTotalCostForProduct(product: $product, quantity: $quantity, apply_discount: false);
     }
 
-    public function getTotalDiscountForProduct(OrderProductDTO $product, int $quantity, bool $assemble = false): float
+    public function getTotalDiscountForProduct(OrderProductDTO $product, int $quantity): float
     {
-        return $this->getTotalCostForProductWithoutDiscount($product, $quantity, $assemble) - $this->getTotalCostForProduct($product, $quantity, $assemble);
+        return $this->getTotalCostForProductWithoutDiscount($product, $quantity) - $this->getTotalCostForProduct($product, $quantity);
     }
 
     /**

@@ -1,4 +1,4 @@
-<x-layouts.app :seotags="new App\DTO\SeoTags('noindex')">
+<x-layouts.app>
     <section>
         <div class="container mx-auto p-4">
             <h1 class="text-3xl text-center font-bold mb-4">

@@ -32,10 +32,11 @@ class DisassemblyImporter extends Importer
 
     public function resolveRecord(): Disassembly
     {
-        // Use find for id, fallback to name
         if (isset($this->data['id'])) {
-            $record = Disassembly::find($this->data['id']);
-            if ($record) {
+            $id = (int) $this->data['id'];
+            $record = Disassembly::find($id);
+
+            if ($record !== null) {
                 return $record;
             }
         }

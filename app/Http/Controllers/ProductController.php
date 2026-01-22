@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\DTO\SeoTags;
 use App\Enums\Role;
 use App\Factories\BreadCrumbs\ProductBreadCrumbs;
 use App\Factories\BreadCrumbs\StandardPageBreadCrumbs;
@@ -21,7 +20,6 @@ class ProductController extends Controller
     public function all(): View
     {
         return view('pages.products', [
-            'seotags' => new SeoTags('product_all'),
             'breadcrumbs' => new StandardPageBreadCrumbs([
                 __('Products') => route('product-list'),
             ]),

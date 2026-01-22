@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Enums\AddressType;
 use App\Enums\PaymentMethod;
 use App\Enums\Role;
-use App\Events\UserCreated;
 use App\Models\Address;
 use App\Models\User;
 use Exception;
@@ -219,8 +218,6 @@ class AddressBuilder
                 'password' => Str::password(),
                 'role' => Role::Customer,
             ]);
-
-            UserCreated::dispatch($this->user);
         } catch (UniqueConstraintViolationException $th) {
             throw $th;
         }

@@ -12,7 +12,10 @@ use Livewire\Features\SupportRedirects\Redirector;
 
 class FilamentLoginResponse implements LoginResponse
 {
-    public function toResponse($request): Redirector|RedirectResponse
+    /**
+     * @param  \Illuminate\Http\Request  $request
+     */
+    public function toResponse($request): Redirector|RedirectResponse  // @pest-ignore-type
     {
         if (Auth::user()?->role === Role::Admin) {
             return redirect('/admin');

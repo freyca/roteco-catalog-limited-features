@@ -53,15 +53,18 @@ class Address extends Model
 
     protected static function booted(): void
     {
-        static::creating(function (Address $address) {
+        static::creating(function (Address $address): void {
             /** @var ?User $user */
             $user = Auth::getUser();
 
-            match (true) {
-                $user === null => true,
-                $user->role === Role::Admin => true,
-                default => $address->user_id = $user->id,
-            };
+            if ($user === null || $user->role === Role::Admin) {
+                return;
+            }
+
+            /** @var int<0, max> $userId */
+            $userId = $user->id;
+
+            $address->user_id = $userId;
         });
     }
 }

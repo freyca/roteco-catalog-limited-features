@@ -1,4 +1,4 @@
-<x-layouts.app > {{-- :seotags="$seotags">  --}}
+<x-layouts.app >
     <div class="container mx-auto rounded-md">
 
         <x-bread-crumbs :breadcrumbs="$breadcrumbs" />

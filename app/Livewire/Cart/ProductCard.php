@@ -27,7 +27,7 @@ class ProductCard extends Component
     {
         $this->product = $order_product->getProduct();
         $this->quantity = $order_product->quantity();
-        $this->related_product = $this->product->disassembly->product;
+        $this->related_product = $this->product->disassembly->product; // @phpstan-ignore-line  The product is ProductSparePart so it will have a disassembly
 
         $this->path = match (true) {
             default => '/producto',

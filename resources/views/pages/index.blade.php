@@ -1,4 +1,4 @@
-<x-layouts.app :seotags="$seotags">
+<x-layouts.app>
     <!-- <x-sliders.main-slider /> -->
 
     <div class="container rounded-top-md">
