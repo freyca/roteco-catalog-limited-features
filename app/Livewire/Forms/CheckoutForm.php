@@ -189,7 +189,7 @@ class CheckoutForm extends Component implements HasActions, HasForms
                             }
 
                             // If is checked "New address
-                            $selectedId = $get('shipping_address_id');
+                            $selectedId = $get('billing_address_id');
 
                             return ! ($selectedId === 0 || $selectedId === '0');
                         }
