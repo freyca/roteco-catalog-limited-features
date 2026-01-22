@@ -64,6 +64,17 @@
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
+        ],
+        "setup": [
+            "composer install",
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php artisan key:generate",
+            "@php artisan storage:link",
+            "@php artisan migrate --force",
+            "@php -r \"is_dir('public/storage/product-images') || mkdir('public/storage/product-images');\"",
+            "@php -r \"is_dir('public/storage/category-images') || mkdir('public/storage/category-images');\"",
+            "npm install",
+            "npm run build"
         ]
     },
     "extra": {

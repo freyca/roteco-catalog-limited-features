@@ -4,15 +4,7 @@
  - npm10
 
 # Deploy
- - composer install
- - npm install
- - npm run build
- - cp .env.example .env
- - php artisan key:generate
- - php artisan storage:link
- - Ensure dirs exists
-   - public/storage/product-images
-   - public/storage/category-images
+ - composer setup
 
 # TODO:
  - keep filter sidebar if is open (must convert open/close button to livewire)
