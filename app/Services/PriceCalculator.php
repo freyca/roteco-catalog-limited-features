@@ -75,4 +75,11 @@ class PriceCalculator
     {
         return $this->getTotalCostForOrder($order_products, $apply_discount) * (1 + config('custom.tax_iva'));
     }
+
+    public function getTotalCostForOrderWithTaxesAndManualDiscount(Collection $order_products, bool $apply_discount = true, float $percentage_discount = 0): float
+    {
+        $total_with_taxes = $this->getTotalCostForOrderWithTaxes($order_products, $apply_discount);
+
+        return round($total_with_taxes - ($total_with_taxes * $percentage_discount / 100), 2);
+    }
 }

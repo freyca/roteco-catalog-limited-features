@@ -148,5 +148,29 @@ describe('PriceCalculator', function () {
 
             expect($discount)->toBe(40.0); // (100 * 2) - (80 * 2)
         });
+
+        it('calculates correct price with manual discount', function () {
+            $product = ProductSparePart::factory()->create([
+                'price' => 100,
+                'price_with_discount' => 80,
+            ]);
+
+            $dto = new OrderProductDTO(
+                orderable_id: $product->id,
+                orderable_type: ProductSparePart::class,
+                unit_price: 100,
+                quantity: 2,
+                product: $product,
+            );
+
+            $products = collect([$dto]);
+            $expected = test()->calculator->getTotalCostForOrderWithTaxesAndManualDiscount($products, true, 10);
+
+            // $total = 80 * 2 * 1.21 = 193.6
+            // $discount = $total - ( $total * 10 / 100) = 193.6 - 19.36
+            // $expected = $total - $discount = 174.24
+
+            expect($expected)->toBe(174.24);
+        });
     });
 });

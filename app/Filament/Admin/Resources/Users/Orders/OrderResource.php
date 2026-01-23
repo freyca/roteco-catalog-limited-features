@@ -32,7 +32,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Number;
 
 class OrderResource extends Resource
 {
@@ -404,12 +403,12 @@ class OrderResource extends Resource
 
         $price_calculator = new PriceCalculator;
 
-        $total_with_taxes = $price_calculator->getTotalCostForOrderWithTaxes($order_products);
+        $final_price = $price_calculator->getTotalCostForOrderWithTaxesAndManualDiscount(
+            order_products: $order_products,
+            apply_discount: true,
+            percentage_discount: $get('discount')
+        );
 
-        // Apply discount
-        $discount = $get('discount');
-        $total = Number::format($total_with_taxes - ($total_with_taxes * $discount / 100), 2);
-
-        $set('purchase_cost', $total);
+        $set('purchase_cost', $final_price);
     }
 }
