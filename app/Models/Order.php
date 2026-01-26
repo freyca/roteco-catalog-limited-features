@@ -41,6 +41,7 @@ class Order extends Model
         'user_id',
         'shipping_address_id',
         'billing_address_id',
+        'order_details',
         'payment_gateway_response',
     ];
 

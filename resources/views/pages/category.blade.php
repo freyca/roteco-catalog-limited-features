@@ -12,9 +12,11 @@
 
                     <hr />
 
+                    {{--
                     <p class="text-justify mt-4">
                         {!! $category->description !!}
                     </p>
+                    --}}
                 </div>
             </div>
         </div>

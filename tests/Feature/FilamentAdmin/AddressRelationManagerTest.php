@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\AddressType;
 use App\Filament\Admin\Resources\Users\Users\Pages\EditUser;
 use App\Filament\Admin\Resources\Users\Users\RelationManagers\AddressRelationManager;
@@ -32,7 +34,7 @@ it('admin can create address through relation manager', function () {
         'name' => 'Shipping John',
         'surname' => 'Doe',
         'address_type' => AddressType::Shipping->value,
-        'bussiness_name' => 'Business Inc',
+        'business_name' => 'Business Inc',
         'financial_number' => 'B87654321',
         'phone' => '34911111111',
         'email' => 'shipping@example.com',
@@ -70,7 +72,7 @@ it('admin can edit address through relation manager', function () {
         'name' => $address->name,
         'surname' => $address->surname,
         'address_type' => $address->address_type->value,
-        'bussiness_name' => $address->bussiness_name,
+        'business_name' => $address->business_name,
         'financial_number' => $address->financial_number,
         'phone' => $address->phone,
         'email' => $address->email,
@@ -115,7 +117,7 @@ it('validates required fields in create action', function () {
         'name' => '',
         'surname' => '',
         'address_type' => '',
-        'bussiness_name' => '',
+        'business_name' => '',
         'financial_number' => '',
         'phone' => '',
         'email' => '',
@@ -168,6 +170,6 @@ it('can create address with optional fields empty', function () {
 
     expect(Address::count())->toBe(1);
     $address = Address::first();
-    expect($address->bussiness_name)->toBeNull();
+    expect($address->business_name)->toBeNull();
     expect($address->financial_number)->toBeNull();
 });

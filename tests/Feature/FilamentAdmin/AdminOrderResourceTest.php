@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\Admin\Resources\Users\Orders\Pages\EditOrder;
 use App\Filament\Admin\Resources\Users\Orders\Pages\ListOrders;
 use App\Models\Order;
@@ -31,7 +33,7 @@ describe('AdminOrderResource', function () {
         $component = Livewire::test(ListOrders::class);
 
         foreach ($orders as $order) {
-            $component->assertSee($order->code);
+            $component->assertSee($order->id);
         }
 
         expect($orders)->toHaveCount(3);
@@ -105,7 +107,7 @@ describe('AdminOrderResource', function () {
         $csv = Storage::disk('local')->get($dataCsvFiles[0]);
         // Check CSV contains at least one order code
         $order = Order::first();
-        expect($csv)->toContain($order->code);
+        expect($csv)->toContain($order->id);
 
         // Clean up export files after test
         foreach ($dataCsvFiles as $file) {

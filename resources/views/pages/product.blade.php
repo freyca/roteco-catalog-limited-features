@@ -18,11 +18,13 @@
                     <x-product.product-image-gallery :image="$product->main_image" />
                 </div>
 
+                {{--
                 @if($product->short_description)
                 <div id="product-short-description" class="mt-8 prose prose-slate prose-sm text-slate-600 max-w-none px-2">
                     {!! $product->short_description !!}
                 </div>
                 @endif
+                --}}
             </div>
 
             <!-- Right: Content & Disassembly -->
@@ -40,6 +42,7 @@
         </div>
 
         <!-- Long Description Section -->
+        {{--
         @if($product->description)
         <div class="mt-24 mb-16 border-t border-slate-100 pt-16">
             <div class="max-w-3xl mx-auto">
@@ -52,6 +55,7 @@
             </div>
         </div>
         @endif
+        --}}
 
         <!-- Featured Products -->
         @if(isset($featuredProducts) && $featuredProducts->count() > 0)

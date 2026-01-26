@@ -33,6 +33,7 @@ class ProductController extends Controller
         }
 
         $relatedDisassemblies = $product->disassemblies;
+        $relatedDisassemblies->load('productSpareParts');
 
         return view(
             'pages.product',

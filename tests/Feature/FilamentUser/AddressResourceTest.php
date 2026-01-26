@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\User\Resources\Addresses\Pages\CreateAddress;
 use App\Filament\User\Resources\Addresses\Pages\EditAddress;
 use App\Models\Address;
@@ -57,7 +59,7 @@ it('can create address with livewire form with all fields', function () {
         'name' => 'John Doe',
         'surname' => 'Smith',
         'address_type' => 'shipping',
-        'bussiness_name' => 'ACME Corp',
+        'business_name' => 'ACME Corp',
         'financial_number' => '12345678A',
         'phone' => '+34912345678',
         'email' => 'john@example.com',
@@ -75,7 +77,7 @@ it('can create address with livewire form with all fields', function () {
     expect($address->surname)->toBe('Smith');
     expect($address->user_id)->toBe($user->id);
     expect($address->email)->toBe('john@example.com');
-    expect($address->bussiness_name)->toBe('ACME Corp');
+    expect($address->business_name)->toBe('ACME Corp');
 });
 
 it('can create address with optional fields empty', function () {
@@ -100,7 +102,7 @@ it('can create address with optional fields empty', function () {
 
     expect(Address::count())->toBe(1);
     $address = Address::first();
-    expect($address->bussiness_name)->toBeNull();
+    expect($address->business_name)->toBeNull();
     expect($address->financial_number)->toBeNull();
 });
 

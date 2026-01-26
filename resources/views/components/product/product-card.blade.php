@@ -11,6 +11,8 @@
         <div class="relative pb-[112.5%] overflow-hidden rounded-md border border-solid border-primary-800">
             <img class="absolute inset-0 h-full w-full object-cover transition-transform duration-300 transform group-hover:scale-110"
                 src="{{ @asset('/storage/' . $product->main_image) }}" alt="{{ $product->name }}">
+
+            {{--
             <div
                 class="absolute inset-0 bg-gradient-to-b from-slate-400 to-transparent bg-opacity-70 flex items-center justify-center text-center opacity-0 group-hover:opacity-100 transition duration-300">
                 <div class="mx-auto text-center">
@@ -19,6 +21,7 @@
                     </p>
                 </div>
             </div>
+            --}}
         </div>
         <div class="md:py-4 md:px-2 sm:px-0 flex-grow flex flex-col justify-between">
             <div class="grid grid-cols-3 mt-auto overflow-hidden md:gap-2">

@@ -14,11 +14,7 @@
         </h2>
 
         <div id="accordion-collapse-body-{{ $counter }}" class="hidden" aria-labelledby="accordion-collapse-heading-{{ $counter }}">
-            @php
-                $relatedSpareParts=$disassembly->productSpareParts;
-            @endphp
-
-            <x-product-spare-part-list :relatedSpareparts=$relatedSpareParts />
+            <x-product-spare-part-list :relatedSpareparts="$disassembly->productSpareParts" />
         </div>
 
         @php
