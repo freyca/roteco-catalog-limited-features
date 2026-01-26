@@ -8,6 +8,6 @@ trait CacheKeys
 {
     private function generateCacheKey(string $functionName): string
     {
-        return md5(__CLASS__.'::'.$functionName);
+        return bcrypt(__CLASS__ . '::' . $functionName);
     }
 }
