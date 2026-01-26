@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\OrderStatus;
 use App\Enums\PaymentMethod;
 use App\Enums\Role;
 use App\Models\Order;
 use App\Models\User;
 
-uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 beforeEach(function () {
     test()->admin = User::factory()->admin_notifiable()->create();

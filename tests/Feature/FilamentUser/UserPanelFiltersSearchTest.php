@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\AddressType;
 use App\Filament\User\Resources\Addresses\Pages\ListAddress;
 use App\Filament\User\Resources\Orders\Pages\ListOrders;

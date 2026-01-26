@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\Admin\Resources\Features\Categories\Pages\CreateCategory;
 use App\Filament\Admin\Resources\Features\Categories\Pages\EditCategory;
 use App\Filament\Admin\Resources\Features\Categories\Pages\ListCategories;
@@ -106,27 +108,27 @@ describe('CategoryResource', function () {
     });
 
     it('category resource has correct navigation group', function () {
-        $group = \App\Filament\Admin\Resources\Features\Categories\CategoryResource::getNavigationGroup();
+        $group = App\Filament\Admin\Resources\Features\Categories\CategoryResource::getNavigationGroup();
         expect($group)->toBe(__('Features'));
     });
 
     it('category resource has correct model label', function () {
-        $label = \App\Filament\Admin\Resources\Features\Categories\CategoryResource::getModelLabel();
+        $label = App\Filament\Admin\Resources\Features\Categories\CategoryResource::getModelLabel();
         expect($label)->toBe(__('Categories'));
     });
 
     it('resource has index page', function () {
-        $pages = \App\Filament\Admin\Resources\Features\Categories\CategoryResource::getPages();
+        $pages = App\Filament\Admin\Resources\Features\Categories\CategoryResource::getPages();
         expect($pages)->toHaveKey('index');
     });
 
     it('resource has create page', function () {
-        $pages = \App\Filament\Admin\Resources\Features\Categories\CategoryResource::getPages();
+        $pages = App\Filament\Admin\Resources\Features\Categories\CategoryResource::getPages();
         expect($pages)->toHaveKey('create');
     });
 
     it('resource has edit page', function () {
-        $pages = \App\Filament\Admin\Resources\Features\Categories\CategoryResource::getPages();
+        $pages = App\Filament\Admin\Resources\Features\Categories\CategoryResource::getPages();
         expect($pages)->toHaveKey('edit');
     });
 

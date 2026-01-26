@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use Filament\Notifications\Livewire\Notifications;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Facades\FilamentColor;
 use Illuminate\Support\ServiceProvider;
-use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Section;
 
 class FilamentCustomizationProvider extends ServiceProvider
 {
@@ -29,13 +29,13 @@ class FilamentCustomizationProvider extends ServiceProvider
         // Notifications on left so does not overlap cart icon
         Notifications::alignment(Alignment::Start);
 
-        Fieldset::configureUsing(fn(Fieldset $fieldset) => $fieldset
+        Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
             ->columnSpanFull());
 
-        Grid::configureUsing(fn(Grid $grid) => $grid
+        Grid::configureUsing(fn (Grid $grid) => $grid
             ->columnSpanFull());
 
-        Section::configureUsing(fn(Section $section) => $section
+        Section::configureUsing(fn (Section $section) => $section
             ->columnSpanFull());
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Livewire\SearchBar;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;

@@ -8,13 +8,13 @@ use App\Http\Responses\FilamentLoginResponse;
 use App\Http\Responses\FilamentLogoutResponse;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Filament\Auth\Http\Responses\Contracts\LogoutResponse;
-use Illuminate\Database\Connection;
-use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
+use Illuminate\Contracts\Http\Kernel as HttpKernel;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -41,7 +41,7 @@ class AppServiceProvider extends ServiceProvider
 
         // Since this is a performance concern only, don’t halt
         // production for violations.
-        Model::preventLazyLoading(!app()->isProduction());
+        Model::preventLazyLoading(! app()->isProduction());
 
         // Log a warning if we spend more than a total of 2000ms querying.
         DB::whenQueryingForLongerThan(2000, function (Connection $connection) {
@@ -51,8 +51,8 @@ class AppServiceProvider extends ServiceProvider
         // Log a warning if we spend more than 1000ms on a single query.
         DB::listen(function ($query) {
             if ($query->time > 1000) {
-                Log::warning("An individual database query exceeded 1 second.", [
-                    'sql' => $query->sql
+                Log::warning('An individual database query exceeded 1 second.', [
+                    'sql' => $query->sql,
                 ]);
             }
         });
@@ -62,7 +62,7 @@ class AppServiceProvider extends ServiceProvider
             $this->app[ConsoleKernel::class]->whenCommandLifecycleIsLongerThan(
                 5000,
                 function ($startedAt, $input, $status) {
-                    Log::warning("A command took longer than 5 seconds.");
+                    Log::warning('A command took longer than 5 seconds.');
                 }
             );
         } else {
@@ -70,7 +70,7 @@ class AppServiceProvider extends ServiceProvider
             $this->app[HttpKernel::class]->whenRequestLifecycleIsLongerThan(
                 5000,
                 function ($startedAt, $request, $response) {
-                    Log::warning("A request took longer than 5 seconds.");
+                    Log::warning('A request took longer than 5 seconds.');
                 }
             );
         }

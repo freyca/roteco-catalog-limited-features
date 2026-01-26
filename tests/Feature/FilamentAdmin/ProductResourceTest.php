@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\Admin\Resources\Products\Products\Pages\CreateProduct;
 use App\Filament\Admin\Resources\Products\Products\Pages\EditProduct;
 use App\Filament\Admin\Resources\Products\Products\Pages\ListProducts;
@@ -128,27 +130,27 @@ describe('ProductResource', function () {
     });
 
     it('product resource has correct navigation group', function () {
-        $group = \App\Filament\Admin\Resources\Products\Products\ProductResource::getNavigationGroup();
+        $group = App\Filament\Admin\Resources\Products\Products\ProductResource::getNavigationGroup();
         expect($group)->toBe(__('Products'));
     });
 
     it('product resource has correct model label', function () {
-        $label = \App\Filament\Admin\Resources\Products\Products\ProductResource::getModelLabel();
+        $label = App\Filament\Admin\Resources\Products\Products\ProductResource::getModelLabel();
         expect($label)->toBe(__('Product'));
     });
 
     it('resource has index page', function () {
-        $pages = \App\Filament\Admin\Resources\Products\Products\ProductResource::getPages();
+        $pages = App\Filament\Admin\Resources\Products\Products\ProductResource::getPages();
         expect($pages)->toHaveKey('index');
     });
 
     it('resource has create page', function () {
-        $pages = \App\Filament\Admin\Resources\Products\Products\ProductResource::getPages();
+        $pages = App\Filament\Admin\Resources\Products\Products\ProductResource::getPages();
         expect($pages)->toHaveKey('create');
     });
 
     it('resource has edit page', function () {
-        $pages = \App\Filament\Admin\Resources\Products\Products\ProductResource::getPages();
+        $pages = App\Filament\Admin\Resources\Products\Products\ProductResource::getPages();
         expect($pages)->toHaveKey('edit');
     });
 

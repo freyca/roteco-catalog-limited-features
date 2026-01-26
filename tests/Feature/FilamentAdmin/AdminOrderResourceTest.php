@@ -48,28 +48,28 @@ describe('AdminOrderResource', function () {
     });
 
     it('order resource is read-only (no create page)', function () {
-        $pages = \App\Filament\Admin\Resources\Users\Orders\OrderResource::getPages();
+        $pages = App\Filament\Admin\Resources\Users\Orders\OrderResource::getPages();
         expect($pages)->toHaveKey('index');
         expect($pages)->toHaveKey('create');
     });
 
     it('order resource has index page', function () {
-        $pages = \App\Filament\Admin\Resources\Users\Orders\OrderResource::getPages();
+        $pages = App\Filament\Admin\Resources\Users\Orders\OrderResource::getPages();
         expect($pages)->toHaveKey('index');
     });
 
     it('order resource has edit page', function () {
-        $pages = \App\Filament\Admin\Resources\Users\Orders\OrderResource::getPages();
+        $pages = App\Filament\Admin\Resources\Users\Orders\OrderResource::getPages();
         expect($pages)->toHaveKey('edit');
     });
 
     it('order resource has correct navigation group', function () {
-        $group = \App\Filament\Admin\Resources\Users\Orders\OrderResource::getNavigationGroup();
+        $group = App\Filament\Admin\Resources\Users\Orders\OrderResource::getNavigationGroup();
         expect($group)->toBe(__('Usuarios'));
     });
 
     it('order resource has correct model label', function () {
-        $label = \App\Filament\Admin\Resources\Users\Orders\OrderResource::getModelLabel();
+        $label = App\Filament\Admin\Resources\Users\Orders\OrderResource::getModelLabel();
         expect($label)->toBe(__('Pedidos'));
     });
 

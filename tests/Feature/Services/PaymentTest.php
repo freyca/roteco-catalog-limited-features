@@ -1,14 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\User;
 
 describe('Payment Service', function () {
     beforeEach(function () {
         test()->admin = User::factory()->admin_notifiable()->create();
-        test()->order = \App\Models\Order::factory()->create([
-            'payment_method' => \App\Enums\PaymentMethod::BankTransfer,
+        test()->order = App\Models\Order::factory()->create([
+            'payment_method' => App\Enums\PaymentMethod::BankTransfer,
         ]);
-        test()->service = new \App\Services\Payment(test()->order);
+        test()->service = new App\Services\Payment(test()->order);
     });
 
     it('calls payPurchase and isGatewayOkWithPayment on BankTransferPaymentRepository', function () {
@@ -18,7 +20,7 @@ describe('Payment Service', function () {
         expect($response->getStatusCode())->toBeIn([301, 302]);
         $location = $response->headers->get('Location');
         expect($location)->toBeString();
-        $route = app('router')->getRoutes()->match(\Illuminate\Http\Request::create($location));
+        $route = app('router')->getRoutes()->match(Illuminate\Http\Request::create($location));
         $routeName = $route->getName();
         expect($routeName)->not->toBeNull();
         expect($routeName)->toBeIn(['payment.purchase-complete', 'payment.purchase-failed', 'pago-completo', 'pago-fallido']);
@@ -32,7 +34,7 @@ describe('PaymentActions trait', function () {
     beforeEach(function () {
         test()->trait = new class
         {
-            use \App\Repositories\Payment\Traits\PaymentActions;
+            use App\Repositories\Payment\Traits\PaymentActions;
 
             public function callConvertPriceToCents($price)
             {

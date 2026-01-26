@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\Admin\Widgets\RevenueChart;
 use App\Models\Order;
 use App\Models\User;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Disassembly;
 use App\Models\Order;
 use App\Models\Product;
@@ -90,7 +92,7 @@ test('user can add random spare parts to cart', function () {
     }
 
     // Get the cart and verify the correct spare parts are in it
-    $cart = app(\App\Services\Cart::class);
+    $cart = app(App\Services\Cart::class);
 
     // Verify selected spare parts are in cart
     foreach ($selectedSpareParts as $sparePart) {
@@ -134,7 +136,7 @@ test('user can complete checkout by submitting the checkout form', function () {
     $response->assertSee('Shipping address');
 
     // Get the cart to verify items before checkout
-    $cart = app(\App\Services\Cart::class);
+    $cart = app(App\Services\Cart::class);
     expect($cart->getTotalQuantity())->toBe(3);
 
     // Submit the checkout form via Livewire (the "place order" button)

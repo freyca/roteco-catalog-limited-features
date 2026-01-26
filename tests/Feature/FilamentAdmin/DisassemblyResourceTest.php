@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\Admin\Resources\Products\Disassemblies\Pages\CreateDisassembly;
 use App\Filament\Admin\Resources\Products\Disassemblies\Pages\EditDisassembly;
 use App\Filament\Admin\Resources\Products\Disassemblies\Pages\ListDisassemblies;
@@ -111,27 +113,27 @@ describe('DisassemblyResource', function () {
     });
 
     it('disassembly resource has correct navigation group', function () {
-        $group = \App\Filament\Admin\Resources\Products\Disassemblies\DisassemblyResource::getNavigationGroup();
+        $group = App\Filament\Admin\Resources\Products\Disassemblies\DisassemblyResource::getNavigationGroup();
         expect($group)->toBe(__('Products'));
     });
 
     it('disassembly resource has correct model label', function () {
-        $label = \App\Filament\Admin\Resources\Products\Disassemblies\DisassemblyResource::getModelLabel();
+        $label = App\Filament\Admin\Resources\Products\Disassemblies\DisassemblyResource::getModelLabel();
         expect($label)->toBe(__('Disassembly'));
     });
 
     it('resource has index page', function () {
-        $pages = \App\Filament\Admin\Resources\Products\Disassemblies\DisassemblyResource::getPages();
+        $pages = App\Filament\Admin\Resources\Products\Disassemblies\DisassemblyResource::getPages();
         expect($pages)->toHaveKey('index');
     });
 
     it('resource has create page', function () {
-        $pages = \App\Filament\Admin\Resources\Products\Disassemblies\DisassemblyResource::getPages();
+        $pages = App\Filament\Admin\Resources\Products\Disassemblies\DisassemblyResource::getPages();
         expect($pages)->toHaveKey('create');
     });
 
     it('resource has edit page', function () {
-        $pages = \App\Filament\Admin\Resources\Products\Disassemblies\DisassemblyResource::getPages();
+        $pages = App\Filament\Admin\Resources\Products\Disassemblies\DisassemblyResource::getPages();
         expect($pages)->toHaveKey('edit');
     });
 

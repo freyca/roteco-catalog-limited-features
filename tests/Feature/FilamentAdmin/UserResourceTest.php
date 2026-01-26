@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\Role;
 use App\Filament\Admin\Resources\Users\Users\Pages\CreateUser;
 use App\Filament\Admin\Resources\Users\Users\Pages\EditUser;
@@ -161,27 +163,27 @@ describe('UserResource', function () {
     });
 
     it('user resource has correct navigation group', function () {
-        $group = \App\Filament\Admin\Resources\Users\Users\UserResource::getNavigationGroup();
+        $group = App\Filament\Admin\Resources\Users\Users\UserResource::getNavigationGroup();
         expect($group)->toBe(__('Users'));
     });
 
     it('user resource has correct model label', function () {
-        $label = \App\Filament\Admin\Resources\Users\Users\UserResource::getModelLabel();
+        $label = App\Filament\Admin\Resources\Users\Users\UserResource::getModelLabel();
         expect($label)->toBe(__('User'));
     });
 
     it('resource has index page', function () {
-        $pages = \App\Filament\Admin\Resources\Users\Users\UserResource::getPages();
+        $pages = App\Filament\Admin\Resources\Users\Users\UserResource::getPages();
         expect($pages)->toHaveKey('index');
     });
 
     it('resource has create page', function () {
-        $pages = \App\Filament\Admin\Resources\Users\Users\UserResource::getPages();
+        $pages = App\Filament\Admin\Resources\Users\Users\UserResource::getPages();
         expect($pages)->toHaveKey('create');
     });
 
     it('resource has edit page', function () {
-        $pages = \App\Filament\Admin\Resources\Users\Users\UserResource::getPages();
+        $pages = App\Filament\Admin\Resources\Users\Users\UserResource::getPages();
         expect($pages)->toHaveKey('edit');
     });
 });

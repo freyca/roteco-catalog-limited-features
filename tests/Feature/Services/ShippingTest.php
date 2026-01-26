@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Repositories\Shipping\ShippingRepositoryInterface;
 use App\Services\Shipping;
 

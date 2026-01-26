@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\Admin\Widgets\OrderStatsOverview;
 use App\Filament\Admin\Widgets\OrderStatusChart;
 use App\Filament\Admin\Widgets\RevenueChart;
@@ -20,8 +22,8 @@ describe('Filament Admin Dashboard', function () {
 
 describe('Filament Admin Widgets', function () {
     it('OrderStatsOverview widget renders all stats in Spanish', function () {
-        \Livewire\Livewire::actingAs(test()->admin);
-        \Livewire\Livewire::test(OrderStatsOverview::class)
+        Livewire\Livewire::actingAs(test()->admin);
+        Livewire\Livewire::test(OrderStatsOverview::class)
             ->assertSeeText('Pedidos Totales')
             ->assertSeeText('Ingresos Totales')
             ->assertSeeText('Pedidos Pendientes')
@@ -29,14 +31,14 @@ describe('Filament Admin Widgets', function () {
     });
 
     it('RevenueChart widget renders in Spanish', function () {
-        \Livewire\Livewire::actingAs(test()->admin);
-        \Livewire\Livewire::test(RevenueChart::class)
+        Livewire\Livewire::actingAs(test()->admin);
+        Livewire\Livewire::test(RevenueChart::class)
             ->assertSeeText('Ingresos (Últimos 7 Días)');
     });
 
     it('OrderStatusChart widget renders in Spanish', function () {
-        \Livewire\Livewire::actingAs(test()->admin);
-        \Livewire\Livewire::test(OrderStatusChart::class)
+        Livewire\Livewire::actingAs(test()->admin);
+        Livewire\Livewire::test(OrderStatusChart::class)
             ->assertSeeText('Pedidos por Estado')
             ->assertSeeText('Pedidos');
     });

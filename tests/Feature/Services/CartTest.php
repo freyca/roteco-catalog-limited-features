@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\ProductSparePart;
 use App\Repositories\Cart\SessionCartRepository;
 use App\Services\Cart;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Support\Facades\App;
 
 uses(Illuminate\Foundation\Testing\RefreshDatabase::class);

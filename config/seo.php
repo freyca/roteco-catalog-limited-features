@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Every index of the array needs two values:
  * title: this will be the webpage title

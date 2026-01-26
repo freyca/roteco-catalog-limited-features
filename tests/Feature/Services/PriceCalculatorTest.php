@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\DTO\OrderProductDTO;
 use App\Models\ProductSparePart;
 use App\Services\PriceCalculator;

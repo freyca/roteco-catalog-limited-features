@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\User\Resources\Orders\Pages\ListOrders;
 use App\Models\Order;
 use App\Models\User;
@@ -23,7 +25,7 @@ it('does not show edit order button', function () {
     $component->assertDontSee('Edit');
 
     // Check in the order view page
-    $component = Livewire::test(\App\Filament\User\Resources\Orders\Pages\ViewOrder::class, ['record' => $order->id])
+    $component = Livewire::test(App\Filament\User\Resources\Orders\Pages\ViewOrder::class, ['record' => $order->id])
         ->assertSuccessful();
     $component->assertDontSee('Edit');
 });
@@ -52,9 +54,9 @@ it('cannot view other users order', function () {
     test()->actingAs($user);
     $otherOrder = Order::factory()->for($otherUser)->create();
 
-    expect(fn () => Livewire::test(\App\Filament\User\Resources\Orders\Pages\ViewOrder::class, ['record' => $otherOrder->id]))
-        ->toThrow(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+    expect(fn () => Livewire::test(App\Filament\User\Resources\Orders\Pages\ViewOrder::class, ['record' => $otherOrder->id]))
+        ->toThrow(Illuminate\Database\Eloquent\ModelNotFoundException::class);
 
     expect(fn () => test()->get(route('filament.user.resources.orders.view', ['record' => $otherOrder->id])))
-        ->toThrow(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        ->toThrow(Illuminate\Database\Eloquent\ModelNotFoundException::class);
 });

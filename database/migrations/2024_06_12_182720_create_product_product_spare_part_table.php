@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Product;
 use App\Models\ProductSparePart;
 use Illuminate\Database\Migrations\Migration;

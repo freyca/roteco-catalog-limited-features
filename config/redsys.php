@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     /**
      * Used to define the service URL. Possible values 'test', 'production' or 'local'.
@@ -14,7 +16,7 @@ return [
      */
     'tpv' => [
         'terminal' => env('REDSYS_TERMINAL', 1),
-        'currency' => \Creagia\Redsys\Enums\Currency::EUR,
+        'currency' => Creagia\Redsys\Enums\Currency::EUR,
         'merchantCode' => env('REDSYS_MERCHANT_CODE', '999008881'), // Default test code: 999008881
         'key' => env('REDSYS_KEY', 'sq7HjrUOBfKmC576ILgskD5srU870gJ7'), // Default test key: sq7HjrUOBfKmC576ILgskD5srU870gJ7
     ],

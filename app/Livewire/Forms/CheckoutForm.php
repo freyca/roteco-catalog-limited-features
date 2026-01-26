@@ -31,7 +31,7 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 
 /**
- * @property \Filament\Schemas\Schema $form
+ * @property Schema $form
  */
 class CheckoutForm extends Component implements HasActions, HasForms
 {

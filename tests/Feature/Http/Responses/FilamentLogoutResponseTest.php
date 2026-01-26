@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Responses\FilamentLogoutResponse;
 use Illuminate\Http\Request;
 
@@ -17,7 +19,7 @@ describe('FilamentLogoutResponse', function () {
     it('is instance of LogoutResponse contract', function () {
         $response = new FilamentLogoutResponse;
 
-        expect($response)->toBeInstanceOf(\Filament\Auth\Http\Responses\Contracts\LogoutResponse::class);
+        expect($response)->toBeInstanceOf(Filament\Auth\Http\Responses\Contracts\LogoutResponse::class);
     });
 
     it('returns redirect response', function () {
@@ -26,7 +28,7 @@ describe('FilamentLogoutResponse', function () {
 
         $result = $response->toResponse($request);
 
-        expect($result)->toBeInstanceOf(\Illuminate\Http\RedirectResponse::class);
+        expect($result)->toBeInstanceOf(Illuminate\Http\RedirectResponse::class);
     });
 
     it('logout response redirects to named route', function () {

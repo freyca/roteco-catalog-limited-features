@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\Role;
 use App\Filament\User\Pages\Auth\EditProfile;
 use App\Models\User;

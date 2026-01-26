@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Responses\FilamentLoginResponse;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,7 +15,7 @@ describe('FilamentLoginResponse', function () {
     it('is instance of LoginResponse contract', function () {
         $response = new FilamentLoginResponse;
 
-        expect($response)->toBeInstanceOf(\Filament\Auth\Http\Responses\Contracts\LoginResponse::class);
+        expect($response)->toBeInstanceOf(Filament\Auth\Http\Responses\Contracts\LoginResponse::class);
     });
 
     it('redirects admin to admin panel', function () {
@@ -43,7 +45,7 @@ describe('FilamentLoginResponse', function () {
 
         $result = $response->toResponse($request);
 
-        expect($result)->toBeInstanceOf(\Illuminate\Http\RedirectResponse::class);
+        expect($result)->toBeInstanceOf(Illuminate\Http\RedirectResponse::class);
     });
 
     it('redirects correctly for admin user', function () {

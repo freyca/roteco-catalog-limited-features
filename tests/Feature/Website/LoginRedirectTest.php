@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\Role;
 use App\Http\Responses\FilamentLoginResponse;
 use App\Models\User;
