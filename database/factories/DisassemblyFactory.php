@@ -21,7 +21,7 @@ class DisassemblyFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->catchPhrase(),
+            'name' => fake()->unique()->words(3, true),
             'main_image' => 'product-images/sample-image.png',
             'product_id' => Product::factory(),
         ];

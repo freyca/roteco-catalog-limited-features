@@ -17,7 +17,7 @@ class SessionCartRepository implements CartRepositoryInterface
 {
     use CurrencyFormatter;
 
-    public const SESSION = 'cart';
+    public const string SESSION = 'cart';
 
     private Collection $session_content;
 

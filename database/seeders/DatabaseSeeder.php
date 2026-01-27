@@ -16,6 +16,8 @@ use App\Models\User;
 use GdImage;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
+use InvalidArgumentException;
+use RuntimeException;
 
 class DatabaseSeeder extends Seeder
 {
@@ -96,19 +98,31 @@ class DatabaseSeeder extends Seeder
 
         // Save to temporary location
         $tempFile = tmpfile();
-        imagepng($image, stream_get_meta_data($tempFile)['uri']);
-        imagedestroy($image);
+
+        $meta = stream_get_meta_data($tempFile);
+        $uri = $meta['uri'] ?? null;
+
+        throw_unless($uri, RuntimeException::class, 'No se pudo obtener el URI del stream temporal.');
+
+        imagepng($image, $uri);
 
         // Put to Storage
-        $imageContent = file_get_contents(stream_get_meta_data($tempFile)['uri']);
+        $imageContent = file_get_contents($uri);
+
+        throw_if($imageContent === false, RuntimeException::class, "Failed to read temporary image file at $uri.");
+
         Storage::disk('public')->put($filePath, $imageContent);
     }
 
     private function createPlaceholderImage(int $width = 200, int $height = 200): GdImage
     {
+        throw_if($width < 1 || $height < 1, InvalidArgumentException::class, 'Width and height must be greater than 0.');
+
         $image = imagecreatetruecolor($width, $height);
         $backgroundColor = imagecolorallocate($image, 220, 220, 220);
         $textColor = imagecolorallocate($image, 100, 100, 100);
+
+        throw_if($backgroundColor === false || $textColor === false, RuntimeException::class, 'Failed to allocate colors.');
 
         // Fill background
         imagefilledrectangle($image, 0, 0, $width, $height, $backgroundColor);

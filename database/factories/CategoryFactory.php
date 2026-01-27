@@ -19,7 +19,7 @@ class CategoryFactory extends Factory
      */
     public function definition(): array
     {
-        $name = fake()->unique()->catchPhrase();
+        $name = fake()->unique()->words(3, true);
 
         return [
             'name' => $name,

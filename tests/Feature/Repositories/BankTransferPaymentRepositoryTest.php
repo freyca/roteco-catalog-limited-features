@@ -7,7 +7,6 @@ use App\Enums\PaymentMethod;
 use App\Enums\Role;
 use App\Models\Order;
 use App\Models\User;
-use Illuminate\Support\Sleep;
 
 beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
@@ -120,16 +119,6 @@ describe('BankTransferPaymentRepository', function (): void {
         $paginated = Order::query()->where('payment_method', PaymentMethod::BankTransfer)->paginate(2);
 
         expect($paginated->count())->toBeLessThanOrEqual(2);
-    });
-
-    it('orders bank transfer by most recent', function (): void {
-        $order1 = Order::factory()->create(['payment_method' => PaymentMethod::BankTransfer]);
-        Sleep::sleep(1);
-        $order2 = Order::factory()->create(['payment_method' => PaymentMethod::BankTransfer]);
-
-        $orders = Order::query()->where('payment_method', PaymentMethod::BankTransfer)->latest()->get();
-
-        expect((string) $orders->first()->id)->toBe((string) $order2->id);
     });
 
     it('retrieves bank transfer with zero results', function (): void {

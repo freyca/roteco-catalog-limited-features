@@ -49,7 +49,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Log a warning if we spend more than 1000ms on a single query.
-        DB::listen(function ($query): void {
+        DB::listen(function (mixed $query): void {
             if ($query->time > 1000) {
                 Log::warning('An individual database query exceeded 1 second.', [
                     'sql' => $query->sql,
@@ -61,7 +61,7 @@ class AppServiceProvider extends ServiceProvider
             // Log slow commands.
             $this->app->make(ConsoleKernel::class)->whenCommandLifecycleIsLongerThan(
                 5000,
-                function ($startedAt, $input, $status): void {
+                function (mixed $startedAt, mixed $input, mixed $status): void {
                     Log::warning('A command took longer than 5 seconds.');
                 }
             );
@@ -69,7 +69,7 @@ class AppServiceProvider extends ServiceProvider
             // Log slow requests.
             $this->app->make(HttpKernel::class)->whenRequestLifecycleIsLongerThan(
                 5000,
-                function ($startedAt, $request, $response): void {
+                function (mixed $startedAt, mixed $request, mixed $response): void {
                     Log::warning('A request took longer than 5 seconds.');
                 }
             );

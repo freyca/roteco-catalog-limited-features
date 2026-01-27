@@ -29,7 +29,7 @@ class AddressFactory extends Factory
             'phone' => fake()->phoneNumber(),
             'address' => fake()->streetAddress(),
             'city' => fake()->city(),
-            'state' => fake()->state(),
+            'state' => fake()->city(),
             'zip_code' => fake()->numberBetween(10000, 99999),
             'country' => fake()->country(),
         ];

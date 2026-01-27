@@ -15,10 +15,8 @@ class UserAdminSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(1)->create();
-
-        $user = User::query()->first();
-        $user->role = Role::Admin;
-        $user->save();
+        User::factory()->create([
+            'role' => Role::Admin,
+        ]);
     }
 }

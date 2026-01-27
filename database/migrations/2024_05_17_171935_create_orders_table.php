@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('payment_method');
             $table->string('status');
             $table->foreignIdFor(User::class)->nullable()->constrained();
-            $table->foreignIdFor(Address::class)->name('shipping_address_id')->constrained();
-            $table->foreignIdFor(Address::class)->name('billing_address_id')->nullable()->constrained();
+            $table->foreignIdFor(Address::class, 'shipping_address_id')->constrained();
+            $table->foreignIdFor(Address::class, 'billing_address_id')->nullable()->constrained();
             $table->json('payment_gateway_response')->nullable();
             $table->timestamps();
         });

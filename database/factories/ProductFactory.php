@@ -25,7 +25,7 @@ class ProductFactory extends Factory
     {
         fake()->randomFloat(2, 10, 3000);
 
-        $name = fake()->unique()->catchPhrase();
+        $name = fake()->unique()->words(3, true);
 
         return [
             'name' => $name,
@@ -46,7 +46,7 @@ class ProductFactory extends Factory
             // 'meta_description' => fake()->realText(20),
             // 'short_description' => fake()->realText(200),
             // 'description' => fake()->realText(1000),
-            'category_id' => Category::query()->inRandomOrder()->first()?->id ?? Category::factory()->create()->id,
+            'category_id' => Category::query()->inRandomOrder()->first()->id ?? Category::factory()->create()->id,
             'main_image' => 'product-images/sample-image.png',
         ];
     }
