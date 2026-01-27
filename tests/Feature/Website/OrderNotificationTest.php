@@ -110,7 +110,7 @@ describe('Order Notifications', function () {
             $order->load('orderProducts.orderable', 'user', 'shippingAddress', 'billingAddress');
             $notification = new OrderConfirmationNotification($order);
             $mail = $notification->toMail($user);
-            $rendered = $mail->render();
+            $rendered = $mail->render()->toHtml();
 
             expect(str_contains($rendered, (string) $order->id))->toBeTrue();
             expect(str_contains($rendered, $user->name))->toBeTrue();
@@ -140,14 +140,14 @@ describe('Order Notifications', function () {
             $order->load('orderProducts.orderable', 'user', 'shippingAddress', 'billingAddress');
             $notification = new OrderConfirmationNotification($order);
             $mail = $notification->toMail($user);
-            $rendered = $mail->render();
+            $rendered = $mail->render()->toHtml();
 
             // Verify notification includes product details
             expect(str_contains($rendered, (string) $order->id))->toBeTrue();
             expect(str_contains($rendered, __('Thank you for your order!')))->toBeTrue();
             expect(str_contains($rendered, $sparePart->name))->toBeTrue();
-            expect(str_contains($rendered, '2'))->toBeTrue(); // quantity
-            expect(str_contains($rendered, $sparePart->getFormattedPrice()))->toBeTrue(); // price
+            expect(str_contains($rendered, '2'))->toBeTrue();
+            expect(str_contains($rendered, $sparePart->getFormattedPrice()))->toBeTrue();
         });
     });
 
@@ -181,7 +181,7 @@ describe('Order Notifications', function () {
             $order->load('orderProducts.orderable', 'user', 'shippingAddress', 'billingAddress');
             $notification = new AdminOrderNotification($order);
             $mail = $notification->toMail(test()->admin);
-            $rendered = $mail->render();
+            $rendered = $mail->render()->toHtml();
 
             expect(str_contains($rendered, (string) $order->id))->toBeTrue();
             expect(str_contains($rendered, $user->name))->toBeTrue();
@@ -212,7 +212,7 @@ describe('Order Notifications', function () {
             $order->load('orderProducts.orderable', 'user', 'shippingAddress', 'billingAddress');
             $notification = new AdminOrderNotification($order);
             $mail = $notification->toMail(test()->admin);
-            $rendered = $mail->render();
+            $rendered = $mail->render()->toHtml();
 
             // Verify admin notification includes product and pricing details
             expect(str_contains($rendered, (string) $order->id))->toBeTrue();
