@@ -16,7 +16,7 @@ abstract class PaymentRepository implements PaymentRepositoryInterface
 
     public function __construct(protected OrderRepositoryInterface $orderRepository) {}
 
-    public function redirectWithFail(Order $order, ?string $response = null): RedirectResponse
+    final public function redirectWithFail(Order $order, ?string $response = null): RedirectResponse
     {
         $this->orderRepository->changeStatus($order, OrderStatus::PaymentFailed);
 

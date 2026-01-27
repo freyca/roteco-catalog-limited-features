@@ -17,7 +17,7 @@ class SearchBar extends Component
         $results = [];
 
         // Do not search until 3 characters
-        if (strlen($this->searchTerm) < 3) {
+        if (mb_strlen($this->searchTerm) < 3) {
             return view('livewire.search-bar', [
                 'results' => $results,
             ]);

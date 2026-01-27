@@ -8,6 +8,6 @@ trait PaymentActions
 {
     protected function convertPriceToCents(float $price): int
     {
-        return intval(bcmul(strval($price), '100'));
+        return (int) (bcmul((string) $price, '100'));
     }
 }

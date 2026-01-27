@@ -17,9 +17,9 @@ class SessionCartRepository implements CartRepositoryInterface
 {
     use CurrencyFormatter;
 
-    private Collection $session_content;
+    public const SESSION = 'cart';
 
-    const SESSION = 'cart';
+    private Collection $session_content;
 
     public function __construct(
         private readonly PriceCalculator $price_calculator,
@@ -233,7 +233,7 @@ class SessionCartRepository implements CartRepositoryInterface
         $order_product_dto = $order_products->get($key);
 
         return [
-            'key' => intval($key),
+            'key' => (int) $key,
             'order_product_dto' => $order_product_dto,
         ];
     }

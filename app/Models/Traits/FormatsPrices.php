@@ -12,21 +12,21 @@ trait FormatsPrices
 
     public function getFormattedPrice(): string
     {
-        $price = $this->price ?? floatval(0);
+        $price = $this->price ?? (float) 0;
 
         return $this->formatCurrency($price);
     }
 
     public function getFormattedPriceWithDiscount(): string
     {
-        $price_with_discount = $this->price_with_discount ?? floatval(0);
+        $price_with_discount = $this->price_with_discount ?? (float) 0;
 
         return $this->formatCurrency($price_with_discount);
     }
 
     public function getFormattedSavings(): string
     {
-        $savings = floatval($this->price - $this->price_with_discount);
+        $savings = (float) ($this->price - $this->price_with_discount);
 
         return $this->formatCurrency($savings);
     }

@@ -60,6 +60,11 @@ abstract class BaseProduct extends Model
         'images',
     ];
 
+    final public function orders(): MorphMany
+    {
+        return $this->morphMany(OrderProduct::class, 'orderable');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -72,10 +77,5 @@ abstract class BaseProduct extends Model
             'price_with_discount' => MoneyCast::class,
             'images' => 'array',
         ];
-    }
-
-    public function orders(): MorphMany
-    {
-        return $this->morphMany(OrderProduct::class, 'orderable');
     }
 }

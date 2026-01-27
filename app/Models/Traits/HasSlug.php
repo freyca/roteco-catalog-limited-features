@@ -8,15 +8,15 @@ use Illuminate\Support\Str;
 
 trait HasSlug
 {
-    public function getRouteKeyName(): string
-    {
-        return 'slug';
-    }
-
     public static function bootHasSlug(): void
     {
         static::saving(function ($model): void {
             $model->slug = Str::slug($model->name);
         });
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
     }
 }

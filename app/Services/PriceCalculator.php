@@ -36,26 +36,6 @@ class PriceCalculator
     /**
      * Order calculations
      */
-
-    /**
-     * @paran Collection<int, OrderProductDTO> $order_products
-     */
-    private function getTotalCostForOrder(Collection $order_products, bool $apply_discount = true): float
-    {
-        $total = 0;
-
-        /* @var OrderProductDTO $order_product */
-        foreach ($order_products as $order_product) {
-            $total += $this->getTotalCostForProduct(
-                product: $order_product,
-                quantity: $order_product->quantity(),
-                apply_discount: $apply_discount,
-            );
-        }
-
-        return $total;
-    }
-
     public function getTotaCostForOrderWithoutDiscount(Collection $order_products): float
     {
         return $this->getTotalCostForOrder($order_products, apply_discount: false);
@@ -81,5 +61,24 @@ class PriceCalculator
         $total_with_taxes = $this->getTotalCostForOrderWithTaxes($order_products, $apply_discount);
 
         return round($total_with_taxes - ($total_with_taxes * $percentage_discount / 100), 2);
+    }
+
+    /**
+     * @paran Collection<int, OrderProductDTO> $order_products
+     */
+    private function getTotalCostForOrder(Collection $order_products, bool $apply_discount = true): float
+    {
+        $total = 0;
+
+        /* @var OrderProductDTO $order_product */
+        foreach ($order_products as $order_product) {
+            $total += $this->getTotalCostForProduct(
+                product: $order_product,
+                quantity: $order_product->quantity(),
+                apply_discount: $apply_discount,
+            );
+        }
+
+        return $total;
     }
 }

@@ -15,13 +15,6 @@ class ListOrders extends ListRecords
 {
     protected static string $resource = OrderResource::class;
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
-
     public function getTabs(): array
     {
         return [
@@ -33,6 +26,13 @@ class ListOrders extends ListRecords
             __('Shipped') => Tab::make()->query(fn (Builder $query) => $query->where('status', OrderStatus::Shipped)),
             __('Delivered') => Tab::make()->query(fn (Builder $query) => $query->where('status', OrderStatus::Delivered)),
             __('Cancelled') => Tab::make()->query(fn (Builder $query) => $query->where('status', OrderStatus::Cancelled)),
+        ];
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            CreateAction::make(),
         ];
     }
 }

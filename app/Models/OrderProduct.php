@@ -24,18 +24,6 @@ class OrderProduct extends Pivot
      */
     protected $table = 'order_product';
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'unit_price' => MoneyCast::class,
-        ];
-    }
-
     protected $fillable = [
         'order_id',
         'orderable_id',
@@ -52,5 +40,17 @@ class OrderProduct extends Pivot
     public function orderable(): MorphTo
     {
         return $this->morphTo()->withTrashed();
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'unit_price' => MoneyCast::class,
+        ];
     }
 }

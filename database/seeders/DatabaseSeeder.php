@@ -119,7 +119,7 @@ class DatabaseSeeder extends Seeder
         // Add placeholder text
         $text = 'Roteco';
         $fontSize = 5;
-        $textX = ($width - strlen($text) * imagefontwidth($fontSize)) / 2;
+        $textX = ($width - mb_strlen($text) * imagefontwidth($fontSize)) / 2;
         $textY = ($height - imagefontheight($fontSize)) / 2;
         imagestring($image, $fontSize, (int) $textX, (int) $textY, $text, $textColor);
 

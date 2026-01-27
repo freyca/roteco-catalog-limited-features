@@ -84,44 +84,44 @@ class AddressBuilder
         $this->user = Auth::user();
 
         // Shipping values
-        $this->shipping_name = strval(data_get($form_data, 'shipping_name'));
-        $this->shipping_surname = strval(data_get($form_data, 'shipping_surname'));
-        $this->shipping_email = strval(data_get($form_data, 'shipping_email'));
-        $this->shipping_business_name = strval(data_get($form_data, 'shipping_business_name'));
-        $this->shipping_cif = strval(data_get($form_data, 'shipping_cif'));
-        $this->shipping_phone = intval(data_get($form_data, 'shipping_phone'));
-        $this->shipping_address_str = strval(data_get($form_data, 'shipping_address'));
-        $this->shipping_city = strval(data_get($form_data, 'shipping_city'));
-        $this->shipping_state = strval(data_get($form_data, 'shipping_state'));
-        $this->shipping_zip_code = intval(data_get($form_data, 'shipping_zip_code'));
-        $this->shipping_country = strval(data_get($form_data, 'shipping_country'));
+        $this->shipping_name = (string) (data_get($form_data, 'shipping_name'));
+        $this->shipping_surname = (string) (data_get($form_data, 'shipping_surname'));
+        $this->shipping_email = (string) (data_get($form_data, 'shipping_email'));
+        $this->shipping_business_name = (string) (data_get($form_data, 'shipping_business_name'));
+        $this->shipping_cif = (string) (data_get($form_data, 'shipping_cif'));
+        $this->shipping_phone = (int) (data_get($form_data, 'shipping_phone'));
+        $this->shipping_address_str = (string) (data_get($form_data, 'shipping_address'));
+        $this->shipping_city = (string) (data_get($form_data, 'shipping_city'));
+        $this->shipping_state = (string) (data_get($form_data, 'shipping_state'));
+        $this->shipping_zip_code = (int) (data_get($form_data, 'shipping_zip_code'));
+        $this->shipping_country = (string) (data_get($form_data, 'shipping_country'));
 
         // Billing values
-        $this->billing_name = strval(data_get($form_data, 'billing_name'));
-        $this->billing_surname = strval(data_get($form_data, 'billing_surname'));
-        $this->billing_business_name = strval(data_get($form_data, 'billing_business_name'));
-        $this->billing_cif = strval(data_get($form_data, 'billing_cif'));
-        $this->billing_phone = intval(data_get($form_data, 'billing_phone'));
-        $this->billing_address_str = strval(data_get($form_data, 'billing_address_str'));
-        $this->billing_city = strval(data_get($form_data, 'billing_city'));
-        $this->billing_state = strval(data_get($form_data, 'billing_state'));
-        $this->billing_zip_code = intval(data_get($form_data, 'billing_zip_code'));
-        $this->billing_country = strval(data_get($form_data, 'billing_country'));
+        $this->billing_name = (string) (data_get($form_data, 'billing_name'));
+        $this->billing_surname = (string) (data_get($form_data, 'billing_surname'));
+        $this->billing_business_name = (string) (data_get($form_data, 'billing_business_name'));
+        $this->billing_cif = (string) (data_get($form_data, 'billing_cif'));
+        $this->billing_phone = (int) (data_get($form_data, 'billing_phone'));
+        $this->billing_address_str = (string) (data_get($form_data, 'billing_address_str'));
+        $this->billing_city = (string) (data_get($form_data, 'billing_city'));
+        $this->billing_state = (string) (data_get($form_data, 'billing_state'));
+        $this->billing_zip_code = (int) (data_get($form_data, 'billing_zip_code'));
+        $this->billing_country = (string) (data_get($form_data, 'billing_country'));
 
         // Shipping for authenticated user when selects a previous one
-        $this->shipping_address_id = intval(data_get($form_data, 'shipping_address_id'));
+        $this->shipping_address_id = (int) (data_get($form_data, 'shipping_address_id'));
 
         // Billing for authenticated user when selects a previous one
-        $this->billing_address_id = intval(data_get($form_data, 'billing_address_id'));
+        $this->billing_address_id = (int) (data_get($form_data, 'billing_address_id'));
 
         // Same billing and shipping address
-        $this->use_shipping_address_as_billing_address = boolval(data_get($form_data, 'use_shipping_address_as_billing_address'));
+        $this->use_shipping_address_as_billing_address = (bool) (data_get($form_data, 'use_shipping_address_as_billing_address'));
 
         // User does not wants to register
-        $this->purchase_as_guest = boolval(data_get($form_data, 'purchase_as_guest'));
+        $this->purchase_as_guest = (bool) (data_get($form_data, 'purchase_as_guest'));
 
         // Comments for the order
-        $this->order_details = strval(data_get($form_data, 'order_details'));
+        $this->order_details = (string) (data_get($form_data, 'order_details'));
     }
 
     public function paymentMethod(): PaymentMethod

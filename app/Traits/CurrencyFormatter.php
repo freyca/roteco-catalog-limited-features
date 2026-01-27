@@ -15,7 +15,7 @@ trait CurrencyFormatter
 
         throw_unless(is_string($locale), Exception::class, 'Invalid locale configured');
 
-        return strval(
+        return (string) (
             Number::currency(
                 $value,
                 in: 'EUR',

@@ -36,11 +36,11 @@ use Illuminate\Support\Collection;
 
 class OrderResource extends Resource
 {
+    public array $product_options = [];
+
     protected static ?string $model = Order::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-currency-euro';
-
-    public array $product_options = [];
 
     public static function form(Schema $schema): Schema
     {
@@ -323,7 +323,7 @@ class OrderResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $modelClass = strval(static::$model);
+        $modelClass = (string) (static::$model);
 
         return (string) $modelClass::whereNotIn('status', [OrderStatus::Cancelled, OrderStatus::Delivered])->count();
     }
@@ -344,12 +344,12 @@ class OrderResource extends Resource
         $order_id = $get('id');
 
         if ($user_id === null && $order_id !== null) {
-            return [Order::query()->find(intval($order_id))?->shippingAddress?->address];
+            return [Order::query()->find((int) $order_id)?->shippingAddress?->address];
         }
 
         return match ($user_id) {
             null => Address::query()->select('address')->pluck('address')->toArray(),
-            default => User::query()->find(intval($user_id))?->shippingAddresses->pluck('address', 'id')->toArray(),
+            default => User::query()->find((int) $user_id)?->shippingAddresses->pluck('address', 'id')->toArray(),
         };
     }
 

@@ -16,8 +16,6 @@ class ProductGrid extends Component
 {
     use WithoutUrlPagination, WithPagination;
 
-    private LengthAwarePaginator $products;
-
     /**
      * Used only for comparison, do not touch it
      *
@@ -41,6 +39,8 @@ class ProductGrid extends Component
     ];
 
     public string $class_filter;
+
+    private LengthAwarePaginator $products;
 
     public function mount(): void
     {
