@@ -15,7 +15,7 @@ describe('PriceCalculator', function (): void {
         it('calculates single product cost without discount', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
-                'price_with_discount' => null,
+                'price_with_discount' => 0,
             ]);
 
             $productDTO = new OrderProductDTO(

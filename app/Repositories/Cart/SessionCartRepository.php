@@ -74,13 +74,19 @@ class SessionCartRepository implements CartRepositoryInterface
         Session::forget(self::SESSION);
     }
 
+    /**
+     * @return Collection<int, OrderProductDTO>
+     */
     public function getCart(): Collection
     {
         /**
          * Kind of cache to avoid repetitive queries
          */
         if (! isset($this->session_content)) {
-            $this->session_content = Session::get(self::SESSION);
+            /** @var Collection */
+            $session = Session::get(self::SESSION);
+
+            $this->session_content = $session;
         }
 
         return $this->session_content;

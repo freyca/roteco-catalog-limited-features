@@ -12,6 +12,7 @@ use Illuminate\Contracts\Console\Kernel as ConsoleKernel;
 use Illuminate\Contracts\Http\Kernel as HttpKernel;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\ServiceProvider;
@@ -49,7 +50,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Log a warning if we spend more than 1000ms on a single query.
-        DB::listen(function (mixed $query): void {
+        DB::listen(function (QueryExecuted $query): void {
             if ($query->time > 1000) {
                 Log::warning('An individual database query exceeded 1 second.', [
                     'sql' => $query->sql,

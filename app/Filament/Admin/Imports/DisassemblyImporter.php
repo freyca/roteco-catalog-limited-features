@@ -43,7 +43,7 @@ class DisassemblyImporter extends Importer
 
     public function resolveRecord(): Disassembly
     {
-        if (isset($this->data['id'])) {
+        if (! empty($this->data['id']) && is_numeric($this->data['id'])) {
             $id = (int) $this->data['id'];
             $record = Disassembly::query()->find($id);
 

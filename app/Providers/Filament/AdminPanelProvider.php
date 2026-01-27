@@ -25,6 +25,9 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        /** @var string $logo */
+        $logo = config('custom.web_logo');
+
         return $panel
             ->id('admin')
             ->path('admin')
@@ -32,7 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverResources(in: app_path('Filament/Admin/Resources'), for: 'App\\Filament\\Admin\\Resources')
             ->discoverPages(in: app_path('Filament/Admin/Pages'), for: 'App\\Filament\\Admin\\Pages')
             ->databaseNotifications()
-            ->brandLogo(config('custom.web_logo'))
+            ->brandLogo($logo)
             ->discoverWidgets(in: app_path('Filament/Admin/Widgets'), for: 'App\\Filament\\Admin\\Widgets')
             ->navigationGroups([
                 __('Users'),

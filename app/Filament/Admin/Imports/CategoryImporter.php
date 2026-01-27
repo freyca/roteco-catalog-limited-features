@@ -39,7 +39,7 @@ class CategoryImporter extends Importer
 
     public function resolveRecord(): Category
     {
-        if (isset($this->data['id'])) {
+        if (! empty($this->data['id']) && is_numeric($this->data['id'])) {
             $id = (int) $this->data['id'];
             $record = Category::query()->find($id);
 

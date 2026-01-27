@@ -13,9 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('product_spare_parts', function (Blueprint $table): void {
-            $table->integer('price_with_discount')->nullable(false)->change();
+        Schema::table('orders', function (Blueprint $table): void {
+            $table->string('order_details')->nullable();
         });
+
     }
 
     /**
@@ -23,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('product_spare_parts', function (Blueprint $table): void {
-            $table->integer('price_with_discount')->nullable()->change();
-        });
+        //
     }
 };

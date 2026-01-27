@@ -50,7 +50,7 @@ class ProductImporter extends Importer
 
     public function resolveRecord(): Product
     {
-        if (isset($this->data['id'])) {
+        if (! empty($this->data['id']) && is_numeric($this->data['id'])) {
             $id = (int) $this->data['id'];
             $record = Product::query()->find($id);
 

@@ -26,6 +26,9 @@ class UserPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        /** @var string $logo */
+        $logo = config('custom.web_logo');
+
         return $panel
             ->default()
             ->id('user')
@@ -38,7 +41,7 @@ class UserPanelProvider extends PanelProvider
             )
             ->darkMode(false)
             ->topbar()
-            ->brandLogo(config('custom.web_logo'))
+            ->brandLogo($logo)
             ->navigationItems([
                 NavigationItem::make(__('Home'))
                     ->url('/')

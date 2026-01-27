@@ -39,6 +39,12 @@ class ProductResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
+        /** @var string $product_directory */
+        $product_directory = config('custom.product-image-storage');
+
+        /** @var string $category_directory */
+        $category_directory = config('custom.category-image-storage');
+
         return $schema
             ->components([
                 self::mainSection(),
@@ -68,7 +74,7 @@ class ProductResource extends Resource
                                         ->moveFiles()
                                         ->orientImagesFromExif(false)
                                         ->preserveFilenames()
-                                        ->directory('category-images'),
+                                        ->directory($category_directory),
                                 ]
                             )
                             ->createOptionAction(fn (Action $action): Action => $action
@@ -96,11 +102,15 @@ class ProductResource extends Resource
                                 ->moveFiles()
                                 ->orientImagesFromExif(false)
                                 ->preserveFilenames()
-                                ->directory(config('custom.product-image-storage')),
+                                ->directory($product_directory),
                         ])
                         ->columns(2)
                         ->collapsed()
-                        ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+                        ->itemLabel(
+                            fn (array $state): string => is_string($state['name'] ?? null)
+                                ? $state['name']
+                                : ''
+                        ),
                 ]),
 
             ]);

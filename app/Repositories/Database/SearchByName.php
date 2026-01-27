@@ -6,6 +6,7 @@ namespace App\Repositories\Database;
 
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class SearchByName
 {
@@ -28,12 +29,24 @@ class SearchByName
         return self::query(Product::class, $search_term, $limit_results);
     }
 
+    /**
+     * @template TModel of Model
+     *
+     * @param  class-string<TModel>  $class_name
+     * @return Collection<int, TModel>
+     */
     private static function query(string $class_name, string $search_term, int $limit_results): Collection
     {
-        return ($limit_results === 0)
-            ? new Collection
-            : $class_name::where('name', 'like', "%{$search_term}%")
-                ->limit($limit_results)
-                ->get();
+        if ($limit_results === 0) {
+            return new Collection();
+        }
+
+        /** @var Collection<int, TModel> */
+        $results = $class_name::query()
+            ->where('name', 'like', "%{$search_term}%")
+            ->limit($limit_results)
+            ->get();
+
+        return $results;
     }
 }

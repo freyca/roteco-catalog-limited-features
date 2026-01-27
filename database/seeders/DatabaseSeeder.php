@@ -26,8 +26,15 @@ class DatabaseSeeder extends Seeder
         // For convenience, all categories and products has the same image
         // We hardcode it here and, if it not exists, we create it
         $imageName = 'sample-image.png';
-        $this->generateImage(config('custom.product-image-storage'), $imageName);
-        $this->generateImage(config('custom.category-image-storage'), $imageName);
+
+        $image_storage = config('custom.product-image-storage');
+        throw_unless(is_string($image_storage), RuntimeException::class, 'Invalid product image storage config');
+
+        $category_storage = config('custom.category-image-storage');
+        throw_unless(is_string($category_storage), RuntimeException::class, 'Invalid product image storage config');
+
+        $this->generateImage($image_storage, $imageName);
+        $this->generateImage($category_storage, $imageName);
 
         // Create minimal product catalog (fast seeding)
         // 2 categories × 3 products × 2 disassemblies × 3 spare parts = 36 total

@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\DTO\OrderProductDTO;
 use Illuminate\Support\Collection;
+use RuntimeException;
 
 class PriceCalculator
 {
@@ -53,7 +54,11 @@ class PriceCalculator
 
     public function getTotalCostForOrderWithTaxes(Collection $order_products, bool $apply_discount = true): float
     {
-        return $this->getTotalCostForOrder($order_products, $apply_discount) * (1 + config('custom.tax_iva'));
+        $taxes = config('custom.tax_iva');
+        throw_unless(is_numeric($taxes), RuntimeException::class, 'Invalid tax IVA config');
+        $taxes = (float) $taxes;
+
+        return $this->getTotalCostForOrder($order_products, $apply_discount) * (1 + $taxes);
     }
 
     public function getTotalCostForOrderWithTaxesAndManualDiscount(Collection $order_products, bool $apply_discount = true, float $percentage_discount = 0): float
@@ -70,7 +75,7 @@ class PriceCalculator
     {
         $total = 0;
 
-        /* @var OrderProductDTO $order_product */
+        /** @var Collection<int, OrderProductDTO> $order_products */
         foreach ($order_products as $order_product) {
             $total += $this->getTotalCostForProduct(
                 product: $order_product,

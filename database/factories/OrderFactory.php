@@ -30,12 +30,15 @@ class OrderFactory extends Factory
             ->for($user)
             ->create(['address_type' => AddressType::Shipping]);
 
+        /** @var PaymentMethod $method */
+        $method = fake()->randomElement(PaymentMethod::cases());
+
         return [
             'id' => Str::ulid(),
             'user_id' => $user->id,
             'shipping_address_id' => $shippingAddress->id,
             'purchase_cost' => fake()->randomFloat(2, 10, 3000),
-            'payment_method' => fake()->randomElement(PaymentMethod::cases())->value,
+            'payment_method' => $method->value,
             'status' => fake()->randomElement(OrderStatus::cases()),
         ];
     }

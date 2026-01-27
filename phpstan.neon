@@ -13,7 +13,7 @@ parameters:
         - public
         - routes
 
-    level: 8
+    level: max
 
     ignoreErrors:
         - identifier: missingType.generics

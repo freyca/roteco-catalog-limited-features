@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Database\Traits\WithProductDiscounts;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends Factory<Product>
@@ -25,11 +26,11 @@ class ProductFactory extends Factory
     {
         fake()->randomFloat(2, 10, 3000);
 
-        $name = fake()->unique()->words(3, true);
+        $name = fake()->unique()->sentence(3);
 
         return [
             'name' => $name,
-            'slug' => str()->slug($name),
+            'slug' => Str::slug($name),
             'reference' => fake()->unique()->bothify('REF-########'),
             // 'price' => $price,
             // 'price_with_discount' => $this->isProductDiscounted($price),

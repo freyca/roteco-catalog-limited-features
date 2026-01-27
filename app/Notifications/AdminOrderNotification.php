@@ -6,6 +6,7 @@ namespace App\Notifications;
 
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use LogicException;
@@ -34,7 +35,7 @@ class AdminOrderNotification extends Notification
         // Load orderProducts with orderable relationship, bypassing PublishedScope
         // If we respect the scope, a product could be missing from the email
         $orderProducts = $order->orderProducts()
-            ->with(['orderable' => fn (mixed $query) => $query->withoutGlobalScopes()])
+            ->with(['orderable' => fn (Relation $query) => $query->withoutGlobalScopes()])
             ->get();
 
         return (new MailMessage)

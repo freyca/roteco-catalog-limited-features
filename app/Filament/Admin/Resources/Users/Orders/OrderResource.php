@@ -12,6 +12,7 @@ use App\Filament\Admin\Resources\Users\Orders\Pages\CreateOrder;
 use App\Filament\Admin\Resources\Users\Orders\Pages\EditOrder;
 use App\Filament\Admin\Resources\Users\Orders\Pages\ListOrders;
 use App\Models\Address;
+use App\Models\BaseProduct;
 use App\Models\Order;
 use App\Models\ProductSparePart;
 use App\Models\User;
@@ -251,6 +252,7 @@ class OrderResource extends Resource
                             return;
                         }
 
+                        /** @var BaseProduct */
                         $class_name = $get('orderable_type');
 
                         return $class_name::query()->pluck('name', 'id')->toArray();
@@ -260,8 +262,11 @@ class OrderResource extends Resource
                     ->live()
                     ->distinct()
                     ->afterStateUpdated(function (mixed $state, Get $get, Set $set): void {
+                        /** @var BaseProduct */
                         $class_name = $get('orderable_type');
-                        $product = $class_name::find($state);
+
+                        /** @var BaseProduct */
+                        $product = $class_name::query()->find($state);
 
                         $set('unit_price', $product->price_with_discount);
                         $set('retailer_price', $product->price);
@@ -323,9 +328,7 @@ class OrderResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $modelClass = (string) (static::$model);
-
-        return (string) $modelClass::whereNotIn('status', [OrderStatus::Cancelled, OrderStatus::Delivered])->count();
+        return (string) Order::query()->whereNotIn('status', [OrderStatus::Cancelled, OrderStatus::Delivered])->count();
     }
 
     public static function getNavigationGroup(): ?string
@@ -340,7 +343,10 @@ class OrderResource extends Resource
 
     public static function getAddressId(Get $get): ?array
     {
+        /** @var ?int */
         $user_id = $get('user_id');
+
+        /** @var ?int */
         $order_id = $get('id');
 
         if ($user_id === null && $order_id !== null) {
@@ -377,18 +383,22 @@ class OrderResource extends Resource
                 continue;
             }
 
+            /** @var ?BaseProduct */
             $p = $orderable_type::find($selected_product['orderable_id']);
 
             if ($p === null) {
                 continue;
             }
 
+            /** @var int */
+            $quantity = $selected_product['quantity'];
+
             $order_products->add(
                 new OrderProductDTO(
                     $p->id,
                     $orderable_type,
                     $p->price_with_discount ?: $p->price,
-                    (int) $selected_product['quantity'],
+                    (int) $quantity,
                     $p
                 )
             );
@@ -396,10 +406,13 @@ class OrderResource extends Resource
 
         $price_calculator = new PriceCalculator;
 
+        /** @var float */
+        $discount = $get('discount');
+
         $final_price = $price_calculator->getTotalCostForOrderWithTaxesAndManualDiscount(
             order_products: $order_products,
             apply_discount: true,
-            percentage_discount: $get('discount')
+            percentage_discount: (float) $discount
         );
 
         $set('purchase_cost', $final_price);

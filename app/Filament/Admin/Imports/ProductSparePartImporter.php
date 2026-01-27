@@ -59,7 +59,7 @@ class ProductSparePartImporter extends Importer
 
     public function resolveRecord(): ProductSparePart
     {
-        if (isset($this->data['id'])) {
+        if (! empty($this->data['id']) && is_numeric($this->data['id'])) {
             $id = (int) $this->data['id'];
             $record = ProductSparePart::query()->find($id);
 

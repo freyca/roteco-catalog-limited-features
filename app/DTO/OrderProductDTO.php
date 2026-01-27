@@ -40,6 +40,7 @@ class OrderProductDTO
      */
     public function getProduct(): BaseProduct
     {
+        /** @var BaseProduct */
         return $this->orderable_type::find($this->orderable_id);
     }
 
