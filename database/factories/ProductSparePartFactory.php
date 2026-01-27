@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Disassembly;
+use App\Models\ProductSparePart;
 use Database\Traits\WithProductDiscounts;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProductSparePart>
+ * @extends Factory<ProductSparePart>
  */
 class ProductSparePartFactory extends Factory
 {
@@ -34,7 +35,7 @@ class ProductSparePartFactory extends Factory
             'price' => $price,
             'price_with_discount' => fake()->randomFloat(2, 10, $price - 1),
             'published' => fake()->boolean(75),
-            'disassembly_id' => Disassembly::inRandomOrder()->first()?->id ?? Disassembly::factory(),
+            'disassembly_id' => Disassembly::query()->inRandomOrder()->first()?->id ?? Disassembly::factory(),
             // 'price_when_user_owns_product' => $price * 0.8,
             // 'stock' => fake()->numberBetween(10, 100),
             // 'dimension_length' => fake()->randomFloat(2, 5, 100),
@@ -58,7 +59,7 @@ class ProductSparePartFactory extends Factory
      */
     public function published(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'published' => true,
         ]);
     }

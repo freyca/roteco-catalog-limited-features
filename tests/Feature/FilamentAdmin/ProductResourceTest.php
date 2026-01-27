@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Filament\Admin\Resources\Products\Products\Pages\CreateProduct;
 use App\Filament\Admin\Resources\Products\Products\Pages\EditProduct;
 use App\Filament\Admin\Resources\Products\Products\Pages\ListProducts;
+use App\Filament\Admin\Resources\Products\Products\ProductResource;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
@@ -13,7 +14,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
 
     Filament::setCurrentPanel(
@@ -21,14 +22,14 @@ beforeEach(function () {
     );
 });
 
-describe('ProductResource', function () {
-    it('admin can access product list page', function () {
+describe('ProductResource', function (): void {
+    it('admin can access product list page', function (): void {
         test()->actingAs(test()->admin);
         $component = Livewire::test(ListProducts::class);
         $component->assertSee(__('Products'));
     });
 
-    it('can display products in list table', function () {
+    it('can display products in list table', function (): void {
         test()->actingAs(test()->admin);
         $products = Product::factory(3)->create();
         $component = Livewire::test(ListProducts::class);
@@ -37,13 +38,13 @@ describe('ProductResource', function () {
         }
     });
 
-    it('admin can access create product page', function () {
+    it('admin can access create product page', function (): void {
         test()->actingAs(test()->admin);
         $component = Livewire::test(CreateProduct::class);
         $component->assertFormComponentExists('name');
     });
 
-    it('can create a new product via form', function () {
+    it('can create a new product via form', function (): void {
         test()->actingAs(test()->admin);
         $category = Category::factory()->create();
         $file = UploadedFile::fake()->image('product.jpg');
@@ -57,10 +58,10 @@ describe('ProductResource', function () {
             'disassemblies' => [],
         ])->call('create');
         $component->assertHasNoFormErrors();
-        expect(Product::where('name', 'New Product')->exists())->toBeTrue();
+        expect(Product::query()->where('name', 'New Product')->exists())->toBeTrue();
     });
 
-    it('validates name is required on update', function () {
+    it('validates name is required on update', function (): void {
         test()->actingAs(test()->admin);
         $product = Product::factory()->create();
         $component = Livewire::test(EditProduct::class, ['record' => $product->getRouteKey()]);
@@ -68,7 +69,7 @@ describe('ProductResource', function () {
         $component->assertHasFormErrors(['name' => 'required']);
     });
 
-    it('validates reference is required on create', function () {
+    it('validates reference is required on create', function (): void {
         test()->actingAs(test()->admin);
         $category = Category::factory()->create();
 
@@ -83,7 +84,7 @@ describe('ProductResource', function () {
             ->assertHasFormErrors(['reference' => 'required']);
     });
 
-    it('validates category_id is required on create', function () {
+    it('validates category_id is required on create', function (): void {
         test()->actingAs(test()->admin);
 
         Livewire::test(CreateProduct::class)
@@ -97,7 +98,7 @@ describe('ProductResource', function () {
             ->assertHasFormErrors(['category_id' => 'required']);
     });
 
-    it('validates main_image is required on create', function () {
+    it('validates main_image is required on create', function (): void {
         test()->actingAs(test()->admin);
         $category = Category::factory()->create();
 
@@ -112,7 +113,7 @@ describe('ProductResource', function () {
             ->assertHasFormErrors(['main_image' => 'required']);
     });
 
-    it('admin can access edit product page', function () {
+    it('admin can access edit product page', function (): void {
         test()->actingAs(test()->admin);
         $product = Product::factory()->create();
 
@@ -120,41 +121,41 @@ describe('ProductResource', function () {
             ->assertStatus(200);
     });
 
-    it('can update product via form', function () {
+    it('can update product via form', function (): void {
         test()->actingAs(test()->admin);
         $product = Product::factory()->create(['name' => 'Old Name']);
 
         $component = Livewire::test(EditProduct::class, ['record' => $product->getRouteKey()]);
         $component->fillForm(['name' => 'Updated Name'])->call('save');
-        expect(Product::find($product->id)->name)->toBe('Updated Name');
+        expect(Product::query()->find($product->id)->name)->toBe('Updated Name');
     });
 
-    it('product resource has correct navigation group', function () {
-        $group = App\Filament\Admin\Resources\Products\Products\ProductResource::getNavigationGroup();
+    it('product resource has correct navigation group', function (): void {
+        $group = ProductResource::getNavigationGroup();
         expect($group)->toBe(__('Products'));
     });
 
-    it('product resource has correct model label', function () {
-        $label = App\Filament\Admin\Resources\Products\Products\ProductResource::getModelLabel();
+    it('product resource has correct model label', function (): void {
+        $label = ProductResource::getModelLabel();
         expect($label)->toBe(__('Product'));
     });
 
-    it('resource has index page', function () {
-        $pages = App\Filament\Admin\Resources\Products\Products\ProductResource::getPages();
+    it('resource has index page', function (): void {
+        $pages = ProductResource::getPages();
         expect($pages)->toHaveKey('index');
     });
 
-    it('resource has create page', function () {
-        $pages = App\Filament\Admin\Resources\Products\Products\ProductResource::getPages();
+    it('resource has create page', function (): void {
+        $pages = ProductResource::getPages();
         expect($pages)->toHaveKey('create');
     });
 
-    it('resource has edit page', function () {
-        $pages = App\Filament\Admin\Resources\Products\Products\ProductResource::getPages();
+    it('resource has edit page', function (): void {
+        $pages = ProductResource::getPages();
         expect($pages)->toHaveKey('edit');
     });
 
-    it('can import products from CSV via Livewire action', function () {
+    it('can import products from CSV via Livewire action', function (): void {
         Storage::fake('local');
         test()->actingAs(test()->admin);
         $category = Category::factory()->create();
@@ -171,7 +172,7 @@ describe('ProductResource', function () {
             ])->callMountedTableAction()
             ->assertHasNoTableActionErrors();
 
-        expect(Product::where('name', 'Imported Product 1')->where('main_image', 'product1.jpg')->where('category_id', $category->id)->exists())->toBeTrue();
-        expect(Product::where('name', 'Imported Product 2')->where('main_image', 'product2.jpg')->where('category_id', $category->id)->exists())->toBeTrue();
+        expect(Product::query()->where('name', 'Imported Product 1')->where('main_image', 'product1.jpg')->where('category_id', $category->id)->exists())->toBeTrue();
+        expect(Product::query()->where('name', 'Imported Product 2')->where('main_image', 'product2.jpg')->where('category_id', $category->id)->exists())->toBeTrue();
     });
 });

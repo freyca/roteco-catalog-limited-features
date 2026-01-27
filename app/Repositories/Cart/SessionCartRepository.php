@@ -54,7 +54,7 @@ class SessionCartRepository implements CartRepositoryInterface
             $this->searchProductKey($product);
 
             return true;
-        } catch (Throwable $th) {
+        } catch (Throwable) {
             return false;
         }
     }
@@ -104,7 +104,7 @@ class SessionCartRepository implements CartRepositoryInterface
     {
         try {
             return $this->searchProductKey($product)['order_product_dto']->quantity();
-        } catch (Throwable $th) {
+        } catch (Throwable) {
             return 0;
         }
     }
@@ -179,11 +179,11 @@ class SessionCartRepository implements CartRepositoryInterface
             $is_present['order_product_dto']->setQuantity($is_present['order_product_dto']->quantity() + $quantity);
 
             $order_products->replace([$is_present['key'] => $is_present['order_product_dto']]);
-        } catch (Throwable $th) {
+        } catch (Throwable) {
             $order_product = new OrderProductDTO(
                 orderable_id: $product->id,
-                orderable_type: get_class($product),
-                unit_price: $product->price_with_discount ? $product->price_with_discount : $product->price,
+                orderable_type: $product::class,
+                unit_price: $product->price_with_discount ?: $product->price,
                 quantity: $quantity,
                 product: $product,
             );
@@ -211,8 +211,8 @@ class SessionCartRepository implements CartRepositoryInterface
     {
         $order_products = $this->getCart();
 
-        $match = $order_products->filter(function (OrderProductDTO $item) use ($product) {
-            $class = get_class($product);
+        $match = $order_products->filter(function (OrderProductDTO $item) use ($product): bool {
+            $class = $product::class;
             $id = $product->id;
 
             return $item->orderableType() === $class
@@ -225,9 +225,7 @@ class SessionCartRepository implements CartRepositoryInterface
 
         $key = $match->keys()->first();
 
-        if (is_null($key)) {
-            throw new Exception('This product is not in cart');
-        }
+        throw_if(is_null($key), Exception::class, 'This product is not in cart');
 
         /**
          * @var OrderProductDTO

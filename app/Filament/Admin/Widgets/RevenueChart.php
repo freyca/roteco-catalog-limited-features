@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Filament\Admin\Widgets;
 
 use App\Models\Order;
-use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
+use Illuminate\Support\Facades\Date;
 
 class RevenueChart extends ChartWidget
 {
@@ -25,8 +25,8 @@ class RevenueChart extends ChartWidget
         $labels = [];
 
         for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i);
-            $revenue = Order::whereDate('created_at', $date)->sum('purchase_cost');
+            $date = Date::now()->subDays($i);
+            $revenue = Order::query()->whereDate('created_at', $date)->sum('purchase_cost');
 
             $data[] = $revenue / 100; // Convert cents to euros
             $labels[] = $date->format('D, d M');

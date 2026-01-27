@@ -11,22 +11,22 @@ use Database\Seeders\ProductSparePartSeeder;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
 });
 
-test('product urls returns 200 if published and 403 if not', function () {
+test('product urls returns 200 if published and 403 if not', function (): void {
     test()->seed(ProductSeeder::class);
     $user = User::factory()->create();
 
-    $publishedProducts = Product::where('published', true)->get();
+    $publishedProducts = Product::query()->where('published', true)->get();
 
     foreach ($publishedProducts as $product) {
         $response = actingAs($user)->get('/producto/'.$product->slug);
         $response->assertStatus(200);
     }
 
-    $notPublishedProducts = Product::where('published', false)->get();
+    $notPublishedProducts = Product::query()->where('published', false)->get();
 
     foreach ($notPublishedProducts as $product) {
         $response = get('/producto/'.$product->slug);
@@ -34,7 +34,7 @@ test('product urls returns 200 if published and 403 if not', function () {
     }
 })->group('product-urls');
 
-test('admin can access published and not published products', function () {
+test('admin can access published and not published products', function (): void {
     test()->seed(ProductSparePartSeeder::class);
     test()->seed(ProductSeeder::class);
 
@@ -46,7 +46,7 @@ test('admin can access published and not published products', function () {
     }
 })->group('product-urls');
 
-test('spare parts urls cannot be accesed directly', function () {
+test('spare parts urls cannot be accesed directly', function (): void {
     test()->seed(ProductSparePartSeeder::class);
     $user = User::factory()->create();
 

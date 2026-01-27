@@ -6,13 +6,13 @@ use App\Enums\Role;
 use App\Models\Category;
 use App\Models\User;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Create an authenticated user for the tests
     test()->user = User::factory()->create(['role' => Role::Customer]);
 });
 
-describe('CategoryController', function () {
-    it('returns categories index view', function () {
+describe('CategoryController', function (): void {
+    it('returns categories index view', function (): void {
         Category::factory(3)->create();
 
         $response = test()->actingAs(test()->user)->get(route('category-list'));
@@ -21,7 +21,7 @@ describe('CategoryController', function () {
         $response->assertViewIs('pages.categories');
     });
 
-    it('passes categories to view', function () {
+    it('passes categories to view', function (): void {
         $categories = Category::factory(3)->create();
 
         $response = test()->actingAs(test()->user)->get(route('category-list'));
@@ -33,7 +33,7 @@ describe('CategoryController', function () {
         }
     });
 
-    it('passes breadcrumbs to view', function () {
+    it('passes breadcrumbs to view', function (): void {
         Category::factory(3)->create();
 
         $response = test()->actingAs(test()->user)->get(route('category-list'));
@@ -43,7 +43,7 @@ describe('CategoryController', function () {
         $response->assertViewHas('breadcrumbs');
     });
 
-    it('returns category detail view', function () {
+    it('returns category detail view', function (): void {
         $category = Category::factory()->create();
 
         $response = test()->actingAs(test()->user)->get(route('category', $category));
@@ -52,7 +52,7 @@ describe('CategoryController', function () {
         $response->assertViewIs('pages.category');
     });
 
-    it('passes category to view', function () {
+    it('passes category to view', function (): void {
         $category = Category::factory()->create();
 
         $response = test()->actingAs(test()->user)->get(route('category', $category));
@@ -62,7 +62,7 @@ describe('CategoryController', function () {
         expect($viewCategory->name)->toBe($category->name);
     });
 
-    it('passes products to view', function () {
+    it('passes products to view', function (): void {
         $category = Category::factory()->create();
 
         $response = test()->actingAs(test()->user)->get(route('category', $category));
@@ -72,7 +72,7 @@ describe('CategoryController', function () {
         $response->assertViewHas('products');
     });
 
-    it('passes breadcrumbs with category to detail view', function () {
+    it('passes breadcrumbs with category to detail view', function (): void {
         $category = Category::factory()->create();
 
         $response = test()->actingAs(test()->user)->get(route('category', $category));

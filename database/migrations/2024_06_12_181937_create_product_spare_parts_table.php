@@ -14,7 +14,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_spare_parts', function (Blueprint $table) {
+        Schema::create('product_spare_parts', function (Blueprint $table): void {
             $table->id();
             $table->string('reference')->unique();
             $table->string('name')->unique();

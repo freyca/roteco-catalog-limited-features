@@ -10,14 +10,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('order_product', function (Blueprint $table) {
+        Schema::table('order_product', function (Blueprint $table): void {
             $table->dropColumn('assembly_price');
         });
     }
 
     public function down(): void
     {
-        Schema::table('order_product', function (Blueprint $table) {
+        Schema::table('order_product', function (Blueprint $table): void {
             $table->integer('assembly_price')->default(0)->nullable();
         });
     }

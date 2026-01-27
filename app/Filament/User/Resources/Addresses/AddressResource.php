@@ -10,6 +10,7 @@ use App\Filament\User\Resources\Addresses\Pages\EditAddress;
 use App\Filament\User\Resources\Addresses\Pages\ListAddress;
 use App\Models\Address;
 use App\Models\User;
+use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
@@ -24,7 +25,7 @@ class AddressResource extends Resource
 {
     protected static ?string $model = Address::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-truck';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-truck';
 
     protected static ?int $navigationSort = 2;
 

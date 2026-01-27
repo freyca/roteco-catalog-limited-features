@@ -17,7 +17,7 @@ class CartIcon extends Component
     public function render(): View
     {
         /** @var Cart */
-        $cart = app(Cart::class);
+        $cart = resolve(Cart::class);
 
         $this->cartItems = $cart->getTotalQuantity();
 

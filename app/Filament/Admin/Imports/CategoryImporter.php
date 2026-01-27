@@ -30,21 +30,21 @@ class CategoryImporter extends Importer
     {
         if (isset($this->data['id'])) {
             $id = (int) $this->data['id'];
-            $record = Category::find($id);
+            $record = Category::query()->find($id);
 
             if ($record !== null) {
                 return $record;
             }
         }
 
-        return Category::firstOrNew(['name' => $this->data['name']]);
+        return Category::query()->firstOrNew(['name' => $this->data['name']]);
     }
 
     public static function getCompletedNotificationBody(Import $import): string
     {
         $body = 'Your category import has completed and '.Number::format($import->successful_rows).' '.str('row')->plural($import->successful_rows).' imported.';
 
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
+        if (($failedRowsCount = $import->getFailedRowsCount()) !== 0) {
             $body .= ' '.Number::format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to import.';
         }
 

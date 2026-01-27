@@ -16,7 +16,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
 
     Filament::setCurrentPanel(
@@ -24,14 +24,14 @@ beforeEach(function () {
     );
 });
 
-describe('ProductSparePartResource', function () {
-    it('admin can access product spare part list page', function () {
+describe('ProductSparePartResource', function (): void {
+    it('admin can access product spare part list page', function (): void {
         test()->actingAs(test()->admin);
         $component = Livewire::test(ListProductSpareParts::class);
         $component->assertSee(__('Spare parts'));
     });
 
-    it('can display product spare parts in list table', function () {
+    it('can display product spare parts in list table', function (): void {
         test()->actingAs(test()->admin);
         $spareParts = ProductSparePart::factory(3)->create();
 
@@ -41,13 +41,13 @@ describe('ProductSparePartResource', function () {
         }
     });
 
-    it('admin can access create product spare part page', function () {
+    it('admin can access create product spare part page', function (): void {
         test()->actingAs(test()->admin);
         $component = Livewire::test(CreateProductSparePart::class);
         $component->assertFormComponentExists('name');
     });
 
-    it('can create a new product spare part via form', function () {
+    it('can create a new product spare part via form', function (): void {
         test()->actingAs(test()->admin);
         $disassembly = Disassembly::factory()->create();
         Livewire::test(CreateProductSparePart::class)
@@ -64,10 +64,10 @@ describe('ProductSparePartResource', function () {
             ])
             ->call('create')
             ->assertHasNoFormErrors();
-        expect(ProductSparePart::where('name', 'New Spare Part')->exists())->toBeTrue();
+        expect(ProductSparePart::query()->where('name', 'New Spare Part')->exists())->toBeTrue();
     });
 
-    it('validates name is required on create', function () {
+    it('validates name is required on create', function (): void {
         test()->actingAs(test()->admin);
         $product = Product::factory()->create();
 
@@ -81,7 +81,7 @@ describe('ProductSparePartResource', function () {
             ->assertHasFormErrors(['name' => 'required']);
     });
 
-    it('validates reference is required on create', function () {
+    it('validates reference is required on create', function (): void {
         test()->actingAs(test()->admin);
         $disassembly = Disassembly::factory()->create();
 
@@ -98,7 +98,7 @@ describe('ProductSparePartResource', function () {
             ->assertHasFormErrors(['reference' => 'required']);
     });
 
-    it('validates disassembly is required on create', function () {
+    it('validates disassembly is required on create', function (): void {
         test()->actingAs(test()->admin);
 
         Livewire::test(CreateProductSparePart::class)
@@ -114,7 +114,7 @@ describe('ProductSparePartResource', function () {
             ->assertHasFormErrors(['disassembly_id' => 'required']);
     });
 
-    it('admin can access edit product spare part page', function () {
+    it('admin can access edit product spare part page', function (): void {
         test()->actingAs(test()->admin);
         $sparePart = ProductSparePart::factory()->create();
 
@@ -122,7 +122,7 @@ describe('ProductSparePartResource', function () {
             ->assertStatus(200);
     });
 
-    it('can update product spare part via form', function () {
+    it('can update product spare part via form', function (): void {
         test()->actingAs(test()->admin);
         $sparePart = ProductSparePart::factory()->create(['name' => 'Old Name']);
 
@@ -132,10 +132,10 @@ describe('ProductSparePartResource', function () {
             ])
             ->call('save');
 
-        expect(ProductSparePart::find($sparePart->id)->name)->toBe('Updated Name');
+        expect(ProductSparePart::query()->find($sparePart->id)->name)->toBe('Updated Name');
     });
 
-    it('validates name is required on update', function () {
+    it('validates name is required on update', function (): void {
         test()->actingAs(test()->admin);
         $sparePart = ProductSparePart::factory()->create();
 
@@ -147,7 +147,7 @@ describe('ProductSparePartResource', function () {
             ->assertHasFormErrors(['name' => 'required']);
     });
 
-    it('validates number_in_image is required on create', function () {
+    it('validates number_in_image is required on create', function (): void {
         test()->actingAs(test()->admin);
         $product = Product::factory()->create();
         $file = UploadedFile::fake()->image('disasm.jpg');
@@ -162,7 +162,7 @@ describe('ProductSparePartResource', function () {
             ->assertHasFormErrors(['number_in_image' => 'required']);
     });
 
-    it('self_reference is optional on create', function () {
+    it('self_reference is optional on create', function (): void {
         test()->actingAs(test()->admin);
         $disassembly = Disassembly::factory()->create();
         $file = UploadedFile::fake()->image('disasm.jpg');
@@ -183,35 +183,35 @@ describe('ProductSparePartResource', function () {
             ->call('create')
             ->assertHasNoFormErrors();
 
-        expect(ProductSparePart::where('name', 'Test Disassembly')->where('number_in_image', 7)->whereNull('self_reference')->exists())->toBeTrue();
+        expect(ProductSparePart::query()->where('name', 'Test Disassembly')->where('number_in_image', 7)->whereNull('self_reference')->exists())->toBeTrue();
     });
 
-    it('product spare part resource has correct navigation group', function () {
+    it('product spare part resource has correct navigation group', function (): void {
         $group = ProductSparePartResource::getNavigationGroup();
         expect($group)->toBe(__('Products'));
     });
 
-    it('product spare part resource has correct model label', function () {
+    it('product spare part resource has correct model label', function (): void {
         $label = ProductSparePartResource::getModelLabel();
         expect($label)->toBe(__('Spare parts'));
     });
 
-    it('resource has index page', function () {
+    it('resource has index page', function (): void {
         $pages = ProductSparePartResource::getPages();
         expect($pages)->toHaveKey('index');
     });
 
-    it('resource has create page', function () {
+    it('resource has create page', function (): void {
         $pages = ProductSparePartResource::getPages();
         expect($pages)->toHaveKey('create');
     });
 
-    it('resource has edit page', function () {
+    it('resource has edit page', function (): void {
         $pages = ProductSparePartResource::getPages();
         expect($pages)->toHaveKey('edit');
     });
 
-    it('can import product spare parts from CSV via table action', function () {
+    it('can import product spare parts from CSV via table action', function (): void {
         Storage::fake('local');
         test()->actingAs(test()->admin);
         $category = Category::factory()->create();
@@ -234,7 +234,7 @@ describe('ProductSparePartResource', function () {
             ])->callMountedTableAction()
             ->assertHasNoTableActionErrors();
 
-        expect(ProductSparePart::where('name', 'Imported Spare 1')->where('disassembly_id', $disassembly->id)->exists())->toBeTrue();
-        expect(ProductSparePart::where('name', 'Imported Spare 2')->where('disassembly_id', $disassembly->id)->exists())->toBeTrue();
+        expect(ProductSparePart::query()->where('name', 'Imported Spare 1')->where('disassembly_id', $disassembly->id)->exists())->toBeTrue();
+        expect(ProductSparePart::query()->where('name', 'Imported Spare 2')->where('disassembly_id', $disassembly->id)->exists())->toBeTrue();
     });
 });

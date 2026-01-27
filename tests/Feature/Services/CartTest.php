@@ -9,7 +9,7 @@ use App\Services\PriceCalculator;
 use App\Traits\CurrencyFormatter;
 use Illuminate\Support\Facades\Session;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Clear session before each test
     Session::flush();
 
@@ -18,9 +18,9 @@ beforeEach(function () {
     test()->cart = new Cart($repository);
 });
 
-describe('Cart Service', function () {
-    describe('Add and remove products', function () {
-        it('adds product to cart', function () {
+describe('Cart Service', function (): void {
+    describe('Add and remove products', function (): void {
+        it('adds product to cart', function (): void {
             $product = ProductSparePart::factory()->create();
 
             $result = test()->cart->add($product, 2);
@@ -30,7 +30,7 @@ describe('Cart Service', function () {
             expect(test()->cart->getTotalQuantityForProduct($product))->toBe(2);
         });
 
-        it('removes product from cart', function () {
+        it('removes product from cart', function (): void {
             $product = ProductSparePart::factory()->create();
 
             test()->cart->add($product, 2);
@@ -40,7 +40,7 @@ describe('Cart Service', function () {
             expect(test()->cart->hasProduct($product))->toBeFalse();
         });
 
-        it('increments product quantity when adding same product twice', function () {
+        it('increments product quantity when adding same product twice', function (): void {
             $product = ProductSparePart::factory()->create();
 
             test()->cart->add($product, 2);
@@ -50,8 +50,8 @@ describe('Cart Service', function () {
         });
     });
 
-    describe('Product quantity', function () {
-        it('gets total quantity for product', function () {
+    describe('Product quantity', function (): void {
+        it('gets total quantity for product', function (): void {
             $product = ProductSparePart::factory()->create();
 
             test()->cart->add($product, 5);
@@ -61,7 +61,7 @@ describe('Cart Service', function () {
             expect($quantity)->toBe(5);
         });
 
-        it('gets total quantity in cart', function () {
+        it('gets total quantity in cart', function (): void {
             $product1 = ProductSparePart::factory()->create();
             $product2 = ProductSparePart::factory()->create();
 
@@ -72,8 +72,8 @@ describe('Cart Service', function () {
         });
     });
 
-    describe('Product cost calculations', function () {
-        it('gets total cost for product with discount', function () {
+    describe('Product cost calculations', function (): void {
+        it('gets total cost for product with discount', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -87,7 +87,7 @@ describe('Cart Service', function () {
             expect($cost)->toBe(160.0);
         });
 
-        it('gets total cost for product without discount', function () {
+        it('gets total cost for product without discount', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -101,7 +101,7 @@ describe('Cart Service', function () {
             expect($cost)->toBe(200.0);
         });
 
-        it('gets formatted total cost for product', function () {
+        it('gets formatted total cost for product', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -117,8 +117,8 @@ describe('Cart Service', function () {
         });
     });
 
-    describe('Cart totals', function () {
-        it('calculates total cost of cart', function () {
+    describe('Cart totals', function (): void {
+        it('calculates total cost of cart', function (): void {
             $product1 = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -136,7 +136,7 @@ describe('Cart Service', function () {
             expect($cost)->toBe(200.0 * (1 + config('custom.tax_iva'))); // (160 + 40) * 1.21
         });
 
-        it('calculates total cost without discount', function () {
+        it('calculates total cost without discount', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -150,7 +150,7 @@ describe('Cart Service', function () {
             expect($cost)->toBe(200.0);
         });
 
-        it('calculates total discount', function () {
+        it('calculates total discount', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -164,7 +164,7 @@ describe('Cart Service', function () {
             expect($discount)->toBe(40.0);
         });
 
-        it('calculates total cost without taxes', function () {
+        it('calculates total cost without taxes', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -177,7 +177,7 @@ describe('Cart Service', function () {
             expect($cost)->toBe(160.0);
         });
 
-        it('gets formatted total cost', function () {
+        it('gets formatted total cost', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -193,8 +193,8 @@ describe('Cart Service', function () {
         });
     });
 
-    describe('Product checks', function () {
-        it('checks if product is in cart', function () {
+    describe('Product checks', function (): void {
+        it('checks if product is in cart', function (): void {
             $product = ProductSparePart::factory()->create();
 
             expect(test()->cart->hasProduct($product))->toBeFalse();
@@ -204,7 +204,7 @@ describe('Cart Service', function () {
             expect(test()->cart->hasProduct($product))->toBeTrue();
         });
 
-        it('checks if product can be incremented', function () {
+        it('checks if product can be incremented', function (): void {
             $product = ProductSparePart::factory()->create();
 
             // New product can always be added/incremented
@@ -212,8 +212,8 @@ describe('Cart Service', function () {
         });
     });
 
-    describe('Cart management', function () {
-        it('gets cart collection', function () {
+    describe('Cart management', function (): void {
+        it('gets cart collection', function (): void {
             $product1 = ProductSparePart::factory()->create();
             $product2 = ProductSparePart::factory()->create();
 
@@ -225,7 +225,7 @@ describe('Cart Service', function () {
             expect($cartItems->count())->toBe(2);
         });
 
-        it('checks if cart is empty', function () {
+        it('checks if cart is empty', function (): void {
             expect(test()->cart->isEmpty())->toBeTrue();
 
             $product = ProductSparePart::factory()->create();
@@ -234,7 +234,7 @@ describe('Cart Service', function () {
             expect(test()->cart->isEmpty())->toBeFalse();
         });
 
-        it('clears cart', function () {
+        it('clears cart', function (): void {
             $product = ProductSparePart::factory()->create();
             test()->cart->add($product, 2);
 
@@ -245,7 +245,7 @@ describe('Cart Service', function () {
             test()->cart->clear();
             expect(Session::has('cart'))->toBeFalse();
         });
-        it('persists multiple products in cart', function () {
+        it('persists multiple products in cart', function (): void {
             $product1 = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,

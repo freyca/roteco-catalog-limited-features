@@ -13,6 +13,7 @@ use App\Models\OrderProduct;
 use App\Models\Product;
 use App\Models\ProductSparePart;
 use App\Models\User;
+use GdImage;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
 
@@ -41,7 +42,7 @@ class DatabaseSeeder extends Seeder
         // Create customers with addresses and minimal orders
         // 5 customers × 3 addresses × 2 orders × 1 product = fast
         // Disable Order events to prevent notifications during seeding
-        Order::withoutEvents(function () {
+        Order::withoutEvents(function (): void {
             for ($counter = 0; $counter < 5; $counter++) {
                 $user = User::factory()->customer()->create();
 
@@ -55,7 +56,7 @@ class DatabaseSeeder extends Seeder
         });
 
         // Create admin user if not exists
-        if (User::where('email', 'fran@gmail.com')->doesntExist()) {
+        if (User::query()->where('email', 'fran@gmail.com')->doesntExist()) {
             $admin = User::factory()
                 ->admin()
                 ->create([
@@ -103,7 +104,7 @@ class DatabaseSeeder extends Seeder
         Storage::disk('public')->put($filePath, $imageContent);
     }
 
-    private function createPlaceholderImage(int $width = 200, int $height = 200): \GdImage
+    private function createPlaceholderImage(int $width = 200, int $height = 200): GdImage
     {
         $image = imagecreatetruecolor($width, $height);
         $backgroundColor = imagecolorallocate($image, 220, 220, 220);

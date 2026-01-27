@@ -25,6 +25,6 @@ abstract class PaymentRepository implements PaymentRepositoryInterface
             $this->orderRepository->paymentGatewayResponse($order, ($encoded === false) ? '' : $encoded);
         }
 
-        return redirect()->route('payment.purchase-failed', ['order' => $order->id]);
+        return to_route('payment.purchase-failed', ['order' => $order->id]);
     }
 }

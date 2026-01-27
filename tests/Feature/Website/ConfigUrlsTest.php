@@ -8,12 +8,12 @@ use Filament\Facades\Filament;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
-test('guest users are redirected to login for all the application', function (string $url) {
+test('guest users are redirected to login for all the application', function (string $url): void {
     $response = get($url);
     $response->assertRedirect(Filament::getPanel('user')->getLoginUrl());
 })->with('configurls');
 
-test('authenticated users can access the application', function (string $url) {
+test('authenticated users can access the application', function (string $url): void {
     $user = User::factory()->create();
     actingAs($user);
 
@@ -29,7 +29,7 @@ test('authenticated users can access the application', function (string $url) {
     }
 })->with('configurls');
 
-test('standard users cannot access admin panel', function () {
+test('standard users cannot access admin panel', function (): void {
     $user = User::factory()->create();
     actingAs($user);
 
@@ -38,7 +38,7 @@ test('standard users cannot access admin panel', function () {
     $response->assertForbidden();
 });
 
-test('admin users accesing user panel are redirected to admin panel', function () {
+test('admin users accesing user panel are redirected to admin panel', function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
     actingAs(test()->admin);
 

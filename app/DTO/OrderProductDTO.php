@@ -12,16 +12,16 @@ class OrderProductDTO
      * Private attributes are used as a "cache system"
      * This avoid repetitive queries to the database by querying this object
      */
-    private float $price_without_discount;
+    private readonly float $price_without_discount;
 
-    private ?float $price_with_discount;
+    private readonly ?float $price_with_discount;
 
-    private string $reference;
+    private readonly string $reference;
 
     public function __construct(
-        private int $orderable_id,
-        private string $orderable_type,
-        private float $unit_price,
+        private readonly int $orderable_id,
+        private readonly string $orderable_type,
+        private readonly float $unit_price,
         private int $quantity,
         BaseProduct $product,
     ) {

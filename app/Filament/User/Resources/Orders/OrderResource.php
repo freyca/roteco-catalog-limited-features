@@ -10,6 +10,7 @@ use App\Filament\User\Resources\Orders\Pages\ListOrders;
 use App\Filament\User\Resources\Orders\Pages\ViewOrder;
 use App\Models\Order;
 use App\Models\Product;
+use BackedEnum;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -27,7 +28,7 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-m-shopping-bag';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-m-shopping-bag';
 
     public static function form(Schema $schema): Schema
     {
@@ -128,7 +129,7 @@ class OrderResource extends Resource
                     ->options(Product::query()->pluck('name', 'id'))
                     ->required()
                     ->reactive()
-                    ->afterStateUpdated(fn (mixed $state, Set $set) => $set('unit_price', Product::find($state)->price ?? 0))
+                    ->afterStateUpdated(fn (mixed $state, Set $set): mixed => $set('unit_price', Product::query()->find($state)->price ?? 0))
                     ->distinct()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                     ->columnSpan([

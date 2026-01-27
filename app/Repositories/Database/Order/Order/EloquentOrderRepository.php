@@ -33,11 +33,11 @@ class EloquentOrderRepository implements OrderRepositoryInterface
         Address $billing_address,
         string $order_details,
     ): Order {
-        return Order::create([
+        return Order::query()->create([
             'purchase_cost' => $purchase_cost,
             'payment_method' => $payment_method,
             'status' => $status,
-            'user_id' => $user ? $user->id : null,
+            'user_id' => $user instanceof User ? $user->id : null,
             'shipping_address_id' => $shipping_address->id,
             'billing_address_id' => $billing_address->id,
             'order_details' => $order_details,
@@ -46,7 +46,7 @@ class EloquentOrderRepository implements OrderRepositoryInterface
 
     public function find(string $id): ?Order
     {
-        return Order::find($id);
+        return Order::query()->find($id);
     }
 
     public function paymentGatewayResponse(Order $order, string $response): bool

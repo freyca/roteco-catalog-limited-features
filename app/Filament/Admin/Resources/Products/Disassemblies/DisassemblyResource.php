@@ -10,6 +10,7 @@ use App\Filament\Admin\Resources\Products\Disassemblies\Pages\EditDisassembly;
 use App\Filament\Admin\Resources\Products\Disassemblies\Pages\ListDisassemblies;
 use App\Filament\Admin\Resources\Products\Traits\FormBuilderTrait;
 use App\Models\Disassembly;
+use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
@@ -29,7 +30,7 @@ class DisassemblyResource extends Resource
 
     protected static ?string $model = Disassembly::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-s-wrench-screwdriver';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-s-wrench-screwdriver';
 
     protected static ?int $navigationSort = 2;
 

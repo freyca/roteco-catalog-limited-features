@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Filament\Admin\Resources\Users\Orders\OrderResource;
 use App\Filament\Admin\Resources\Users\Orders\Pages\EditOrder;
 use App\Filament\Admin\Resources\Users\Orders\Pages\ListOrders;
 use App\Models\Order;
@@ -10,7 +11,7 @@ use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
 
     Filament::setCurrentPanel(
@@ -18,15 +19,15 @@ beforeEach(function () {
     );
 });
 
-describe('AdminOrderResource', function () {
-    it('admin can access order list page', function () {
+describe('AdminOrderResource', function (): void {
+    it('admin can access order list page', function (): void {
         test()->actingAs(test()->admin);
 
         Livewire::test(ListOrders::class)
             ->assertStatus(200);
     });
 
-    it('can display orders in list table', function () {
+    it('can display orders in list table', function (): void {
         test()->actingAs(test()->admin);
         $orders = Order::factory(3)->create();
 
@@ -39,7 +40,7 @@ describe('AdminOrderResource', function () {
         expect($orders)->toHaveCount(3);
     });
 
-    it('admin can access edit order page', function () {
+    it('admin can access edit order page', function (): void {
         test()->actingAs(test()->admin);
         $order = Order::factory()->create();
 
@@ -47,33 +48,33 @@ describe('AdminOrderResource', function () {
             ->assertStatus(200);
     });
 
-    it('order resource is read-only (no create page)', function () {
-        $pages = App\Filament\Admin\Resources\Users\Orders\OrderResource::getPages();
+    it('order resource is read-only (no create page)', function (): void {
+        $pages = OrderResource::getPages();
         expect($pages)->toHaveKey('index');
         expect($pages)->toHaveKey('create');
     });
 
-    it('order resource has index page', function () {
-        $pages = App\Filament\Admin\Resources\Users\Orders\OrderResource::getPages();
+    it('order resource has index page', function (): void {
+        $pages = OrderResource::getPages();
         expect($pages)->toHaveKey('index');
     });
 
-    it('order resource has edit page', function () {
-        $pages = App\Filament\Admin\Resources\Users\Orders\OrderResource::getPages();
+    it('order resource has edit page', function (): void {
+        $pages = OrderResource::getPages();
         expect($pages)->toHaveKey('edit');
     });
 
-    it('order resource has correct navigation group', function () {
-        $group = App\Filament\Admin\Resources\Users\Orders\OrderResource::getNavigationGroup();
+    it('order resource has correct navigation group', function (): void {
+        $group = OrderResource::getNavigationGroup();
         expect($group)->toBe(__('Usuarios'));
     });
 
-    it('order resource has correct model label', function () {
-        $label = App\Filament\Admin\Resources\Users\Orders\OrderResource::getModelLabel();
+    it('order resource has correct model label', function (): void {
+        $label = OrderResource::getModelLabel();
         expect($label)->toBe(__('Pedidos'));
     });
 
-    it('can export orders via table action', function () {
+    it('can export orders via table action', function (): void {
         // Clean up export files before test
         $exportDirs = Storage::disk('local')->directories('filament_exports');
         foreach ($exportDirs as $dir) {
@@ -106,7 +107,7 @@ describe('AdminOrderResource', function () {
         expect($dataCsvFiles)->not->toBeEmpty();
         $csv = Storage::disk('local')->get($dataCsvFiles[0]);
         // Check CSV contains at least one order code
-        $order = Order::first();
+        $order = Order::query()->first();
         expect($csv)->toContain($order->id);
 
         // Clean up export files after test

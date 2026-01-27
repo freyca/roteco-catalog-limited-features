@@ -69,7 +69,7 @@ class Order extends Model
 
     public static function booted(): void
     {
-        static::creating(function (Order $model) {
+        static::creating(function (Order $model): void {
             $model->id = (string) Str::ulid();
         });
     }

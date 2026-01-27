@@ -41,21 +41,21 @@ class ProductImporter extends Importer
     {
         if (isset($this->data['id'])) {
             $id = (int) $this->data['id'];
-            $record = Product::find($id);
+            $record = Product::query()->find($id);
 
             if ($record !== null) {
                 return $record;
             }
         }
 
-        return Product::firstOrNew(['name' => $this->data['name']]);
+        return Product::query()->firstOrNew(['name' => $this->data['name']]);
     }
 
     public static function getCompletedNotificationBody(Import $import): string
     {
         $body = 'Your product import has completed and '.Number::format($import->successful_rows).' '.str('row')->plural($import->successful_rows).' imported.';
 
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
+        if (($failedRowsCount = $import->getFailedRowsCount()) !== 0) {
             $body .= ' '.Number::format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to import.';
         }
 

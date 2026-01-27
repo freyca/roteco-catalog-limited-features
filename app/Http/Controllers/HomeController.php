@@ -11,8 +11,8 @@ use Illuminate\View\View;
 class HomeController extends Controller
 {
     public function __construct(
-        private CategoryRepositoryInterface $categoryRepository,
-        private ProductRepositoryInterface $productRepository,
+        private readonly CategoryRepositoryInterface $categoryRepository,
+        private readonly ProductRepositoryInterface $productRepository,
     ) {}
 
     public function index(): View

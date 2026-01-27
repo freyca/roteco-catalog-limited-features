@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Product;
 
+use App\Repositories\Database\Product\Product\EloquentProductRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
@@ -43,7 +44,7 @@ class ProductGrid extends Component
 
     public function mount(): void
     {
-        $this->class_filter = 'App\Repositories\Database\Product\Product\EloquentProductRepository';
+        $this->class_filter = EloquentProductRepository::class;
     }
 
     /**
@@ -54,7 +55,7 @@ class ProductGrid extends Component
     {
         // If no filters has been set, return all products
         if ($filters === $this->default_filters) {
-            $repository = app($this->class_filter);
+            $repository = resolve($this->class_filter);
 
             $this->products = $repository->getAll();
         }
@@ -66,7 +67,7 @@ class ProductGrid extends Component
             $this->resetPage();
         }
 
-        $repository = app($this->class_filter);
+        $repository = resolve($this->class_filter);
         $this->products = $repository->getAll();
     }
 

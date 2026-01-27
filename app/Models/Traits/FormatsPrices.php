@@ -19,7 +19,7 @@ trait FormatsPrices
 
     public function getFormattedPriceWithDiscount(): string
     {
-        $price_with_discount = $this->price_with_discount === null ? floatval(0) : $this->price_with_discount;
+        $price_with_discount = $this->price_with_discount ?? floatval(0);
 
         return $this->formatCurrency($price_with_discount);
     }

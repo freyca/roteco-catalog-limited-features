@@ -6,14 +6,15 @@ namespace App\Http\Responses;
 
 use Filament\Auth\Http\Responses\Contracts\LogoutResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class FilamentLogoutResponse implements LogoutResponse
 {
     /**
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      */
     public function toResponse($request): RedirectResponse  // @pest-ignore-type
     {
-        return redirect()->route('home');
+        return to_route('home');
     }
 }

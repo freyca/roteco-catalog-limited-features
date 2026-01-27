@@ -13,9 +13,7 @@ trait CurrencyFormatter
     {
         $locale = config('app.locale');
 
-        if (! is_string($locale)) {
-            throw new Exception('Invalid locale configured');
-        }
+        throw_unless(is_string($locale), Exception::class, 'Invalid locale configured');
 
         return strval(
             Number::currency(

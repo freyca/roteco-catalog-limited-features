@@ -10,6 +10,7 @@ use App\Filament\Admin\Resources\Products\ProductSpareParts\Pages\EditProductSpa
 use App\Filament\Admin\Resources\Products\ProductSpareParts\Pages\ListProductSpareParts;
 use App\Filament\Admin\Resources\Products\Traits\FormBuilderTrait;
 use App\Models\ProductSparePart;
+use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
@@ -28,7 +29,7 @@ class ProductSparePartResource extends Resource
 
     protected static ?string $model = ProductSparePart::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-s-wrench';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-s-wrench';
 
     protected static ?int $navigationSort = 3;
 

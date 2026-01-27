@@ -15,7 +15,7 @@ trait HasSlug
 
     public static function bootHasSlug(): void
     {
-        static::saving(function ($model) {
+        static::saving(function ($model): void {
             $model->slug = Str::slug($model->name);
         });
     }

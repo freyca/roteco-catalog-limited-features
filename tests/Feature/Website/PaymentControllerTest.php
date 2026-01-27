@@ -6,14 +6,14 @@ use App\Enums\Role;
 use App\Models\Order;
 use App\Models\User;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Create an authenticated user and an admin user for the tests
     test()->user = User::factory()->create(['role' => Role::Customer]);
     test()->admin = User::factory()->admin_notifiable()->create();
 });
 
-describe('PaymentController', function () {
-    it('returns purchase complete view on successful order', function () {
+describe('PaymentController', function (): void {
+    it('returns purchase complete view on successful order', function (): void {
         $order = Order::factory()->for(test()->user)->create();
 
         $response = test()->actingAs(test()->user)->get(route('payment.purchase-complete', $order));
@@ -22,7 +22,7 @@ describe('PaymentController', function () {
         $response->assertViewIs('pages.purchase-complete');
     });
 
-    it('passes order to purchase complete view', function () {
+    it('passes order to purchase complete view', function (): void {
         $order = Order::factory()->for(test()->user)->create();
 
         $response = test()->actingAs(test()->user)->get(route('payment.purchase-complete', $order));

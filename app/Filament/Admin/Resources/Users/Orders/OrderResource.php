@@ -16,6 +16,7 @@ use App\Models\Order;
 use App\Models\ProductSparePart;
 use App\Models\User;
 use App\Services\PriceCalculator;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
@@ -37,7 +38,7 @@ class OrderResource extends Resource
 {
     protected static ?string $model = Order::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-euro';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-currency-euro';
 
     public array $product_options = [];
 
@@ -58,7 +59,7 @@ class OrderResource extends Resource
                                 ->label(__('Customer email'))
                                 ->searchable()
                                 ->preload()
-                                ->afterStateUpdated(function (mixed $state, Set $set) {
+                                ->afterStateUpdated(function (mixed $state, Set $set): void {
                                     $user_id = $state;
 
                                     if ($user_id === null) {
@@ -81,15 +82,11 @@ class OrderResource extends Resource
                                 ),
                             Select::make('shipping_address_id')
                                 ->relationship('shippingAddress', 'address')
-                                ->disabled(function (Get $get) {
-                                    return ! filled($get('user_id'));
-                                })
+                                ->disabled(fn (Get $get): bool => blank($get('user_id')))
                                 ->options(
-                                    function (Get $get) {
-                                        return self::getAddressId($get);
-                                    }
+                                    fn (Get $get): ?array => self::getAddressId($get)
                                 )
-                                ->selectablePlaceholder(function (Get $get) {
+                                ->selectablePlaceholder(function (Get $get): bool {
                                     $user_id = $get('user_id');
                                     $order_id = $get('id');
 
@@ -104,15 +101,11 @@ class OrderResource extends Resource
                                 ->required(),
                             Select::make('billing_address_id')
                                 ->relationship('billingAddress', 'address')
-                                ->disabled(function (Get $get) {
-                                    return ! filled($get('user_id'));
-                                })
+                                ->disabled(fn (Get $get): bool => blank($get('user_id')))
                                 ->options(
-                                    function (Get $get) {
-                                        return self::getAddressId($get);
-                                    }
+                                    fn (Get $get): ?array => self::getAddressId($get)
                                 )
-                                ->selectablePlaceholder(function (Get $get) {
+                                ->selectablePlaceholder(function (Get $get): bool {
                                     $user_id = $get('user_id');
                                     $order_id = $get('id');
 
@@ -134,7 +127,7 @@ class OrderResource extends Resource
                 Section::make(__('Payment'))
                     ->schema([
                         TextInput::make('purchase_cost')
-                            ->label(__('Price'.' '.'with taxes'))
+                            ->label(__('Price with taxes'))
                             ->required()
                             ->numeric()
                             ->disabled(),
@@ -146,7 +139,7 @@ class OrderResource extends Resource
                             ->integer()
                             ->lazy()
                             ->afterStateUpdated(
-                                function (Get $get, Set $set) {
+                                function (Get $get, Set $set): void {
                                     self::updateTotals($get, $set);
                                 }
                             ),
@@ -252,11 +245,9 @@ class OrderResource extends Resource
 
                 Select::make('orderable_id')
                     ->label(__('Product'))
-                    ->disabled(function (Get $get) {
-                        return ! filled($get('orderable_type'));
-                    })
+                    ->disabled(fn (Get $get): bool => blank($get('orderable_type')))
                     ->options(function (Get $get) {
-                        if (! filled($get('orderable_type'))) {
+                        if (blank($get('orderable_type'))) {
                             return;
                         }
 
@@ -268,7 +259,7 @@ class OrderResource extends Resource
                     ->required()
                     ->live()
                     ->distinct()
-                    ->afterStateUpdated(function (mixed $state, Get $get, Set $set) {
+                    ->afterStateUpdated(function (mixed $state, Get $get, Set $set): void {
                         $class_name = $get('orderable_type');
                         $product = $class_name::find($state);
 
@@ -315,14 +306,14 @@ class OrderResource extends Resource
             // @see: https://laraveldaily.com/post/filament-repeater-live-calculations-on-update
             ->live()
             ->afterStateUpdated(
-                function (Get $get, Set $set) {
+                function (Get $get, Set $set): void {
                     self::updateTotals($get, $set);
                 }
             )
             ->deleteAction(
-                function (Action $action) {
+                function (Action $action): void {
                     $action->after(
-                        function (Get $get, Set $set) {
+                        function (Get $get, Set $set): void {
                             self::updateTotals($get, $set);
                         }
                     );
@@ -353,12 +344,12 @@ class OrderResource extends Resource
         $order_id = $get('id');
 
         if ($user_id === null && $order_id !== null) {
-            return [Order::find(intval($order_id))?->shippingAddress?->address];
+            return [Order::query()->find(intval($order_id))?->shippingAddress?->address];
         }
 
         return match ($user_id) {
-            null => Address::select('address')->pluck('address')->toArray(),
-            default => User::find(intval($user_id))?->shippingAddresses->pluck('address', 'id')->toArray(),
+            null => Address::query()->select('address')->pluck('address')->toArray(),
+            default => User::query()->find(intval($user_id))?->shippingAddresses->pluck('address', 'id')->toArray(),
         };
     }
 
@@ -379,8 +370,10 @@ class OrderResource extends Resource
             }
 
             $orderable_type = $selected_product['orderable_type'];
-
-            if (! is_string($orderable_type) || ! class_exists($orderable_type)) {
+            if (! is_string($orderable_type)) {
+                continue;
+            }
+            if (! class_exists($orderable_type)) {
                 continue;
             }
 

@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Database\Factories;
 
 use App\Models\Category;
+use App\Models\Product;
 use Database\Traits\WithProductDiscounts;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
+ * @extends Factory<Product>
  */
 class ProductFactory extends Factory
 {
@@ -22,7 +23,7 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
-        $price = fake()->randomFloat(2, 10, 3000);
+        fake()->randomFloat(2, 10, 3000);
 
         $name = fake()->unique()->catchPhrase();
 
@@ -45,7 +46,7 @@ class ProductFactory extends Factory
             // 'meta_description' => fake()->realText(20),
             // 'short_description' => fake()->realText(200),
             // 'description' => fake()->realText(1000),
-            'category_id' => Category::inRandomOrder()->first()?->id ?? Category::factory()->create()->id,
+            'category_id' => Category::query()->inRandomOrder()->first()?->id ?? Category::factory()->create()->id,
             'main_image' => 'product-images/sample-image.png',
         ];
     }

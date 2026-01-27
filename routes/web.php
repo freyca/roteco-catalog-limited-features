@@ -9,11 +9,11 @@ use App\Http\Controllers\ProductController;
 use Filament\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(Authenticate::class)->group(function () {
+Route::middleware(Authenticate::class)->group(function (): void {
     Route::redirect('/', '/categorias')->name('home');
 
     /** Checkout */
-    Route::group(['as' => 'checkout.'], function () {
+    Route::group(['as' => 'checkout.'], function (): void {
         Route::get('carrito', [CartController::class, 'index'])->name('cart');
 
         // POST requests sent to checkout are managed by livewire in App\Livewire\CheckoutForm
@@ -22,7 +22,7 @@ Route::middleware(Authenticate::class)->group(function () {
     });
 
     /** Payment */
-    Route::group(['as' => 'payment.'], function () {
+    Route::group(['as' => 'payment.'], function (): void {
         Route::get('pago-completo/{order}', [PaymentController::class, 'orderFinishedOk'])
             ->name('purchase-complete');
     });

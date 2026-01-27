@@ -46,16 +46,12 @@ class UserPanelProvider extends PanelProvider
                     ->group(__('Website urls'))
                     ->sort(5),
                 NavigationItem::make(__('Cart'))
-                    ->url(function () {
-                        return route('checkout.cart');
-                    })
+                    ->url(fn (): string => route('checkout.cart'))
                     ->icon('heroicon-o-shopping-bag')
                     ->group(__('Website urls'))
                     ->sort(5),
                 NavigationItem::make(__('Products'))
-                    ->url(function () {
-                        return route('product-list');
-                    })
+                    ->url(fn (): string => route('product-list'))
                     ->icon('heroicon-o-rectangle-stack')
                     ->group(__('Website urls'))
                     ->sort(5),

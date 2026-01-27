@@ -14,13 +14,13 @@ class EloquentProductRepository implements ProductRepositoryInterface
 
     public function getAll(): LengthAwarePaginator
     {
-        return Product::paginate(16);
+        return Product::query()->paginate(16);
     }
 
     public function featured(): LengthAwarePaginator
     {
         $featured_products = config('custom.featured-products');
 
-        return Product::whereIn('id', $featured_products)->paginate(15);
+        return Product::query()->whereIn('id', $featured_products)->paginate(15);
     }
 }

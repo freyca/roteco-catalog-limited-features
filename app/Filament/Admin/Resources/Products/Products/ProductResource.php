@@ -10,6 +10,7 @@ use App\Filament\Admin\Resources\Products\Products\Pages\EditProduct;
 use App\Filament\Admin\Resources\Products\Products\Pages\ListProducts;
 use App\Filament\Admin\Resources\Products\Traits\FormBuilderTrait;
 use App\Models\Product;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
@@ -32,7 +33,7 @@ class ProductResource extends Resource
 
     protected static ?string $model = Product::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?int $navigationSort = 1;
 
@@ -70,11 +71,9 @@ class ProductResource extends Resource
                                         ->directory('category-images'),
                                 ]
                             )
-                            ->createOptionAction(function (Action $action) {
-                                return $action
-                                    ->modalHeading(__('Create category'))
-                                    ->modalSubmitActionLabel('Create category');
-                            })->columnSpan(1),
+                            ->createOptionAction(fn (Action $action): Action => $action
+                                ->modalHeading(__('Create category'))
+                                ->modalSubmitActionLabel('Create category'))->columnSpan(1),
                     ]),
 
                 self::imagesSection(),

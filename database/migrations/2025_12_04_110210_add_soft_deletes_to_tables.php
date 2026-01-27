@@ -13,35 +13,35 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->softDeletes();
         });
 
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table): void {
             $table->softDeletes();
         });
 
-        Schema::table('product_spare_parts', function (Blueprint $table) {
+        Schema::table('product_spare_parts', function (Blueprint $table): void {
             $table->softDeletes();
         });
 
-        Schema::table('disassemblies', function (Blueprint $table) {
+        Schema::table('disassemblies', function (Blueprint $table): void {
             $table->softDeletes();
         });
 
-        Schema::table('categories', function (Blueprint $table) {
+        Schema::table('categories', function (Blueprint $table): void {
             $table->softDeletes();
         });
 
-        Schema::table('orders', function (Blueprint $table) {
+        Schema::table('orders', function (Blueprint $table): void {
             $table->softDeletes();
         });
 
-        Schema::table('addresses', function (Blueprint $table) {
+        Schema::table('addresses', function (Blueprint $table): void {
             $table->softDeletes();
         });
 
-        Schema::table('order_product', function (Blueprint $table) {
+        Schema::table('order_product', function (Blueprint $table): void {
             $table->softDeletes();
         });
     }
@@ -51,35 +51,35 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->dropSoftDeletes();
         });
 
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('products', function (Blueprint $table): void {
             $table->dropSoftDeletes();
         });
 
-        Schema::table('product_spare_parts', function (Blueprint $table) {
+        Schema::table('product_spare_parts', function (Blueprint $table): void {
             $table->dropSoftDeletes();
         });
 
-        Schema::table('disassemblies', function (Blueprint $table) {
+        Schema::table('disassemblies', function (Blueprint $table): void {
             $table->dropSoftDeletes();
         });
 
-        Schema::table('categories', function (Blueprint $table) {
+        Schema::table('categories', function (Blueprint $table): void {
             $table->dropSoftDeletes();
         });
 
-        Schema::table('orders', function (Blueprint $table) {
+        Schema::table('orders', function (Blueprint $table): void {
             $table->dropSoftDeletes();
         });
 
-        Schema::table('addresses', function (Blueprint $table) {
+        Schema::table('addresses', function (Blueprint $table): void {
             $table->dropSoftDeletes();
         });
 
-        Schema::table('order_product', function (Blueprint $table) {
+        Schema::table('order_product', function (Blueprint $table): void {
             $table->dropSoftDeletes();
         });
     }

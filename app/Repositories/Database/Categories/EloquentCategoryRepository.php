@@ -19,7 +19,7 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
         /**
          * @var Collection<int, Category>
          */
-        return Category::where('published', true)->get();
+        return Category::query()->where('published', true)->get();
     }
 
     public function getProducts(Category $category): LengthAwarePaginator
@@ -37,6 +37,6 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
          */
         $featured_categories = config('custom.featured-categories');
 
-        return Category::whereIn('id', $featured_categories)->get();
+        return Category::query()->whereIn('id', $featured_categories)->get();
     }
 }

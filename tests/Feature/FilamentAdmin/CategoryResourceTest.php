@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Filament\Admin\Resources\Features\Categories\CategoryResource;
 use App\Filament\Admin\Resources\Features\Categories\Pages\CreateCategory;
 use App\Filament\Admin\Resources\Features\Categories\Pages\EditCategory;
 use App\Filament\Admin\Resources\Features\Categories\Pages\ListCategories;
@@ -12,7 +13,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
 
     Filament::setCurrentPanel(
@@ -20,14 +21,14 @@ beforeEach(function () {
     );
 });
 
-describe('CategoryResource', function () {
-    it('admin can access category list page', function () {
+describe('CategoryResource', function (): void {
+    it('admin can access category list page', function (): void {
         test()->actingAs(test()->admin);
         $component = Livewire::test(ListCategories::class);
         $component->assertSee(__('Categories'));
     });
 
-    it('can display categories in list table', function () {
+    it('can display categories in list table', function (): void {
         test()->actingAs(test()->admin);
         $categories = Category::factory(3)->create();
 
@@ -38,16 +39,16 @@ describe('CategoryResource', function () {
         }
     });
 
-    it('admin can access create category page', function () {
+    it('admin can access create category page', function (): void {
         test()->actingAs(test()->admin);
         $component = Livewire::test(CreateCategory::class);
         $component->assertSee(__('Create'));
     });
 
-    it('can create a new category via form', function () {
+    it('can create a new category via form', function (): void {
         test()->actingAs(test()->admin);
         Storage::fake('local');
-        $initialCount = Category::count();
+        $initialCount = Category::query()->count();
 
         $file = UploadedFile::fake()->image('test-image.jpg');
 
@@ -57,11 +58,11 @@ describe('CategoryResource', function () {
             'big_image' => $file,
         ])->call('create');
 
-        expect(Category::count())->toBeGreaterThan($initialCount);
-        expect(Category::where('name', 'New Electronics')->exists())->toBeTrue();
+        expect(Category::query()->count())->toBeGreaterThan($initialCount);
+        expect(Category::query()->where('name', 'New Electronics')->exists())->toBeTrue();
     });
 
-    it('validates name is required on create', function () {
+    it('validates name is required on create', function (): void {
         test()->actingAs(test()->admin);
         $file = UploadedFile::fake()->image('test.jpg');
         $component = Livewire::test(CreateCategory::class);
@@ -72,7 +73,7 @@ describe('CategoryResource', function () {
         $component->assertHasFormErrors(['name' => 'required']);
     });
 
-    it('validates big_image is required on create', function () {
+    it('validates big_image is required on create', function (): void {
         test()->actingAs(test()->admin);
         $component = Livewire::test(CreateCategory::class);
         $component->fillForm([
@@ -82,23 +83,23 @@ describe('CategoryResource', function () {
         $component->assertHasFormErrors(['big_image' => 'required']);
     });
 
-    it('admin can access edit category page', function () {
+    it('admin can access edit category page', function (): void {
         test()->actingAs(test()->admin);
         $category = Category::factory()->create();
         $component = Livewire::test(EditCategory::class, ['record' => $category->getRouteKey()]);
         $component->assertFormComponentExists('name');
     });
 
-    it('can update category via form', function () {
+    it('can update category via form', function (): void {
         test()->actingAs(test()->admin);
         $category = Category::factory()->create(['name' => 'Old Name']);
 
         $component = Livewire::test(EditCategory::class, ['record' => $category->getRouteKey()]);
         $component->fillForm(['name' => 'Updated Name'])->call('save');
-        expect(Category::find($category->id)->name)->toBe('Updated Name');
+        expect(Category::query()->find($category->id)->name)->toBe('Updated Name');
     });
 
-    it('validates name is required on update', function () {
+    it('validates name is required on update', function (): void {
         test()->actingAs(test()->admin);
         $category = Category::factory()->create();
 
@@ -107,32 +108,32 @@ describe('CategoryResource', function () {
         $component->assertHasFormErrors(['name' => 'required']);
     });
 
-    it('category resource has correct navigation group', function () {
-        $group = App\Filament\Admin\Resources\Features\Categories\CategoryResource::getNavigationGroup();
+    it('category resource has correct navigation group', function (): void {
+        $group = CategoryResource::getNavigationGroup();
         expect($group)->toBe(__('Features'));
     });
 
-    it('category resource has correct model label', function () {
-        $label = App\Filament\Admin\Resources\Features\Categories\CategoryResource::getModelLabel();
+    it('category resource has correct model label', function (): void {
+        $label = CategoryResource::getModelLabel();
         expect($label)->toBe(__('Categories'));
     });
 
-    it('resource has index page', function () {
-        $pages = App\Filament\Admin\Resources\Features\Categories\CategoryResource::getPages();
+    it('resource has index page', function (): void {
+        $pages = CategoryResource::getPages();
         expect($pages)->toHaveKey('index');
     });
 
-    it('resource has create page', function () {
-        $pages = App\Filament\Admin\Resources\Features\Categories\CategoryResource::getPages();
+    it('resource has create page', function (): void {
+        $pages = CategoryResource::getPages();
         expect($pages)->toHaveKey('create');
     });
 
-    it('resource has edit page', function () {
-        $pages = App\Filament\Admin\Resources\Features\Categories\CategoryResource::getPages();
+    it('resource has edit page', function (): void {
+        $pages = CategoryResource::getPages();
         expect($pages)->toHaveKey('edit');
     });
 
-    it('can import categories from CSV via Livewire action', function () {
+    it('can import categories from CSV via Livewire action', function (): void {
         Storage::fake('local');
         test()->actingAs(test()->admin);
 
@@ -148,7 +149,7 @@ describe('CategoryResource', function () {
             ])->callMountedTableAction()
             ->assertHasNoTableActionErrors();
 
-        expect(Category::where('name', 'Imported Electronics')->where('slug', 'imported-electronics')->exists())->toBeTrue();
-        expect(Category::where('name', 'Imported Clothing')->where('slug', 'imported-clothing')->exists())->toBeTrue();
+        expect(Category::query()->where('name', 'Imported Electronics')->where('slug', 'imported-electronics')->exists())->toBeTrue();
+        expect(Category::query()->where('name', 'Imported Clothing')->where('slug', 'imported-clothing')->exists())->toBeTrue();
     });
 });

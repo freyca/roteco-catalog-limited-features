@@ -2,11 +2,9 @@
 
 declare(strict_types=1);
 
-dataset('configurls', function () {
-    return [
-        '/',
-        '/categorias',
-        '/productos',
-        '/carrito',
-    ];
-});
+dataset('configurls', fn (): array => [
+    '/',
+    '/categorias',
+    '/productos',
+    '/carrito',
+]);

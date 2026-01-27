@@ -9,6 +9,7 @@ use App\Filament\Admin\Resources\Features\Categories\Pages\CreateCategory;
 use App\Filament\Admin\Resources\Features\Categories\Pages\EditCategory;
 use App\Filament\Admin\Resources\Features\Categories\Pages\ListCategories;
 use App\Models\Category;
+use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
@@ -18,6 +19,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -26,7 +28,7 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-tag';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 
     public static function form(Schema $schema): Schema
     {
@@ -75,7 +77,7 @@ class CategoryResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                \Filament\Tables\Columns\IconColumn::make('published')
+                IconColumn::make('published')
                     ->boolean()
                     ->label(__('Published')),
             ])

@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -14,8 +17,8 @@ declare(strict_types=1);
 */
 
 uses(
-    Tests\TestCase::class,
-    Illuminate\Foundation\Testing\RefreshDatabase::class,
+    TestCase::class,
+    RefreshDatabase::class,
 )->in('Feature');
 
 /*
@@ -29,9 +32,7 @@ uses(
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
+expect()->extend('toBeOne', fn () => $this->toBe(1));
 
 /*
 |--------------------------------------------------------------------------

@@ -13,13 +13,13 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-describe('Address filters and search', function () {
-    beforeEach(function () {
+describe('Address filters and search', function (): void {
+    beforeEach(function (): void {
         test()->user = User::factory()->create();
         test()->actingAs(test()->user);
     });
 
-    it('displays all user addresses in list', function () {
+    it('displays all user addresses in list', function (): void {
         $user = test()->user;
         test()->actingAs($user);
 
@@ -32,7 +32,7 @@ describe('Address filters and search', function () {
         expect($addresses)->toHaveCount(5);
     });
 
-    it('shows empty state when no addresses exist', function () {
+    it('shows empty state when no addresses exist', function (): void {
         Livewire::test(ListAddress::class)->assertSuccessful();
 
         // Verify no addresses are displayed in the table
@@ -40,7 +40,7 @@ describe('Address filters and search', function () {
         expect($addresses)->toHaveCount(0);
     });
 
-    it('filters addresses by type', function () {
+    it('filters addresses by type', function (): void {
         $user = test()->user;
         test()->actingAs($user);
 
@@ -55,7 +55,7 @@ describe('Address filters and search', function () {
         $component->assertSee('Shipping Address 2');
     });
 
-    it('paginates addresses correctly', function () {
+    it('paginates addresses correctly', function (): void {
         $user = test()->user;
         test()->actingAs($user);
 
@@ -70,7 +70,7 @@ describe('Address filters and search', function () {
         expect($component->html())->toContain($addresses->first()->address);
     });
 
-    it('only shows authenticated user addresses', function () {
+    it('only shows authenticated user addresses', function (): void {
         $user = test()->user;
         $otherUser = User::factory()->create();
 
@@ -87,15 +87,15 @@ describe('Address filters and search', function () {
     });
 });
 
-describe('Order filters and search', function () {
-    beforeEach(function () {
+describe('Order filters and search', function (): void {
+    beforeEach(function (): void {
         // Create an admin for notification events
         test()->admin = User::factory()->admin_notifiable()->create();
         test()->user = User::factory()->create();
         test()->actingAs(test()->user);
     });
 
-    it('displays all user orders in list', function () {
+    it('displays all user orders in list', function (): void {
         $user = test()->user;
         test()->actingAs($user);
 
@@ -107,14 +107,14 @@ describe('Order filters and search', function () {
         }
     });
 
-    it('shows empty state when no orders exist', function () {
+    it('shows empty state when no orders exist', function (): void {
         $component = Livewire::test(ListOrders::class)->assertSuccessful();
         // Verify no orders are displayed in the table
         $orders = Order::query()->get();
         expect($orders)->toHaveCount(0);
     });
 
-    it('paginates orders correctly', function () {
+    it('paginates orders correctly', function (): void {
         $user = test()->user;
         test()->actingAs($user);
 
@@ -127,7 +127,7 @@ describe('Order filters and search', function () {
         expect($component->html())->toContain((string) $orders->first()->id);
     });
 
-    it('only shows authenticated user orders', function () {
+    it('only shows authenticated user orders', function (): void {
         $user = test()->user;
         $otherUser = User::factory()->create();
 
@@ -148,7 +148,7 @@ describe('Order filters and search', function () {
         }
     });
 
-    it('displays order status in list', function () {
+    it('displays order status in list', function (): void {
         $user = test()->user;
         test()->actingAs($user);
 

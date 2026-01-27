@@ -23,59 +23,60 @@ class AddressBuilder
 
     private Address $billing_address;
 
-    private string $shipping_name;
+    private readonly string $shipping_name;
 
-    private string $shipping_surname;
+    private readonly string $shipping_surname;
 
-    private string $shipping_email;
+    private readonly string $shipping_email;
 
-    private string $shipping_business_name;
+    private readonly string $shipping_business_name;
 
-    private string $shipping_cif;
+    private readonly string $shipping_cif;
 
-    private int $shipping_phone;
+    private readonly int $shipping_phone;
 
-    private string $shipping_address_str;
+    private readonly string $shipping_address_str;
 
-    private string $shipping_city;
+    private readonly string $shipping_city;
 
-    private string $shipping_state;
+    private readonly string $shipping_state;
 
-    private int $shipping_zip_code;
+    private readonly int $shipping_zip_code;
 
-    private string $shipping_country;
+    private readonly string $shipping_country;
 
-    private string $billing_name;
+    private readonly string $billing_name;
 
-    private string $billing_surname;
+    private readonly string $billing_surname;
 
-    private string $billing_cif;
+    private readonly string $billing_cif;
 
-    private string $billing_business_name;
+    private readonly string $billing_business_name;
 
-    private int $billing_phone;
+    private readonly int $billing_phone;
 
-    private string $billing_address_str;
+    private readonly string $billing_address_str;
 
-    private string $billing_city;
+    private readonly string $billing_city;
 
-    private string $billing_state;
+    private readonly string $billing_state;
 
-    private int $billing_zip_code;
+    private readonly int $billing_zip_code;
 
-    private string $billing_country;
+    private readonly string $billing_country;
 
-    private int $shipping_address_id;
+    private readonly int $shipping_address_id;
 
-    private int $billing_address_id;
+    private readonly int $billing_address_id;
 
-    private string $order_details;
+    private readonly string $order_details;
 
-    private bool $purchase_as_guest;
+    private readonly bool $purchase_as_guest;
 
-    private bool $use_shipping_address_as_billing_address;
+    private readonly bool $use_shipping_address_as_billing_address;
 
-    private PaymentMethod $payment_method;
+    // Payment method
+    private PaymentMethod $payment_method = PaymentMethod::BankTransfer;
 
     public function __construct(Schema $schema)
     {
@@ -121,9 +122,6 @@ class AddressBuilder
 
         // Comments for the order
         $this->order_details = strval(data_get($form_data, 'order_details'));
-
-        // Payment method
-        $this->payment_method = PaymentMethod::BankTransfer;
     }
 
     public function paymentMethod(): PaymentMethod
@@ -156,7 +154,7 @@ class AddressBuilder
      */
     public function build(): void
     {
-        if ($this->user === null) {
+        if (! $this->user instanceof User) {
             $this->buildNotRegisteredUserOrder();
         } else {
             $this->buildRegisteredUserOrder();
@@ -173,16 +171,14 @@ class AddressBuilder
         }
 
         // If user uses same shipping and billing adddress
-        if ($this->use_shipping_address_as_billing_address === true) {
+        if ($this->use_shipping_address_as_billing_address) {
             $this->billing_address = $this->shipping_address;
-        } else {
+        } elseif ($this->billing_address_id !== 0) {
             // If user selects some other registered billing address
             // If user has selected one registered address
-            if ($this->billing_address_id) {
-                $this->buildBillingAddressFromId();
-            } else {
-                $this->buildBillingAddressFromUserInput();
-            }
+            $this->buildBillingAddressFromId();
+        } else {
+            $this->buildBillingAddressFromUserInput();
         }
     }
 
@@ -198,7 +194,7 @@ class AddressBuilder
         $this->buildShippingAddressFromUserInput();
 
         // If user uses same shipping and billing adddress
-        if ($this->use_shipping_address_as_billing_address === true) {
+        if ($this->use_shipping_address_as_billing_address) {
             $this->billing_address = $this->shipping_address;
         } else {
             $this->buildBillingAddressFromUserInput();
@@ -210,17 +206,13 @@ class AddressBuilder
      */
     private function createUserAccount(): void
     {
-        try {
-            $this->user = User::create([
-                'name' => $this->shipping_name,
-                'surname' => $this->shipping_surname,
-                'email' => $this->shipping_email,
-                'password' => Str::password(),
-                'role' => Role::Customer,
-            ]);
-        } catch (UniqueConstraintViolationException $th) {
-            throw $th;
-        }
+        $this->user = User::query()->create([
+            'name' => $this->shipping_name,
+            'surname' => $this->shipping_surname,
+            'email' => $this->shipping_email,
+            'password' => Str::password(),
+            'role' => Role::Customer,
+        ]);
     }
 
     private function buildShippingAddressFromId(): void
@@ -235,15 +227,11 @@ class AddressBuilder
 
     private function buildAddressFromId(int $address_id): Address
     {
-        $address = Address::find($address_id);
+        $address = Address::query()->find($address_id);
 
-        if ($address === null) {
-            throw new Exception('Cannot find address', 1);
-        }
+        throw_if($address === null, Exception::class, 'Cannot find address', 1);
 
-        if (! $this->validateAddressBelongsToUser($address)) {
-            throw new Exception('Address does not belongs to user', 1);
-        }
+        throw_unless($this->validateAddressBelongsToUser($address), Exception::class, 'Address does not belongs to user', 1);
 
         return $address;
     }
@@ -254,25 +242,23 @@ class AddressBuilder
         $email = $this->shipping_email !== '' ? $this->shipping_email : $this->user?->email;
 
         // If user is registered, we associate the address to the user
-        $user_id = $this->user ? $this->user->id : null;
+        $user_id = $this->user instanceof User ? $this->user->id : null;
 
-        $this->shipping_address = Address::create(
-            [
-                'user_id' => $user_id,
-                'email' => $email,
-                'address_type' => AddressType::Shipping,
-                'name' => $this->shipping_name,
-                'surname' => $this->shipping_surname,
-                'vat_number' => $this->shipping_cif,
-                'business_name' => $this->shipping_business_name,
-                'phone' => $this->shipping_phone,
-                'address' => $this->shipping_address_str,
-                'city' => $this->shipping_city,
-                'state' => $this->shipping_state,
-                'zip_code' => $this->shipping_zip_code,
-                'country' => $this->shipping_country,
-            ]
-        );
+        $this->shipping_address = Address::query()->create([
+            'user_id' => $user_id,
+            'email' => $email,
+            'address_type' => AddressType::Shipping,
+            'name' => $this->shipping_name,
+            'surname' => $this->shipping_surname,
+            'vat_number' => $this->shipping_cif,
+            'business_name' => $this->shipping_business_name,
+            'phone' => $this->shipping_phone,
+            'address' => $this->shipping_address_str,
+            'city' => $this->shipping_city,
+            'state' => $this->shipping_state,
+            'zip_code' => $this->shipping_zip_code,
+            'country' => $this->shipping_country,
+        ]);
     }
 
     private function buildBillingAddressFromUserInput(): void
@@ -281,25 +267,23 @@ class AddressBuilder
         $email = $this->shipping_address->email;
 
         // If user is registered, we associate the address to the user
-        $user_id = $this->user ? $this->user->id : null;
+        $user_id = $this->user instanceof User ? $this->user->id : null;
 
-        $this->billing_address = Address::create(
-            [
-                'user_id' => $user_id,
-                'email' => $email,
-                'address_type' => AddressType::Shipping,
-                'name' => $this->billing_name,
-                'surname' => $this->billing_surname,
-                'business_name' => $this->billing_business_name,
-                'vat_number' => $this->billing_cif,
-                'phone' => $this->billing_phone,
-                'address' => $this->billing_address_str,
-                'city' => $this->billing_city,
-                'state' => $this->billing_state,
-                'zip_code' => $this->billing_zip_code,
-                'country' => $this->billing_country,
-            ]
-        );
+        $this->billing_address = Address::query()->create([
+            'user_id' => $user_id,
+            'email' => $email,
+            'address_type' => AddressType::Shipping,
+            'name' => $this->billing_name,
+            'surname' => $this->billing_surname,
+            'business_name' => $this->billing_business_name,
+            'vat_number' => $this->billing_cif,
+            'phone' => $this->billing_phone,
+            'address' => $this->billing_address_str,
+            'city' => $this->billing_city,
+            'state' => $this->billing_state,
+            'zip_code' => $this->billing_zip_code,
+            'country' => $this->billing_country,
+        ]);
     }
 
     private function validateAddressBelongsToUser(Address $address): bool

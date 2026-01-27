@@ -15,11 +15,9 @@ class SendOrderNotificationToAdmin implements ShouldQueue
 {
     public function handle(OrderCreated $event): void
     {
-        $admin_notification = User::where('email', config('custom.admin_email'))->first();
+        $admin_notification = User::query()->where('email', config('custom.admin_email'))->first();
 
-        if (! $admin_notification) {
-            throw new RuntimeException('No admin user found. Please ensure admin user exists to be notified.');
-        }
+        throw_unless($admin_notification, RuntimeException::class, 'No admin user found. Please ensure admin user exists to be notified.');
 
         Notification::send($admin_notification, new AdminOrderNotification($event->order));
     }

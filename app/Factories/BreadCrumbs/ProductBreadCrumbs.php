@@ -16,8 +16,8 @@ class ProductBreadCrumbs extends StandardPageBreadCrumbs
         parent::setDefaultBreadCrumb();
 
         $bread_crumbs = match (true) {
-            is_a($product, ProductSparePart::class) => $this->productSparePartBreadCrumb(),
-            is_a($product, Product::class) => $this->productBreadCrumb($product),
+            $product instanceof ProductSparePart => $this->productSparePartBreadCrumb(),
+            $product instanceof Product => $this->productBreadCrumb($product),
             default => throw new Exception('Invalid class type'),
         };
 

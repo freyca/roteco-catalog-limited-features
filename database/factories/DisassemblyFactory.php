@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
+use App\Models\Disassembly;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Disassembly>
+ * @extends Factory<Disassembly>
  */
 class DisassemblyFactory extends Factory
 {

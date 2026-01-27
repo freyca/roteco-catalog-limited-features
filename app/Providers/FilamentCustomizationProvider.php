@@ -29,13 +29,13 @@ class FilamentCustomizationProvider extends ServiceProvider
         // Notifications on left so does not overlap cart icon
         Notifications::alignment(Alignment::Start);
 
-        Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
+        Fieldset::configureUsing(fn (Fieldset $fieldset): Fieldset => $fieldset
             ->columnSpanFull());
 
-        Grid::configureUsing(fn (Grid $grid) => $grid
+        Grid::configureUsing(fn (Grid $grid): Grid => $grid
             ->columnSpanFull());
 
-        Section::configureUsing(fn (Section $section) => $section
+        Section::configureUsing(fn (Section $section): Section => $section
             ->columnSpanFull());
     }
 }

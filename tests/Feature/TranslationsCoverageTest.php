@@ -2,47 +2,48 @@
 
 declare(strict_types=1);
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\App;
 
-uses(Illuminate\Foundation\Testing\RefreshDatabase::class);
+uses(RefreshDatabase::class);
 
-describe('Translations Coverage', function () {
-    describe('Spanish translations', function () {
-        beforeEach(function () {
+describe('Translations Coverage', function (): void {
+    describe('Spanish translations', function (): void {
+        beforeEach(function (): void {
             App::setLocale('es');
         });
 
-        it('loads spanish locale successfully', function () {
+        it('loads spanish locale successfully', function (): void {
             expect(App::getLocale())->toBe('es');
         });
 
-        it('translates all strings in spanish', function ($key) {
+        it('translates all strings in spanish', function ($key): void {
             expect(__($key))
                 ->not->toBe($key)
                 ->not->toBeEmpty();
         })->with('translatable_strings');
     });
 
-    describe('English locale fallback', function () {
-        beforeEach(function () {
+    describe('English locale fallback', function (): void {
+        beforeEach(function (): void {
             App::setLocale('en');
         });
 
-        it('fallback to english returns english strings', function () {
+        it('fallback to english returns english strings', function (): void {
             expect(App::getLocale())->toBe('en');
             $result = __('Order Confirmation');
             expect($result)->toBeTruthy();
         });
 
-        it('handles parametrized translations', function () {
+        it('handles parametrized translations', function (): void {
             $name = 'John Doe';
             $translated = __('Hello', ['name' => $name]);
             expect($translated)->toBeTruthy();
         });
     });
 
-    describe('Translation consistency', function () {
-        it('ensures critical translations exist in spanish', function ($key) {
+    describe('Translation consistency', function (): void {
+        it('ensures critical translations exist in spanish', function ($key): void {
             App::setLocale('es');
 
             $translated = __($key);
@@ -50,7 +51,7 @@ describe('Translations Coverage', function () {
                 ->not->toBe($key);
         })->with('critical_translations');
 
-        it('preserves locales can be switched', function () {
+        it('preserves locales can be switched', function (): void {
             App::setLocale('es');
             $spanish = __('Orders');
 
@@ -62,8 +63,8 @@ describe('Translations Coverage', function () {
         });
     });
 
-    describe('Translation file validation', function () {
-        it('spanish translation file is valid json', function () {
+    describe('Translation file validation', function (): void {
+        it('spanish translation file is valid json', function (): void {
             $filePath = resource_path('lang/es.json');
             expect(file_exists($filePath))->toBeTrue();
 
@@ -73,7 +74,7 @@ describe('Translations Coverage', function () {
             expect(is_array($decoded))->toBeTrue();
         });
 
-        it('spanish translation contains essential keys', function () {
+        it('spanish translation contains essential keys', function (): void {
             $filePath = resource_path('lang/es.json');
             $translations = json_decode(file_get_contents($filePath), true);
 
@@ -90,30 +91,30 @@ describe('Translations Coverage', function () {
             }
         });
 
-        it('spanish translations are not empty strings', function () {
+        it('spanish translations are not empty strings', function (): void {
             $filePath = resource_path('lang/es.json');
             $translations = json_decode(file_get_contents($filePath), true);
 
-            foreach ($translations as $key => $value) {
+            foreach ($translations as $value) {
                 expect(! empty($value))->toBeTrue();
             }
         });
     });
 
-    describe('Notification translations', function () {
-        it('verifies all order notification translations', function ($string) {
+    describe('Notification translations', function (): void {
+        it('verifies all order notification translations', function ($string): void {
             App::setLocale('es');
             expect(__($string))->not->toBeEmpty();
         })->with('notification_strings');
 
-        it('verifies all admin notification translations', function ($string) {
+        it('verifies all admin notification translations', function ($string): void {
             App::setLocale('es');
             expect(__($string))->not->toBeEmpty();
         })->with('admin_notification_strings');
     });
 
-    describe('Locale switching', function () {
-        it('can switch between locales', function () {
+    describe('Locale switching', function (): void {
+        it('can switch between locales', function (): void {
             App::setLocale('es');
             expect(App::getLocale())->toBe('es');
 
@@ -124,7 +125,7 @@ describe('Translations Coverage', function () {
             expect(App::getLocale())->toBe('es');
         });
 
-        it('translations change with locale', function () {
+        it('translations change with locale', function (): void {
             App::setLocale('es');
             $spanishOrder = __('Orders');
 
