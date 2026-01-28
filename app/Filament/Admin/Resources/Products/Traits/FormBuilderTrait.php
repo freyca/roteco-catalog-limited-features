@@ -151,9 +151,6 @@ trait FormBuilderTrait
 
     private static function imagesSection(): Section
     {
-        /** @var string $product_directory */
-        $product_directory = config('custom.product-image-storage');
-
         return Section::make(__('Images'))
             ->schema([
                 FileUpload::make('main_image')
@@ -163,8 +160,7 @@ trait FormBuilderTrait
                     ->moveFiles()
                     ->orientImagesFromExif(false)
                     ->preserveFilenames()
-                    ->directory($product_directory),
-
+                    ->directory(config()->string('custom.product-image-storage')),
             ])->columns(2);
     }
 

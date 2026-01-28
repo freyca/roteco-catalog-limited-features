@@ -32,9 +32,6 @@ class CategoryResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        /** @var string $directory */
-        $directory = config('custom.category-image-storage');
-
         return $schema
             ->components([
                 Section::make([
@@ -52,7 +49,7 @@ class CategoryResource extends Resource
                     ->moveFiles()
                     ->preserveFilenames()
                     ->orientImagesFromExif(false)
-                    ->directory($directory),
+                    ->directory(config()->string('custom.category-image-storage')),
 
                 // Published toggle
                 Toggle::make('published')

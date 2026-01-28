@@ -32,10 +32,7 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
 
     public function featured(): Collection
     {
-        /**
-         * @var Collection<int, Category>
-         */
-        $featured_categories = config('custom.featured-categories');
+        $featured_categories = config()->array('custom.featured-categories');
 
         return Category::query()->whereIn('id', $featured_categories)->get();
     }

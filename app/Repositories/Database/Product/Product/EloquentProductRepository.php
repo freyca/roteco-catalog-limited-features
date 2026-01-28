@@ -19,7 +19,7 @@ class EloquentProductRepository implements ProductRepositoryInterface
 
     public function featured(): LengthAwarePaginator
     {
-        $featured_products = config('custom.featured-products');
+        $featured_products = config()->array('custom.featured-products');
 
         return Product::query()->whereIn('id', $featured_products)->paginate(15);
     }
