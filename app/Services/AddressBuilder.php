@@ -295,6 +295,9 @@ class AddressBuilder
         return $this->user->addresses->pluck('id')->contains($address->id);
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     private function get_string(array $data, string $key, string $default = ''): string
     {
         $value = data_get($data, $key);
@@ -302,6 +305,9 @@ class AddressBuilder
         return is_scalar($value) || $value === null ? (string) $value : $default;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     private function get_int(array $data, string $key, int $default = 0): int
     {
         $value = data_get($data, $key);

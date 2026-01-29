@@ -15,6 +15,7 @@ class ProductBreadCrumbs extends StandardPageBreadCrumbs
     {
         parent::setDefaultBreadCrumb();
 
+        /** @var array<string, string> */
         $bread_crumbs = match (true) {
             $product instanceof ProductSparePart => $this->productSparePartBreadCrumb(),
             $product instanceof Product => $this->productBreadCrumb($product),
@@ -26,6 +27,9 @@ class ProductBreadCrumbs extends StandardPageBreadCrumbs
         $this->bread_crumbs = array_merge($this->default_bread_crumb, $bread_crumbs);
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function productBreadCrumb(Product $product): array
     {
         return [
@@ -33,6 +37,9 @@ class ProductBreadCrumbs extends StandardPageBreadCrumbs
         ];
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function productSparePartBreadCrumb(): array
     {
         return [

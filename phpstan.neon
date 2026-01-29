@@ -17,6 +17,5 @@ parameters:
 
     ignoreErrors:
         - identifier: missingType.generics
-        - identifier: missingType.iterableValue
 
     tmpDir: /tmp/phpstan

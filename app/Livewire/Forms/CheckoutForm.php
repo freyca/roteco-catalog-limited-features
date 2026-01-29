@@ -38,6 +38,9 @@ class CheckoutForm extends Component implements HasActions, HasForms
     use InteractsWithActions;
     use InteractsWithForms;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     public ?array $checkoutFormData = [];
 
     public function mount(): void
@@ -129,7 +132,8 @@ class CheckoutForm extends Component implements HasActions, HasForms
                     ->reactive()
                     ->hidden(
                         // If there is no addresses
-                        fn (): bool => $shipping_addresses->count() === 0),
+                        fn (): bool => $shipping_addresses->count() === 0
+                    ),
                 $this->addressFormFields('shipping', Auth::user() === null)
                     ->hidden(
                         function (Get $get) use ($shipping_addresses): bool {

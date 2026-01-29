@@ -12,6 +12,9 @@ class SearchByName
 {
     private static int $limit_results = 5;
 
+    /**
+     * @return array{products: Collection<int, Product>}|array{}
+     */
     public static function search(string $search_term): array
     {
         $results['products'] = self::queryProducts($search_term, self::$limit_results);
