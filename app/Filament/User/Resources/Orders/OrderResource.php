@@ -9,7 +9,7 @@ use App\Enums\PaymentMethod;
 use App\Filament\User\Resources\Orders\Pages\ListOrders;
 use App\Filament\User\Resources\Orders\Pages\ViewOrder;
 use App\Models\Order;
-use App\Models\Product;
+use App\Models\ProductSparePart;
 use BackedEnum;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Repeater;
@@ -22,7 +22,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 class OrderResource extends Resource
 {
@@ -103,21 +102,6 @@ class OrderResource extends Resource
         ];
     }
 
-    public static function canEdit(Model $record): bool
-    {
-        return false;
-    }
-
-    public static function canCreate(): bool
-    {
-        return false;
-    }
-
-    public static function canDelete(Model $record): bool
-    {
-        return false;
-    }
-
     public static function getProductsRepeater(): Repeater
     {
         return Repeater::make('orderProducts')
@@ -126,10 +110,10 @@ class OrderResource extends Resource
             ->schema([
                 Select::make('orderable_id')
                     ->label(__('Product'))
-                    ->options(Product::query()->pluck('name', 'id'))
+                    ->options(ProductSparePart::query()->pluck('name', 'id'))
                     ->required()
                     ->reactive()
-                    ->afterStateUpdated(fn (mixed $state, Set $set): mixed => $set('unit_price', Product::query()->find($state)->price ?? 0))
+                    ->afterStateUpdated(fn (mixed $state, Set $set): mixed => $set('unit_price', ProductSparePart::query()->find($state)->price ?? 0))
                     ->distinct()
                     ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                     ->columnSpan([

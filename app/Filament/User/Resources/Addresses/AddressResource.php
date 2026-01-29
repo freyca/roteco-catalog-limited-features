@@ -136,11 +136,6 @@ class AddressResource extends Resource
         ];
     }
 
-    public static function getNavigationGroup(): ?string
-    {
-        return __('User');
-    }
-
     public static function getModelLabel(): string
     {
         return __('Shipping address');

@@ -24,6 +24,7 @@ use function Pest\Laravel\actingAs;
 
 beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
+    test()->actingAs(test()->admin);
 
     Filament::setCurrentPanel(
         Filament::getPanel('admin')
@@ -32,14 +33,11 @@ beforeEach(function (): void {
 
 describe('AdminOrderResource', function (): void {
     it('admin can access order list page', function (): void {
-        test()->actingAs(test()->admin);
-
         Livewire::test(ListOrders::class)
             ->assertStatus(200);
     });
 
     it('can display orders in list table', function (): void {
-        test()->actingAs(test()->admin);
         $orders = Order::factory(3)->create();
 
         $component = Livewire::test(ListOrders::class);
@@ -52,37 +50,35 @@ describe('AdminOrderResource', function (): void {
     });
 
     it('admin can access edit order page', function (): void {
-        test()->actingAs(test()->admin);
         $order = Order::factory()->create();
 
         Livewire::test(EditOrder::class, ['record' => $order->getRouteKey()])
-            ->assertStatus(200);
+            ->assertStatus(200)
+            ->assertHasNoFormErrors();
     });
 
-    it('order resource is read-only (no create page)', function (): void {
-        $pages = OrderResource::getPages();
-        expect($pages)->toHaveKey('index');
-        expect($pages)->toHaveKey('create');
-    });
+    it('order resource has option', function (string $key): void {
+        expect(OrderResource::getPages())->toHaveKey($key);
+    })
+        ->with([
+            'index',
+            'create',
+            'edit'
+        ]);
 
-    it('order resource has index page', function (): void {
-        $pages = OrderResource::getPages();
-        expect($pages)->toHaveKey('index');
-    });
-
-    it('order resource has edit page', function (): void {
-        $pages = OrderResource::getPages();
-        expect($pages)->toHaveKey('edit');
-    });
+    it('order resource doesnt has option', function (string $key): void {
+        expect(OrderResource::getPages())->not->toHaveKey($key);
+    })
+        ->with([
+            'delete'
+        ]);
 
     it('order resource has correct navigation group', function (): void {
-        $group = OrderResource::getNavigationGroup();
-        expect($group)->toBe(__('Usuarios'));
+        expect(OrderResource::getNavigationGroup())->toBe(__('Usuarios'));
     });
 
     it('order resource has correct model label', function (): void {
-        $label = OrderResource::getModelLabel();
-        expect($label)->toBe(__('Pedidos'));
+        expect(OrderResource::getModelLabel())->toBe(__('Pedidos'));
     });
 
     it('can export orders via table action', function (): void {
@@ -95,7 +91,6 @@ describe('AdminOrderResource', function (): void {
             }
         }
 
-        test()->actingAs(test()->admin);
         Order::factory(3)->create();
 
         // Test the export action through Livewire
@@ -128,21 +123,18 @@ describe('AdminOrderResource', function (): void {
     });
 
     it('can create an order', function (): void {
-        $user = User::factory()->admin()->create();
-        $address = Address::factory(['address_type' => AddressType::ShippingAndBilling])->for($user)->create();
+        $address = Address::factory(['address_type' => AddressType::ShippingAndBilling])->for(test()->admin)->create();
 
         $product = ProductSparePart::factory()->create([
             'price' => 100,
             'price_with_discount' => 90,
         ]);
 
-        actingAs($user);
-
         $undoRepeaterFake = Repeater::fake();
 
         Livewire::test(CreateOrder::class)
             ->fillForm([
-                'user_id' => $user->id,
+                'user_id' => test()->admin->id,
                 'shipping_address_id' => $address->id,
                 'billing_address_id' => $address->id,
                 'discount' => 10,
@@ -165,7 +157,7 @@ describe('AdminOrderResource', function (): void {
         $order = Order::query()->first();
 
         // Validate order belongs to user
-        expect($order->user_id)->toBe($user->id);
+        expect($order->user_id)->toBe(test()->admin->id);
         expect($order->shipping_address_id)->toBe($address->id);
         expect($order->billing_address_id)->toBe($address->id);
 
@@ -197,10 +189,8 @@ describe('AdminOrderResource', function (): void {
     });
 
     it('can update an order adding a product', function (): void {
-        // Create user & address
-        $user = User::factory()->admin()->create();
         $address = Address::factory(['address_type' => AddressType::ShippingAndBilling])
-            ->for($user)
+            ->for(test()->admin)
             ->create();
 
         // Create products
@@ -214,7 +204,7 @@ describe('AdminOrderResource', function (): void {
         ]);
 
         // Create initial order
-        $order = Order::factory()->for($user)->create([
+        $order = Order::factory()->for(test()->admin)->create([
             'shipping_address_id' => $address->id,
             'billing_address_id' => $address->id,
             'discount' => 0,
@@ -228,8 +218,6 @@ describe('AdminOrderResource', function (): void {
             'quantity' => 1,
             'unit_price' => $product1->price_with_discount,
         ]);
-
-        actingAs($user);
 
         // Fake repeater UUIDs
         $undoRepeaterFake = Repeater::fake();
@@ -275,7 +263,7 @@ describe('AdminOrderResource', function (): void {
         expect($order->status)->toBe(OrderStatus::Shipped);
         expect($order->shipping_address_id)->toBe($address->id);
         expect($order->billing_address_id)->toBe($address->id);
-        expect($order->user_id)->toBe($user->id);
+        expect($order->user_id)->toBe(test()->admin->id);
 
         $order->load('orderProducts.orderable');
         $products = $order->orderProducts;

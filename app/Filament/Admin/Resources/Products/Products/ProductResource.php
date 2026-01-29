@@ -99,12 +99,7 @@ class ProductResource extends Resource
                                 ->directory(config()->string('custom.product-image-storage')),
                         ])
                         ->columns(2)
-                        ->collapsed()
-                        ->itemLabel(
-                            fn (array $state): string => is_string($state['name'] ?? null)
-                                ? $state['name']
-                                : ''
-                        ),
+                        ->collapsed(),
                 ]),
 
             ]);

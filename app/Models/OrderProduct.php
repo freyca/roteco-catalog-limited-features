@@ -32,11 +32,6 @@ class OrderProduct extends Pivot
         'quantity',
     ];
 
-    public function order(): BelongsTo
-    {
-        return $this->belongsTo(Order::class);
-    }
-
     public function orderable(): MorphTo
     {
         return $this->morphTo()->withTrashed();
