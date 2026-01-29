@@ -369,11 +369,14 @@ class OrderResource extends Resource
                 ->toArray();
         }
 
-        return User::query()
+        /** @var array<int|string, string>|null */
+        $ret = User::query()
             ->find((int) $user_id)
             ?->shippingAddresses
             ->pluck('address', 'id')
             ->toArray() ?? [];
+
+        return $ret;
     }
 
     public static function updateTotals(Get $get, Set $set): void
