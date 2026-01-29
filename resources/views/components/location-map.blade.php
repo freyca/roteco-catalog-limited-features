@@ -1,6 +1,6 @@
 <div class="location-map mx-auto py-8">
-    <h2 class="text-2xl font-semibold mb-4">{{ __('Our Location') }}</h2>
-    <div id="map" class="w-full h-96 rounded-md shadow-md"></div>
+    <h2 class="mb-4 text-2xl font-semibold">{{ __('Our Location') }}</h2>
+    <div id="map" class="h-96 w-full rounded-md shadow-md"></div>
 </div>
 
 <style>
@@ -40,14 +40,15 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         var map = L.map('map').setView([43.016, -7.55], 15);
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         }).addTo(map);
 
-        var marker = L.marker([43.016, -7.55]).addTo(map)
+        var marker = L.marker([43.016, -7.55])
+            .addTo(map)
             .bindPopup('Here you can buy <b>Roteco</b> supplies')
             .openPopup();
     });

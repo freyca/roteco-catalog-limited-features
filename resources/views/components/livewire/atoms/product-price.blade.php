@@ -1,7 +1,7 @@
 <div>
     <p>
-        <span class="text-md font-semibold p-3 px-4 mr-4 rounded text-primary-100 bg-primary-800">
-            @if((isset($variant) && !is_null($variant)))
+        <span class="text-md text-primary-100 bg-primary-800 mr-4 rounded p-3 px-4 font-semibold">
+            @if (isset($variant) && ! is_null($variant))
                 @if ($product->price_with_discount)
                     {{ $variant->getFormattedPriceWithDiscount() }}
                 @else
@@ -16,22 +16,22 @@
             @endif
         </span>
 
-        @if($product->price_with_discount)
+        @if ($product->price_with_discount)
             @php
                 $price = $product->getFormattedPrice();
             @endphp
         @endif
 
-        @if(isset($variant) && !is_null($variant) && $variant->price_with_discount)
+        @if (isset($variant) && ! is_null($variant) && $variant->price_with_discount)
             @php
                 $price = $variant->getFormattedPrice();
             @endphp
         @endif
 
         @if (isset($price))
-            <span class="pr-2 text-primary-800">
+            <span class="text-primary-800 pr-2">
                 {{ __('Before') . ': ' }}
-                <span class="line-through font-semibold">
+                <span class="font-semibold line-through">
                     {{ $price }}
                 </span>
             </span>
