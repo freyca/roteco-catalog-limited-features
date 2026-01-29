@@ -12,7 +12,7 @@ interface CartRepositoryInterface
     /**
      * Functions for products
      */
-    public function add(BaseProduct $product, int $quantity): bool;
+    public function add(BaseProduct $product, int $quantity): void;
 
     public function remove(BaseProduct $product): void;
 

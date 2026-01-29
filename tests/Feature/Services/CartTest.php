@@ -23,9 +23,8 @@ describe('Cart Service', function (): void {
         it('adds product to cart', function (): void {
             $product = ProductSparePart::factory()->create();
 
-            $result = test()->cart->add($product, 2);
+            test()->cart->add($product, 2);
 
-            expect($result)->toBeTrue();
             expect(test()->cart->hasProduct($product))->toBeTrue();
             expect(test()->cart->getTotalQuantityForProduct($product))->toBe(2);
         });

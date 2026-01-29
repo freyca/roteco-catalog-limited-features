@@ -16,8 +16,6 @@ class OrderProductDTO
 
     private readonly ?float $price_with_discount;
 
-    private readonly string $reference;
-
     public function __construct(
         private readonly int $orderable_id,
         private readonly string $orderable_type,
@@ -25,7 +23,6 @@ class OrderProductDTO
         private int $quantity,
         BaseProduct $product,
     ) {
-        $this->reference = (string) $product->reference;
         $this->price_with_discount = $product->price_with_discount;
         $this->price_without_discount = $product->price;
     }
@@ -52,11 +49,6 @@ class OrderProductDTO
     public function priceWithDiscount(): ?float
     {
         return $this->price_with_discount;
-    }
-
-    public function reference(): string
-    {
-        return $this->reference;
     }
 
     public function orderableId(): int

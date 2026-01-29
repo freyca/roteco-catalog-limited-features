@@ -15,11 +15,13 @@ class ProductBreadCrumbs extends StandardPageBreadCrumbs
     {
         parent::setDefaultBreadCrumb();
 
+        /** @codeCoverageIgnore exception is for sanity  */
+        throw_if(! $product instanceof BaseProduct, new Exception('Invalid class type'));
+
         /** @var array<string, string> */
         $bread_crumbs = match (true) {
             $product instanceof ProductSparePart => $this->productSparePartBreadCrumb(),
             $product instanceof Product => $this->productBreadCrumb($product),
-            default => throw new Exception('Invalid class type'),
         };
 
         $bread_crumbs = array_merge($bread_crumbs, [$product->name => $product->slug]);
@@ -33,11 +35,13 @@ class ProductBreadCrumbs extends StandardPageBreadCrumbs
     private function productBreadCrumb(Product $product): array
     {
         return [
-            $product->category?->name => '/'.$product->category?->slug,
+            $product->category?->name => '/' . $product->category?->slug,
         ];
     }
 
     /**
+     * @codeCoverageIgnore It is not used by now
+     *
      * @return array<string, string>
      */
     private function productSparePartBreadCrumb(): array

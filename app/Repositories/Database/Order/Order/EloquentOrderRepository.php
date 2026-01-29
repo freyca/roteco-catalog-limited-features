@@ -12,11 +12,17 @@ use App\Models\User;
 
 class EloquentOrderRepository implements OrderRepositoryInterface
 {
+    /**
+     * @codeCoverageIgnore Not used by now
+     */
     public function save(Order $order): bool
     {
         return $order->save();
     }
 
+    /**
+     * @codeCoverageIgnore Not used by now
+     */
     public function changeStatus(Order $order, OrderStatus $order_status): bool
     {
         $order->status = $order_status;
@@ -44,11 +50,17 @@ class EloquentOrderRepository implements OrderRepositoryInterface
         ]);
     }
 
+    /**
+     * @codeCoverageIgnore Not used by now
+     */
     public function find(string $id): ?Order
     {
         return Order::query()->find($id);
     }
 
+    /**
+     * @codeCoverageIgnore Not used by now
+     */
     public function paymentGatewayResponse(Order $order, string $response): bool
     {
         $order->payment_gateway_response = $response;

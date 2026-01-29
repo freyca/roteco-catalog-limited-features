@@ -32,13 +32,11 @@ class SessionCartRepository implements CartRepositoryInterface
     /**
      * Functions for products
      */
-    public function add(BaseProduct $product, int $quantity): bool
+    public function add(BaseProduct $product, int $quantity): void
     {
         $order_products = $this->addProductToOrder($product, $quantity);
 
         $this->updateCart($order_products);
-
-        return true;
     }
 
     public function remove(BaseProduct $product): void

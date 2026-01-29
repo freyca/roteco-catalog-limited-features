@@ -18,6 +18,9 @@ class PaymentController extends Controller
         private readonly Cart $cart,
     ) {}
 
+    /**
+     * @codeCoverageIgnore It is not used by now
+     */
     public function redirectToPayment(Order $order): mixed
     {
         $paymentService = new Payment($order);
@@ -34,6 +37,9 @@ class PaymentController extends Controller
         ]);
     }
 
+    /**
+     * @codeCoverageIgnore  It is not used by now since we do not pass through payment services
+     */
     public function orderFinishedKo(Order $order): View
     {
         $this->cart->clear();

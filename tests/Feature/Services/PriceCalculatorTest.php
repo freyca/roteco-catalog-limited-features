@@ -131,7 +131,26 @@ describe('PriceCalculator', function (): void {
             expect($total)->toBe(200.0);
         });
 
-        it('calculates total discount amount', function (): void {
+        it('calculates total discount amount for product', function (): void {
+            $product = ProductSparePart::factory()->create([
+                'price' => 120,
+                'price_with_discount' => 80,
+            ]);
+
+            $dto = new OrderProductDTO(
+                orderable_id: $product->id,
+                orderable_type: ProductSparePart::class,
+                unit_price: 100,
+                quantity: 5,
+                product: $product,
+            );
+
+            $discount = test()->calculator->getTotalDiscountForProduct($dto, 5);
+
+            expect($discount)->toBe(200.0); // (120 * 5) - (80 * 5)
+        });
+
+        it('calculates total discount amount for order', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,

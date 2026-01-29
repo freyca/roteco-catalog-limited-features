@@ -6,14 +6,11 @@ namespace App\Repositories\Database\Categories;
 
 use App\Models\Category;
 use App\Models\Product;
-use App\Repositories\Database\Traits\CacheKeys;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class EloquentCategoryRepository implements CategoryRepositoryInterface
 {
-    use CacheKeys;
-
     public function getAll(): Collection
     {
         /**
@@ -30,6 +27,9 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
         return $category->products()->paginate(8);
     }
 
+    /**
+     * @codeCoverageIgnore It is not used by now
+     */
     public function featured(): Collection
     {
         $featured_categories = config()->array('custom.featured-categories');

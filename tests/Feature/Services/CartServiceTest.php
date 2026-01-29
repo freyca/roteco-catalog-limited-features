@@ -18,9 +18,8 @@ describe('Cart Service', function (): void {
         test()->actingAs(test()->user);
         $cart = resolve(Cart::class);
 
-        $result = $cart->add(test()->product1, 1);
+        $cart->add(test()->product1, 1);
 
-        expect($result)->toBeTrue();
         expect($cart->hasProduct(test()->product1))->toBeTrue();
     });
 

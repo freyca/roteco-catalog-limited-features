@@ -7,7 +7,6 @@ namespace App\Services;
 use App\Models\BaseProduct;
 use App\Repositories\Cart\CartRepositoryInterface;
 use Illuminate\Support\Collection;
-use Throwable;
 
 final readonly class Cart implements CartRepositoryInterface
 {
@@ -15,15 +14,9 @@ final readonly class Cart implements CartRepositoryInterface
         private CartRepositoryInterface $repository,
     ) {}
 
-    public function add(BaseProduct $product, int $quantity): bool
+    public function add(BaseProduct $product, int $quantity): void
     {
-        try {
-            $this->repository->add($product, $quantity);
-
-            return true;
-        } catch (Throwable) {
-            return false;
-        }
+        $this->repository->add($product, $quantity);
     }
 
     public function remove(BaseProduct $product): void

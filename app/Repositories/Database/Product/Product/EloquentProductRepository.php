@@ -5,13 +5,10 @@ declare(strict_types=1);
 namespace App\Repositories\Database\Product\Product;
 
 use App\Models\Product;
-use App\Repositories\Database\Traits\CacheKeys;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class EloquentProductRepository implements ProductRepositoryInterface
 {
-    use CacheKeys;
-
     public function getAll(): LengthAwarePaginator
     {
         return Product::query()->paginate(16);

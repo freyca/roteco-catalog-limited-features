@@ -16,6 +16,9 @@ abstract class PaymentRepository implements PaymentRepositoryInterface
 
     public function __construct(protected OrderRepositoryInterface $orderRepository) {}
 
+    /**
+     * @codeCoverageIgnore  It is not used by now since we do not pass through payment gateways
+     */
     final public function redirectWithFail(Order $order, ?string $response = null): RedirectResponse
     {
         $this->orderRepository->changeStatus($order, OrderStatus::PaymentFailed);

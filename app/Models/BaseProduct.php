@@ -60,6 +60,9 @@ abstract class BaseProduct extends Model
         'images',
     ];
 
+    /**
+     * @codeCoverageIgnore It is not used by now
+     */
     final public function orders(): MorphMany
     {
         return $this->morphMany(OrderProduct::class, 'orderable');
