@@ -99,7 +99,7 @@
             "rector --dry-run",
             "npm run test:lint"
         ],
-        "test:unit": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --min=85.0",
+        "test:unit": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --min=90.0",
         "test:types": "phpstan",
         "test": [
             "@test:type-coverage",
