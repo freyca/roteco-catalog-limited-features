@@ -52,7 +52,7 @@ class OrderResource extends Resource
             ->components([
                 Section::make([
                     TextInput::make('id')
-                        ->name(__('Order id (automatically generated)').':')
+                        ->name(__('Order id (automatically generated)') . ':')
                         ->disabled()
                         ->columnSpanFull(),
 
@@ -86,9 +86,9 @@ class OrderResource extends Resource
                                 ),
                             Select::make('shipping_address_id')
                                 ->relationship('shippingAddress', 'address')
-                                ->disabled(fn (Get $get): bool => blank($get('user_id')))
+                                ->disabled(fn(Get $get): bool => blank($get('user_id')))
                                 ->options(
-                                    fn (Get $get): ?array => self::getAddressId($get)
+                                    fn(Get $get): ?array => self::getAddressId($get)
                                 )
                                 ->selectablePlaceholder(function (Get $get): bool {
                                     $user_id = $get('user_id');
@@ -105,9 +105,9 @@ class OrderResource extends Resource
                                 ->required(),
                             Select::make('billing_address_id')
                                 ->relationship('billingAddress', 'address')
-                                ->disabled(fn (Get $get): bool => blank($get('user_id')))
+                                ->disabled(fn(Get $get): bool => blank($get('user_id')))
                                 ->options(
-                                    fn (Get $get): ?array => self::getAddressId($get)
+                                    fn(Get $get): ?array => self::getAddressId($get)
                                 )
                                 ->selectablePlaceholder(function (Get $get): bool {
                                     $user_id = $get('user_id');
@@ -249,7 +249,7 @@ class OrderResource extends Resource
 
                 Select::make('orderable_id')
                     ->label(__('Product'))
-                    ->disabled(fn (Get $get): bool => blank($get('orderable_type')))
+                    ->disabled(fn(Get $get): bool => blank($get('orderable_type')))
                     ->options(function (Get $get) {
                         if (blank($get('orderable_type'))) {
                             return;
@@ -268,8 +268,16 @@ class OrderResource extends Resource
                         /** @var BaseProduct */
                         $class_name = $get('orderable_type');
 
-                        /** @var BaseProduct */
+                        /** @var ?BaseProduct */
                         $product = $class_name::query()->find($state);
+
+                        if (! $product) {
+                            $set('unit_price', 0);
+                            $set('retailer_price', 0);
+                            $set('quantity', 1);
+
+                            return;
+                        }
 
                         $set('unit_price', $product->price_with_discount);
                         $set('retailer_price', $product->price);
@@ -278,8 +286,10 @@ class OrderResource extends Resource
 
                 TextInput::make('quantity')
                     ->label(__('Quantity'))
+                    ->numeric()
                     ->integer()
                     ->default(1)
+                    ->minValue(1)
                     ->columnSpan([
                         'md' => 2,
                     ])
@@ -411,14 +421,14 @@ class OrderResource extends Resource
                 continue;
             }
 
-            /** @var int */
+            /** @var string */
             $quantity = $selected_product['quantity'];
 
             $order_products->add(new OrderProductDTO(
                 $product->id,
                 $selected_product['orderable_type'],
                 $product->price_with_discount ?: $product->price,
-                $quantity,
+                (int) $quantity,
                 $product
             ));
         }

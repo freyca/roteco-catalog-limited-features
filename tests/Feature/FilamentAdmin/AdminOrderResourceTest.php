@@ -20,8 +20,6 @@ use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
-use function Pest\Laravel\actingAs;
-
 beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
     test()->actingAs(test()->admin);
@@ -63,14 +61,14 @@ describe('AdminOrderResource', function (): void {
         ->with([
             'index',
             'create',
-            'edit'
+            'edit',
         ]);
 
     it('order resource doesnt has option', function (string $key): void {
         expect(OrderResource::getPages())->not->toHaveKey($key);
     })
         ->with([
-            'delete'
+            'delete',
         ]);
 
     it('order resource has correct navigation group', function (): void {
@@ -299,5 +297,19 @@ describe('AdminOrderResource', function (): void {
         );
 
         expect($order->purchase_cost)->toBe($expectedTotal);
+    });
+
+    it('resets addresses when user_id is null', function (): void {
+        Livewire::test(CreateOrder::class)
+            ->fillForm([
+                'user_id' => test()->admin->id,
+            ])
+            ->fillForm([
+                'user_id' => null,
+            ])
+            ->assertSchemaStateSet([
+                'shipping_address_id' => '',
+                'billing_address_id' => '',
+            ]);
     });
 });

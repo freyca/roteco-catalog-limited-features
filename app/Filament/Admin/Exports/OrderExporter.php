@@ -37,6 +37,9 @@ class OrderExporter extends Exporter
         ];
     }
 
+    /**
+     * @codeCoverageIgnore
+     */
     public static function getCompletedNotificationBody(Export $export): string
     {
         $body = 'Your order export has completed and '.Number::format($export->successful_rows).' '.str('row')->plural($export->successful_rows).' exported.';

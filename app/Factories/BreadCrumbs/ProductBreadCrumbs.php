@@ -6,7 +6,6 @@ namespace App\Factories\BreadCrumbs;
 
 use App\Models\BaseProduct;
 use App\Models\Product;
-use App\Models\ProductSparePart;
 use Exception;
 
 class ProductBreadCrumbs extends StandardPageBreadCrumbs
@@ -16,13 +15,10 @@ class ProductBreadCrumbs extends StandardPageBreadCrumbs
         parent::setDefaultBreadCrumb();
 
         /** @codeCoverageIgnore exception is for sanity  */
-        throw_if(! $product instanceof BaseProduct, Exception::class, 'Invalid class type');
+        throw_if(! $product instanceof Product, Exception::class, 'Invalid class type');
 
         /** @var array<string, string> */
-        $bread_crumbs = match (true) {
-            $product instanceof ProductSparePart => $this->productSparePartBreadCrumb(),
-            $product instanceof Product => $this->productBreadCrumb($product),
-        };
+        $bread_crumbs = $this->productBreadCrumb($product);
 
         $bread_crumbs = array_merge($bread_crumbs, [$product->name => $product->slug]);
 
@@ -36,18 +32,6 @@ class ProductBreadCrumbs extends StandardPageBreadCrumbs
     {
         return [
             $product->category?->name => '/'.$product->category?->slug,
-        ];
-    }
-
-    /**
-     * @codeCoverageIgnore It is not used by now
-     *
-     * @return array<string, string>
-     */
-    private function productSparePartBreadCrumb(): array
-    {
-        return [
-            __('Spare parts') => route('spare-part-list'),
         ];
     }
 }
