@@ -43,18 +43,15 @@ class UserPanelProvider extends PanelProvider
                 NavigationItem::make(__('Home'))
                     ->url('/')
                     ->icon('heroicon-o-home')
-                    ->group(__('Website urls'))
-                    ->sort(5),
-                NavigationItem::make(__('Cart'))
-                    ->url(fn (): string => route('checkout.cart'))
-                    ->icon('heroicon-o-shopping-bag')
-                    ->group(__('Website urls'))
-                    ->sort(5),
+                    ->sort(1),
                 NavigationItem::make(__('Products'))
                     ->url(fn (): string => route('product-list'))
                     ->icon('heroicon-o-rectangle-stack')
-                    ->group(__('Website urls'))
-                    ->sort(5),
+                    ->sort(2),
+                NavigationItem::make(__('Cart'))
+                    ->url(fn (): string => route('checkout.cart'))
+                    ->icon('heroicon-o-shopping-bag')
+                    ->sort(3),
                 NavigationItem::make(__('Profile'))
                     ->url('/user/profile', shouldOpenInNewTab: false)
                     ->icon('heroicon-s-user-circle')

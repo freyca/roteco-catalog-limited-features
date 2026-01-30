@@ -150,4 +150,9 @@ class OrderResource extends Resource
     {
         return __('Orders');
     }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('User');
+    }
 }

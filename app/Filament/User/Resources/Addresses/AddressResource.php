@@ -140,4 +140,9 @@ class AddressResource extends Resource
     {
         return __('Shipping address');
     }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('User');
+    }
 }
