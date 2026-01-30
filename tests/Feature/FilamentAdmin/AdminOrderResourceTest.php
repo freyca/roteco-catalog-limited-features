@@ -121,6 +121,7 @@ describe('AdminOrderResource', function (): void {
     });
 
     it('can create an order', function (): void {
+        $user = User::factory()->create();
         $address = Address::factory(['address_type' => AddressType::ShippingAndBilling])->for(test()->admin)->create();
 
         $product = ProductSparePart::factory()->create([
@@ -129,7 +130,7 @@ describe('AdminOrderResource', function (): void {
         ]);
 
         $orderData = [
-            'user_id' => test()->admin->id,
+            'user_id' => $user->id,
             'shipping_address_id' => $address->id,
             'billing_address_id' => $address->id,
             'discount' => 10,
@@ -158,7 +159,7 @@ describe('AdminOrderResource', function (): void {
         $order = Order::query()->first();
 
         // Validate order belongs to user
-        expect($order->user_id)->toBe(test()->admin->id);
+        expect($order->user_id)->toBe($user->id);
         expect($order->shipping_address_id)->toBe($address->id);
         expect($order->billing_address_id)->toBe($address->id);
 
@@ -190,8 +191,9 @@ describe('AdminOrderResource', function (): void {
     });
 
     it('can update an order adding a product', function (): void {
+        $user = User::factory()->create();
         $address = Address::factory(['address_type' => AddressType::ShippingAndBilling])
-            ->for(test()->admin)
+            ->for($user)
             ->create();
 
         // Create products
@@ -205,7 +207,7 @@ describe('AdminOrderResource', function (): void {
         ]);
 
         // Create initial order
-        $order = Order::factory()->for(test()->admin)->create([
+        $order = Order::factory()->for($user)->create([
             'shipping_address_id' => $address->id,
             'billing_address_id' => $address->id,
             'discount' => 0,
@@ -266,7 +268,7 @@ describe('AdminOrderResource', function (): void {
         expect($order->status)->toBe(OrderStatus::Shipped);
         expect($order->shipping_address_id)->toBe($address->id);
         expect($order->billing_address_id)->toBe($address->id);
-        expect($order->user_id)->toBe(test()->admin->id);
+        expect($order->user_id)->toBe($user->id);
 
         $order->load('orderProducts.orderable');
         $products = $order->orderProducts;
