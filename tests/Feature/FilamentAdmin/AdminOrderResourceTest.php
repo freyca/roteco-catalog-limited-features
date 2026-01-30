@@ -94,8 +94,8 @@ describe('AdminOrderResource', function (): void {
         // Test the export action through Livewire
         Livewire::test(ListOrders::class)
             ->mountTableAction('export')
-            ->callMountedTableAction()
-            ->assertHasNoTableActionErrors();
+            ->callMountedAction()
+            ->assertHasNoFormErrors();
 
         // Find all CSV files except headers and xlsx
         $exportDirs = Storage::disk('local')->directories('filament_exports');
@@ -128,27 +128,28 @@ describe('AdminOrderResource', function (): void {
             'price_with_discount' => 90,
         ]);
 
-        $undoRepeaterFake = Repeater::fake();
+        $orderData = [
+            'user_id' => test()->admin->id,
+            'shipping_address_id' => $address->id,
+            'billing_address_id' => $address->id,
+            'discount' => 10,
+            'payment_method' => PaymentMethod::Card,
+            'status' => OrderStatus::Paid,
+            'orderProducts' => [
+                0 => [
+                    'orderable_type' => ProductSparePart::class,
+                    'orderable_id' => $product->id,
+                    'quantity' => 2,
+                    'unit_price' => $product->price_with_discount,
+                ],
+            ],
+        ];
 
+        $undoRepeaterFake = Repeater::fake();
         Filament::setCurrentPanel(Filament::getPanel('admin'));
 
         Livewire::test(CreateOrder::class)
-            ->fillForm([
-                'user_id' => test()->admin->id,
-                'shipping_address_id' => $address->id,
-                'billing_address_id' => $address->id,
-                'discount' => 10,
-                'payment_method' => PaymentMethod::Card,
-                'status' => OrderStatus::Paid,
-                'orderProducts' => [
-                    0 => [
-                        'orderable_type' => ProductSparePart::class,
-                        'orderable_id' => $product->id,
-                        'quantity' => 2,
-                        'unit_price' => $product->price_with_discount,
-                    ],
-                ],
-            ])
+            ->fillForm($orderData)
             ->call('create')
             ->assertHasNoFormErrors();
 
