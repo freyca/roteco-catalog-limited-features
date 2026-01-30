@@ -130,6 +130,8 @@ describe('AdminOrderResource', function (): void {
 
         $undoRepeaterFake = Repeater::fake();
 
+        Filament::setCurrentPanel(Filament::getPanel('admin'));
+
         Livewire::test(CreateOrder::class)
             ->fillForm([
                 'user_id' => test()->admin->id,
@@ -233,6 +235,8 @@ describe('AdminOrderResource', function (): void {
                 ],
             ],
         ];
+
+        Filament::setCurrentPanel(Filament::getPanel('admin'));
 
         Livewire::test(EditOrder::class, [
             'record' => $order->getKey(),
