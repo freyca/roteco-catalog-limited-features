@@ -142,9 +142,9 @@ class OrderResource extends Resource
                         TextInput::make('discount')
                             ->label(__('Discount (in percentage %)'))
                             ->hint(__('Will be applied after taxes'))
-                            ->default(0)
-                            ->minValue(0)
                             ->numeric()
+                            ->minValue(0)
+                            ->default(0)
                             ->lazy()
                             ->afterStateUpdated(
                                 function (Get $get, Set $set): void {

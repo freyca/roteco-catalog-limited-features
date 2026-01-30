@@ -46,14 +46,16 @@ trait FormBuilderTrait
                 TextInput::make('price')
                     ->label(__('Price PVP'))
                     ->numeric()
+                    ->minValue(0.01)
                     ->suffix('€')
                     ->required(),
 
                 TextInput::make('price_with_discount')
                     ->label(__('Price to retailer'))
+                    ->numeric()
+                    ->minValue(0.01)
                     ->suffix('€')
-                    ->required()
-                    ->numeric(),
+                    ->required(),
 
             ])->columns(3);
     }
