@@ -52,7 +52,7 @@ class OrderResource extends Resource
             ->components([
                 Section::make([
                     TextInput::make('id')
-                        ->name(__('Order id (automatically generated)').':')
+                        ->name(__('Order id (automatically generated)') . ':')
                         ->disabled()
                         ->columnSpanFull(),
 
@@ -61,6 +61,7 @@ class OrderResource extends Resource
                             Select::make('user_id')
                                 ->relationship('user', 'email')
                                 ->label(__('Customer email'))
+                                ->required()
                                 ->searchable()
                                 ->preload()
                                 ->afterStateUpdated(function (mixed $state, Set $set): void {
@@ -86,9 +87,9 @@ class OrderResource extends Resource
                                 ),
                             Select::make('shipping_address_id')
                                 ->relationship('shippingAddress', 'address')
-                                ->disabled(fn (Get $get): bool => blank($get('user_id')))
+                                ->disabled(fn(Get $get): bool => blank($get('user_id')))
                                 ->options(
-                                    fn (Get $get): ?array => self::getAddressId($get)
+                                    fn(Get $get): ?array => self::getAddressId($get)
                                 )
                                 ->selectablePlaceholder(function (Get $get): bool {
                                     $user_id = $get('user_id');
@@ -105,9 +106,9 @@ class OrderResource extends Resource
                                 ->required(),
                             Select::make('billing_address_id')
                                 ->relationship('billingAddress', 'address')
-                                ->disabled(fn (Get $get): bool => blank($get('user_id')))
+                                ->disabled(fn(Get $get): bool => blank($get('user_id')))
                                 ->options(
-                                    fn (Get $get): ?array => self::getAddressId($get)
+                                    fn(Get $get): ?array => self::getAddressId($get)
                                 )
                                 ->selectablePlaceholder(function (Get $get): bool {
                                     $user_id = $get('user_id');
@@ -120,6 +121,7 @@ class OrderResource extends Resource
                                     };
                                 })
                                 ->columnSpanFull()
+                                ->required()
                                 ->label(__('Billing address')),
                         ]),
                 ])->columns(2),
@@ -141,7 +143,9 @@ class OrderResource extends Resource
                             ->label(__('Discount (in percentage %)'))
                             ->hint(__('Will be applied after taxes'))
                             ->default(0)
-                            ->integer()
+                            ->minValue(0)
+                            ->numeric()
+                            ->decimalPlaces(2)
                             ->lazy()
                             ->afterStateUpdated(
                                 function (Get $get, Set $set): void {
@@ -153,6 +157,7 @@ class OrderResource extends Resource
                             ->label(__('Payment method'))
                             ->inline()
                             ->options(PaymentMethod::class)
+                            ->default(PaymentMethod::Card)
                             ->required()
                             ->columnSpan('full'),
 
@@ -160,6 +165,7 @@ class OrderResource extends Resource
                             ->label(__('Status'))
                             ->inline()
                             ->options(OrderStatus::class)
+                            ->default(OrderStatus::PaymentPending)
                             ->required()
                             ->columnSpan('full'),
 
@@ -249,7 +255,7 @@ class OrderResource extends Resource
 
                 Select::make('orderable_id')
                     ->label(__('Product'))
-                    ->disabled(fn (Get $get): bool => blank($get('orderable_type')))
+                    ->disabled(fn(Get $get): bool => blank($get('orderable_type')))
                     ->options(function (Get $get) {
                         if (blank($get('orderable_type'))) {
                             return;
