@@ -12,27 +12,19 @@ class OrderProductDTO
      * Private attributes are used as a "cache system"
      * This avoid repetitive queries to the database by querying this object
      */
-    private float $price_without_discount;
+    private readonly float $price_without_discount;
 
-    private ?float $price_with_discount;
-
-    private ?float $price_when_user_owns_product;
-
-    private string $reference;
-
-    private BaseProduct $product;
+    private readonly ?float $price_with_discount;
 
     public function __construct(
-        private int $orderable_id,
-        private string $orderable_type,
-        private float $unit_price,
+        private readonly int $orderable_id,
+        private readonly string $orderable_type,
+        private readonly float $unit_price,
         private int $quantity,
         BaseProduct $product,
     ) {
-        $this->reference = (string) $product->reference;
         $this->price_with_discount = $product->price_with_discount;
         $this->price_without_discount = $product->price;
-        $this->price_when_user_owns_product = ! isset($product->price_when_user_owns_product) ? null : $product->price_when_user_owns_product;
     }
 
     public function setQuantity(int $quantity): void
@@ -45,11 +37,8 @@ class OrderProductDTO
      */
     public function getProduct(): BaseProduct
     {
-        if (! isset($this->product)) {
-            $this->product = $this->orderable_type::find($this->orderable_id);
-        }
-
-        return $this->product;
+        /** @var BaseProduct */
+        return $this->orderable_type::find($this->orderable_id);
     }
 
     public function priceWithoutDiscount(): float
@@ -60,16 +49,6 @@ class OrderProductDTO
     public function priceWithDiscount(): ?float
     {
         return $this->price_with_discount;
-    }
-
-    public function priceWhenUserOwnsProduct(): ?float
-    {
-        return $this->price_when_user_owns_product;
-    }
-
-    public function reference(): string
-    {
-        return $this->reference;
     }
 
     public function orderableId(): int

@@ -25,7 +25,7 @@ class OrderStatusChart extends ChartWidget
         $labels = [];
 
         foreach (OrderStatus::cases() as $status) {
-            $count = Order::where('status', $status)->count();
+            $count = Order::query()->where('status', $status)->count();
             $data[] = $count;
             $labels[] = $status->getLabel();
         }

@@ -1,19 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\Admin\Widgets\RevenueChart;
 use App\Models\Order;
 use App\Models\User;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Date;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
 });
 
-describe('RevenueChart Widget', function () {
-    it('returns chart data structure', function () {
+describe('RevenueChart Widget', function (): void {
+    it('returns chart data structure', function (): void {
         $widget = new RevenueChart;
         $reflection = new ReflectionMethod($widget, 'getData');
-        $reflection->setAccessible(true);
         $data = $reflection->invoke($widget);
 
         expect($data)->toHaveKey('datasets');
@@ -21,23 +22,22 @@ describe('RevenueChart Widget', function () {
         expect($data['datasets'])->toHaveCount(1);
     });
 
-    it('has correct chart heading', function () {
+    it('has correct chart heading', function (): void {
         $widget = new RevenueChart;
 
         expect($widget->getHeading())->toBe(__('Revenue (Last 7 Days)'));
     });
 
-    it('includes last 7 days labels', function () {
+    it('includes last 7 days labels', function (): void {
         $widget = new RevenueChart;
         $reflection = new ReflectionMethod($widget, 'getData');
-        $reflection->setAccessible(true);
         $data = $reflection->invoke($widget);
 
         expect($data['labels'])->toHaveCount(7);
     });
 
-    it('calculates revenue for each day', function () {
-        $today = Carbon::now();
+    it('calculates revenue for each day', function (): void {
+        $today = Date::now();
         Order::factory()->create([
             'purchase_cost' => 10000,
             'created_at' => $today->copy(),
@@ -49,7 +49,6 @@ describe('RevenueChart Widget', function () {
 
         $widget = new RevenueChart;
         $reflection = new ReflectionMethod($widget, 'getData');
-        $reflection->setAccessible(true);
         $data = $reflection->invoke($widget);
         $dataset = $data['datasets'][0];
 
@@ -58,57 +57,51 @@ describe('RevenueChart Widget', function () {
         expect($dataset['data'][6])->toBeGreaterThanOrEqual(150);
     });
 
-    it('has correct dataset label', function () {
+    it('has correct dataset label', function (): void {
         $widget = new RevenueChart;
         $reflection = new ReflectionMethod($widget, 'getData');
-        $reflection->setAccessible(true);
         $data = $reflection->invoke($widget);
 
         expect($data['datasets'][0]['label'])->toBe(__('Revenue (€)'));
     });
 
-    it('dataset is filled', function () {
+    it('dataset is filled', function (): void {
         $widget = new RevenueChart;
         $reflection = new ReflectionMethod($widget, 'getData');
-        $reflection->setAccessible(true);
         $data = $reflection->invoke($widget);
 
         expect($data['datasets'][0]['fill'])->toBeTrue();
     });
 
-    it('dataset has border color', function () {
+    it('dataset has border color', function (): void {
         $widget = new RevenueChart;
         $reflection = new ReflectionMethod($widget, 'getData');
-        $reflection->setAccessible(true);
         $data = $reflection->invoke($widget);
 
         expect($data['datasets'][0])->toHaveKey('borderColor');
         expect($data['datasets'][0]['borderColor'])->toBe('rgb(34, 197, 94)');
     });
 
-    it('dataset has background color', function () {
+    it('dataset has background color', function (): void {
         $widget = new RevenueChart;
         $reflection = new ReflectionMethod($widget, 'getData');
-        $reflection->setAccessible(true);
         $data = $reflection->invoke($widget);
 
         expect($data['datasets'][0])->toHaveKey('backgroundColor');
         expect($data['datasets'][0]['backgroundColor'])->toBe('rgba(34, 197, 94, 0.1)');
     });
 
-    it('has correct chart type', function () {
+    it('has correct chart type', function (): void {
         $widget = new RevenueChart;
         $reflection = new ReflectionMethod($widget, 'getType');
-        $reflection->setAccessible(true);
         $type = $reflection->invoke($widget);
 
         expect($type)->toBe('line');
     });
 
-    it('chart options are present', function () {
+    it('chart options are present', function (): void {
         $widget = new RevenueChart;
         $reflection = new ReflectionMethod($widget, 'getOptions');
-        $reflection->setAccessible(true);
         $options = $reflection->invoke($widget);
 
         expect($options)->not()->toBeNull();

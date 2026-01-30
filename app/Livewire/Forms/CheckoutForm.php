@@ -31,13 +31,16 @@ use Livewire\Attributes\On;
 use Livewire\Component;
 
 /**
- * @property \Filament\Schemas\Schema $form
+ * @property Schema $form
  */
 class CheckoutForm extends Component implements HasActions, HasForms
 {
     use InteractsWithActions;
     use InteractsWithForms;
 
+    /**
+     * @var array<string, mixed>|null
+     */
     public ?array $checkoutFormData = [];
 
     public function mount(): void
@@ -63,14 +66,14 @@ class CheckoutForm extends Component implements HasActions, HasForms
         try {
             $addressBuilder = new AddressBuilder($this->form);
             $addressBuilder->build();
-        } catch (UniqueConstraintViolationException $th) {
+        } catch (UniqueConstraintViolationException) {
             session()->flash('email_account_exists');
             redirect('/user/login');
 
             return;
         }
 
-        $orderBuilder = app(OrderBuilder::class);
+        $orderBuilder = resolve(OrderBuilder::class);
         $orderBuilder->build($addressBuilder);
 
         $this->redirect(
@@ -89,7 +92,7 @@ class CheckoutForm extends Component implements HasActions, HasForms
 
     private function buildFormForLoggedInUser(User $user, Schema $schema): Schema
     {
-        $shipping_addresses = Address::where('user_id', $user->id)->pluck('address', 'id');
+        $shipping_addresses = Address::query()->where('user_id', $user->id)->pluck('address', 'id');
 
         if ($shipping_addresses->count() !== 0) {
             $shipping_addresses->put(0, __('New address'));
@@ -127,13 +130,13 @@ class CheckoutForm extends Component implements HasActions, HasForms
                     ->default($shipping_addresses->keys()->first())
                     ->live()
                     ->reactive()
-                    ->hidden(function () use ($shipping_addresses) {
+                    ->hidden(
                         // If there is no addresses
-                        return $shipping_addresses->count() === 0;
-                    }),
+                        fn (): bool => $shipping_addresses->count() === 0
+                    ),
                 $this->addressFormFields('shipping', Auth::user() === null)
                     ->hidden(
-                        function (Get $get) use ($shipping_addresses) {
+                        function (Get $get) use ($shipping_addresses): bool {
                             // If there is no addresses
                             if (count($shipping_addresses) === 0) {
                                 return false;
@@ -142,7 +145,7 @@ class CheckoutForm extends Component implements HasActions, HasForms
                             // If is checked 'new address
                             $selectedId = $get('shipping_address_id');
 
-                            return ! ($selectedId === 0 || $selectedId === '0');
+                            return $selectedId !== 0 && $selectedId !== '0';
                         }
                     ),
             ]);
@@ -165,7 +168,7 @@ class CheckoutForm extends Component implements HasActions, HasForms
                     ->live()
                     ->reactive()
                     ->hidden(
-                        function (Get $get) use ($billing_addresses) {
+                        function (Get $get) use ($billing_addresses): bool {
                             // If is checked use_shipping_address_as_billing_address
                             if ($get('use_shipping_address_as_billing_address')) {
                                 return true;
@@ -177,7 +180,7 @@ class CheckoutForm extends Component implements HasActions, HasForms
                     ),
                 $this->addressFormFields('billing')
                     ->hidden(
-                        function (Get $get) use ($billing_addresses) {
+                        function (Get $get) use ($billing_addresses): bool {
                             // If is checked use_shipping_address_as_billing_address
                             if ($get('use_shipping_address_as_billing_address')) {
                                 return true;
@@ -189,9 +192,9 @@ class CheckoutForm extends Component implements HasActions, HasForms
                             }
 
                             // If is checked "New address
-                            $selectedId = $get('shipping_address_id');
+                            $selectedId = $get('billing_address_id');
 
-                            return ! ($selectedId === 0 || $selectedId === '0');
+                            return $selectedId !== 0 && $selectedId !== '0';
                         }
                     ),
             ]);
@@ -219,7 +222,7 @@ class CheckoutForm extends Component implements HasActions, HasForms
                 ->email()
                 ->prefixIcon('heroicon-s-envelope')
                 ->required()
-                ->hidden(function () use ($form_field_name, $is_guest) {
+                ->hidden(function () use ($form_field_name, $is_guest): bool {
                     // Hidden on billing
                     if ($form_field_name === 'billing') {
                         return true;
@@ -281,7 +284,7 @@ class CheckoutForm extends Component implements HasActions, HasForms
                 ->live()
                 ->default(false)
                 ->label(__('Purchase as guest'))
-                ->hidden(function () use ($form_field_name, $is_guest) {
+                ->hidden(function () use ($form_field_name, $is_guest): bool {
                     // Hidden on billing
                     if ($form_field_name === 'billing') {
                         return true;

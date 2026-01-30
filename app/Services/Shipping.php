@@ -6,9 +6,9 @@ namespace App\Services;
 
 use App\Repositories\Shipping\ShippingRepositoryInterface;
 
-final class Shipping
+final readonly class Shipping
 {
-    public function __construct(private readonly ShippingRepositoryInterface $repository) {}
+    public function __construct(private ShippingRepositoryInterface $repository) {}
 
     public function getTrackStatus(): string
     {

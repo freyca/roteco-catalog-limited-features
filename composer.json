@@ -8,7 +8,7 @@
     ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "andreiio/blade-remix-icon": "^3.6",
         "blade-ui-kit/blade-heroicons": "^2.3",
         "creagia/redsys-php": "^3.0",
@@ -16,12 +16,14 @@
         "filament/filament": "^4.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.9",
+        "nunomaduro/essentials": "^1.0",
         "owenvoke/blade-fontawesome": "^2.9",
         "socialiteproviders/google": "^4.1",
         "srmklive/paypal": "^3.0"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.13",
+        "driftingly/rector-laravel": "^2.1",
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.0",
         "laravel/pint": "^1.15",
@@ -29,11 +31,14 @@
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",
         "nunomaduro/phpinsights": "^2.12",
-        "pestphp/pest": "^3.0",
-        "pestphp/pest-plugin-laravel": "^3.1",
-        "pestphp/pest-plugin-type-coverage": "^3.6",
+        "pestphp/pest": "^4.0",
+        "pestphp/pest-plugin-browser": "^4.2.1",
+        "pestphp/pest-plugin-laravel": "^4.0.0",
+        "pestphp/pest-plugin-type-coverage": "^4.0.3",
+        "rector/rector": "^2.3",
         "spatie/laravel-ignition": "^2.4",
-        "spatie/laravel-web-tinker": "^1.9"
+        "spatie/laravel-web-tinker": "^1.9",
+        "wire-elements/wire-spy": "^0.0.12"
     },
     "autoload": {
         "psr-4": {
@@ -64,6 +69,44 @@
             "@php artisan key:generate --ansi",
             "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
             "@php artisan migrate --graceful --ansi"
+        ],
+        "setup": [
+            "composer install",
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php artisan key:generate",
+            "@php artisan storage:link",
+            "@php artisan migrate --force",
+            "@php -r \"is_dir('public/storage/product-images') || mkdir('public/storage/product-images');\"",
+            "@php -r \"is_dir('public/storage/category-images') || mkdir('public/storage/category-images');\"",
+            "npm install",
+            "npm run build"
+        ],
+        "update-application": [
+            "git pull",
+            "@php artisan migrate",
+            "composer update",
+            "npm update",
+            "npm run build",
+            "@php artisan optimize"
+        ],
+        "lint": [
+            "rector",
+            "pint --parallel",
+            "npm run lint"
+        ],
+        "test:type-coverage": "pest --type-coverage --min=100",
+        "test:lint": [
+            "pint --parallel --test",
+            "rector --dry-run",
+            "npm run test:lint"
+        ],
+        "test:unit": "XDEBUG_MODE=\"coverage\" pest --parallel --coverage --min=90.0",
+        "test:types": "phpstan",
+        "test": [
+            "@test:type-coverage",
+            "@test:unit",
+            "@test:lint",
+            "@test:types"
         ]
     },
     "extra": {

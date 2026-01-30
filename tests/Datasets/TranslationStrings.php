@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 dataset('translatable_strings', [
     'order-related' => [
         'Orders',

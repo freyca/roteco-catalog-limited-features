@@ -15,7 +15,7 @@ class PriceCalculator
     public function getTotalCostForProduct(OrderProductDTO $product, int $quantity, bool $apply_discount = true): float
     {
         if ($apply_discount) {
-            $price = ! is_null($product->priceWithDiscount()) ? $product->priceWithDiscount() : $product->priceWithoutDiscount();
+            $price = is_null($product->priceWithDiscount()) ? $product->priceWithoutDiscount() : $product->priceWithDiscount();
         } else {
             $price = $product->priceWithoutDiscount();
         }
@@ -36,26 +36,6 @@ class PriceCalculator
     /**
      * Order calculations
      */
-
-    /**
-     * @paran Collection<int, OrderProductDTO> $order_products
-     */
-    private function getTotalCostForOrder(Collection $order_products, bool $apply_discount = true): float
-    {
-        $total = 0;
-
-        /* @var OrderProductDTO $order_product */
-        foreach ($order_products as $order_product) {
-            $total += $this->getTotalCostForProduct(
-                product: $order_product,
-                quantity: $order_product->quantity(),
-                apply_discount: $apply_discount,
-            );
-        }
-
-        return $total;
-    }
-
     public function getTotaCostForOrderWithoutDiscount(Collection $order_products): float
     {
         return $this->getTotalCostForOrder($order_products, apply_discount: false);
@@ -73,6 +53,32 @@ class PriceCalculator
 
     public function getTotalCostForOrderWithTaxes(Collection $order_products, bool $apply_discount = true): float
     {
-        return $this->getTotalCostForOrder($order_products, $apply_discount) * (1 + config('custom.tax_iva'));
+        return $this->getTotalCostForOrder($order_products, $apply_discount) * (1 + config()->float('custom.tax_iva'));
+    }
+
+    public function getTotalCostForOrderWithTaxesAndManualDiscount(Collection $order_products, bool $apply_discount = true, float $percentage_discount = 0): float
+    {
+        $total_with_taxes = $this->getTotalCostForOrderWithTaxes($order_products, $apply_discount);
+
+        return round($total_with_taxes - ($total_with_taxes * $percentage_discount / 100), 2);
+    }
+
+    /**
+     * @paran Collection<int, OrderProductDTO> $order_products
+     */
+    private function getTotalCostForOrder(Collection $order_products, bool $apply_discount = true): float
+    {
+        $total = 0;
+
+        /** @var Collection<int, OrderProductDTO> $order_products */
+        foreach ($order_products as $order_product) {
+            $total += $this->getTotalCostForProduct(
+                product: $order_product,
+                quantity: $order_product->quantity(),
+                apply_discount: $apply_discount,
+            );
+        }
+
+        return $total;
     }
 }

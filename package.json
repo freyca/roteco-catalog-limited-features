@@ -3,7 +3,9 @@
     "type": "module",
     "scripts": {
         "dev": "vite --host 127.0.0.1",
-        "build": "vite build"
+        "build": "vite build",
+        "lint": "prettier --write resources/",
+        "test:lint": "prettier --check resources/"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.10",
@@ -11,6 +13,9 @@
         "axios": "^1.6.4",
         "laravel-vite-plugin": "^1.0",
         "postcss-nesting": "^12.1.5",
+        "prettier": "^3.8.1",
+        "prettier-plugin-blade": "^2.1.21",
+        "prettier-plugin-tailwindcss": "^0.7.2",
         "vite": "^5.0"
     },
     "dependencies": {

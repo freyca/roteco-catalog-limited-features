@@ -1,19 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 use App\DTO\OrderProductDTO;
 use App\Models\ProductSparePart;
 use App\Services\PriceCalculator;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->calculator = new PriceCalculator;
 });
 
-describe('PriceCalculator', function () {
-    describe('Product cost calculations', function () {
-        it('calculates single product cost without discount', function () {
+describe('PriceCalculator', function (): void {
+    describe('Product cost calculations', function (): void {
+        it('calculates single product cost without discount', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
-                'price_with_discount' => null,
+                'price_with_discount' => 0,
             ]);
 
             $productDTO = new OrderProductDTO(
@@ -29,7 +31,7 @@ describe('PriceCalculator', function () {
             expect($cost)->toBe(200.0);
         });
 
-        it('calculates single product cost with discount', function () {
+        it('calculates single product cost with discount', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -48,7 +50,7 @@ describe('PriceCalculator', function () {
             expect($cost)->toBe(160.0); // 80 * 2
         });
 
-        it('calculates product cost ignoring discount when apply_discount is false', function () {
+        it('calculates product cost ignoring discount when apply_discount is false', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -68,15 +70,15 @@ describe('PriceCalculator', function () {
         });
     });
 
-    describe('Order cost calculations', function () {
-        it('returns zero for empty order', function () {
+    describe('Order cost calculations', function (): void {
+        it('returns zero for empty order', function (): void {
             $products = collect();
             $total = test()->calculator->getTotalCostForOrderWithTaxes($products);
 
             expect($total)->toBe(0.0);
         });
 
-        it('calculates order total with multiple products and discounts', function () {
+        it('calculates order total with multiple products and discounts', function (): void {
             $product1 = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -109,7 +111,7 @@ describe('PriceCalculator', function () {
             expect($total)->toBe(338.8); // ((80 * 2) + (40 * 3)) * 1.21
         });
 
-        it('calculates order total without applying discounts', function () {
+        it('calculates order total without applying discounts', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -129,7 +131,26 @@ describe('PriceCalculator', function () {
             expect($total)->toBe(200.0);
         });
 
-        it('calculates total discount amount', function () {
+        it('calculates total discount amount for product', function (): void {
+            $product = ProductSparePart::factory()->create([
+                'price' => 120,
+                'price_with_discount' => 80,
+            ]);
+
+            $dto = new OrderProductDTO(
+                orderable_id: $product->id,
+                orderable_type: ProductSparePart::class,
+                unit_price: 100,
+                quantity: 5,
+                product: $product,
+            );
+
+            $discount = test()->calculator->getTotalDiscountForProduct($dto, 5);
+
+            expect($discount)->toBe(200.0); // (120 * 5) - (80 * 5)
+        });
+
+        it('calculates total discount amount for order', function (): void {
             $product = ProductSparePart::factory()->create([
                 'price' => 100,
                 'price_with_discount' => 80,
@@ -147,6 +168,30 @@ describe('PriceCalculator', function () {
             $discount = test()->calculator->getTotalDiscountForOrder($products);
 
             expect($discount)->toBe(40.0); // (100 * 2) - (80 * 2)
+        });
+
+        it('calculates correct price with manual discount', function (): void {
+            $product = ProductSparePart::factory()->create([
+                'price' => 100,
+                'price_with_discount' => 80,
+            ]);
+
+            $dto = new OrderProductDTO(
+                orderable_id: $product->id,
+                orderable_type: ProductSparePart::class,
+                unit_price: 100,
+                quantity: 2,
+                product: $product,
+            );
+
+            $products = collect([$dto]);
+            $expected = test()->calculator->getTotalCostForOrderWithTaxesAndManualDiscount($products, true, 10);
+
+            // $total = 80 * 2 * 1.21 = 193.6
+            // $discount = $total - ( $total * 10 / 100) = 193.6 - 19.36
+            // $expected = $total - $discount = 174.24
+
+            expect($expected)->toBe(174.24);
         });
     });
 });

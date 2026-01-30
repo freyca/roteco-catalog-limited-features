@@ -6,5 +6,8 @@ namespace App\Factories\BreadCrumbs;
 
 interface BreadCrumbsFactory
 {
+    /**
+     * @return array<string, string>
+     */
     public function getBreadCrumbs(): array;
 }

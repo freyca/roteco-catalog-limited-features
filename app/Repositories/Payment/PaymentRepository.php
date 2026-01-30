@@ -16,7 +16,10 @@ abstract class PaymentRepository implements PaymentRepositoryInterface
 
     public function __construct(protected OrderRepositoryInterface $orderRepository) {}
 
-    public function redirectWithFail(Order $order, ?string $response = null): RedirectResponse
+    /**
+     * @codeCoverageIgnore  It is not used by now since we do not pass through payment gateways
+     */
+    final public function redirectWithFail(Order $order, ?string $response = null): RedirectResponse
     {
         $this->orderRepository->changeStatus($order, OrderStatus::PaymentFailed);
 
@@ -25,6 +28,6 @@ abstract class PaymentRepository implements PaymentRepositoryInterface
             $this->orderRepository->paymentGatewayResponse($order, ($encoded === false) ? '' : $encoded);
         }
 
-        return redirect()->route('payment.purchase-failed', ['order' => $order->id]);
+        return to_route('payment.purchase-failed', ['order' => $order->id]);
     }
 }

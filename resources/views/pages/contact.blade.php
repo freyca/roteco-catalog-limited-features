@@ -1,5 +1,4 @@
 <x-layouts.app>
-
     <x-bread-crumbs :breadcrumbs="$breadcrumbs" />
 
     <div class="mx-4">

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -12,21 +14,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('addresses', function (Blueprint $table) {
+        Schema::create('addresses', function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(User::class)->nullable()->constrained();
             $table->string('address_type');
-            $table->string('name')->maxLength(255);
-            $table->string('surname')->maxLength(255);
-            $table->string('bussiness_name')->nullable()->maxLength(255);
-            $table->string('email')->maxLength(255);
-            $table->string('financial_number')->nullable()->maxLength(20);
-            $table->string('phone')->maxLength(20);
-            $table->string('address')->maxLength(255);
-            $table->string('city')->maxLength(255);
-            $table->string('state')->maxLength(255);
-            $table->unsignedInteger('zip_code')->maxLength(20);
-            $table->string('country')->maxLength(255);
+            $table->string('name');
+            $table->string('surname');
+            $table->string('bussiness_name')->nullable();
+            $table->string('email');
+            $table->string('financial_number')->nullable();
+            $table->string('phone');
+            $table->string('address');
+            $table->string('city');
+            $table->string('state');
+            $table->unsignedInteger('zip_code');
+            $table->string('country');
             $table->timestamps();
         });
     }

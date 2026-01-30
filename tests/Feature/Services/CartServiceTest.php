@@ -1,30 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\Role;
 use App\Models\ProductSparePart;
 use App\Models\User;
 use App\Services\Cart;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->user = User::factory()->create(['role' => Role::Customer]);
     test()->product1 = ProductSparePart::factory()->create();
     test()->product2 = ProductSparePart::factory()->create();
 });
 
-describe('Cart Service', function () {
-    it('can add product to cart', function () {
+describe('Cart Service', function (): void {
+    it('can add product to cart', function (): void {
         test()->actingAs(test()->user);
-        $cart = app(Cart::class);
+        $cart = resolve(Cart::class);
 
-        $result = $cart->add(test()->product1, 1);
+        $cart->add(test()->product1, 1);
 
-        expect($result)->toBeTrue();
         expect($cart->hasProduct(test()->product1))->toBeTrue();
     });
 
-    it('can remove product from cart', function () {
+    it('can remove product from cart', function (): void {
         test()->actingAs(test()->user);
-        $cart = app(Cart::class);
+        $cart = resolve(Cart::class);
 
         $cart->add(test()->product1, 1);
         expect($cart->hasProduct(test()->product1))->toBeTrue();
@@ -34,18 +35,18 @@ describe('Cart Service', function () {
         expect($cart->hasProduct(test()->product1))->toBeFalse();
     });
 
-    it('returns total quantity for product', function () {
+    it('returns total quantity for product', function (): void {
         test()->actingAs(test()->user);
-        $cart = app(Cart::class);
+        $cart = resolve(Cart::class);
 
         $cart->add(test()->product1, 3);
 
         expect($cart->getTotalQuantityForProduct(test()->product1))->toBe(3);
     });
 
-    it('returns total cost for product', function () {
+    it('returns total cost for product', function (): void {
         test()->actingAs(test()->user);
-        $cart = app(Cart::class);
+        $cart = resolve(Cart::class);
 
         $cart->add(test()->product1, 2);
 
@@ -53,9 +54,9 @@ describe('Cart Service', function () {
         expect($totalCost)->toBeGreaterThan(0);
     });
 
-    it('can format product cost', function () {
+    it('can format product cost', function (): void {
         test()->actingAs(test()->user);
-        $cart = app(Cart::class);
+        $cart = resolve(Cart::class);
 
         $cart->add(test()->product1, 1);
 
@@ -64,9 +65,9 @@ describe('Cart Service', function () {
         expect($formattedCost)->toContain('€');
     });
 
-    it('can get total quantity in cart', function () {
+    it('can get total quantity in cart', function (): void {
         test()->actingAs(test()->user);
-        $cart = app(Cart::class);
+        $cart = resolve(Cart::class);
 
         $cart->add(test()->product1, 2);
         $cart->add(test()->product2, 3);
@@ -74,9 +75,9 @@ describe('Cart Service', function () {
         expect($cart->getTotalQuantity())->toBe(5);
     });
 
-    it('can get total cost in cart', function () {
+    it('can get total cost in cart', function (): void {
         test()->actingAs(test()->user);
-        $cart = app(Cart::class);
+        $cart = resolve(Cart::class);
 
         $cart->add(test()->product1, 1);
         $cart->add(test()->product2, 1);
@@ -85,9 +86,9 @@ describe('Cart Service', function () {
         expect($totalCost)->toBeGreaterThan(0);
     });
 
-    it('can check if cart is empty', function () {
+    it('can check if cart is empty', function (): void {
         test()->actingAs(test()->user);
-        $cart = app(Cart::class);
+        $cart = resolve(Cart::class);
 
         expect($cart->isEmpty())->toBeTrue();
 
@@ -96,9 +97,9 @@ describe('Cart Service', function () {
         expect($cart->isEmpty())->toBeFalse();
     });
 
-    it('can get all cart items', function () {
+    it('can get all cart items', function (): void {
         test()->actingAs(test()->user);
-        $cart = app(Cart::class);
+        $cart = resolve(Cart::class);
 
         $cart->add(test()->product1, 1);
         $cart->add(test()->product2, 2);

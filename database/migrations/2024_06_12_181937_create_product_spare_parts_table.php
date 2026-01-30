@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Disassembly;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -12,7 +14,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_spare_parts', function (Blueprint $table) {
+        Schema::create('product_spare_parts', function (Blueprint $table): void {
             $table->id();
             $table->string('reference')->unique();
             $table->string('name')->unique();

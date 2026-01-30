@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Disassembly;
+use App\Models\ProductSparePart;
 use Database\Traits\WithProductDiscounts;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\ProductSparePart>
+ * @extends Factory<ProductSparePart>
  */
 class ProductSparePartFactory extends Factory
 {
@@ -21,18 +25,18 @@ class ProductSparePartFactory extends Factory
     public function definition(): array
     {
         $price = fake()->randomFloat(2, 10, 3000);
-        $name = fake()->unique()->catchPhrase();
+        $name = fake()->unique()->sentence(3);
 
         return [
             'name' => $name,
-            'slug' => str()->slug($name),
+            'slug' => Str::slug($name),
             'reference' => fake()->unique()->bothify('REF-########'),
             'number_in_image' => fake()->numberBetween(1, 99),
             'self_reference' => fake()->optional()->bothify('REF-####'),
             'price' => $price,
             'price_with_discount' => fake()->randomFloat(2, 10, $price - 1),
             'published' => fake()->boolean(75),
-            'disassembly_id' => Disassembly::inRandomOrder()->first()?->id ?? Disassembly::factory(),
+            'disassembly_id' => Disassembly::query()->inRandomOrder()->first()->id ?? Disassembly::factory(),
             // 'price_when_user_owns_product' => $price * 0.8,
             // 'stock' => fake()->numberBetween(10, 100),
             // 'dimension_length' => fake()->randomFloat(2, 5, 100),
@@ -56,7 +60,7 @@ class ProductSparePartFactory extends Factory
      */
     public function published(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn (array $attributes): array => [
             'published' => true,
         ]);
     }

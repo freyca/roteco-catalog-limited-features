@@ -28,11 +28,10 @@ class ProductController extends Controller
 
     public function product(Product $product): View
     {
-        if (! $product->published && ! $this->canAccessPrivateProducts()) {
-            abort(403);
-        }
+        abort_if(! $product->published && ! $this->canAccessPrivateProducts(), 403);
 
         $relatedDisassemblies = $product->disassemblies;
+        $relatedDisassemblies->load('productSpareParts');
 
         return view(
             'pages.product',

@@ -10,10 +10,11 @@ use App\Filament\Admin\Resources\Users\Users\Pages\EditUser;
 use App\Filament\Admin\Resources\Users\Users\Pages\ListUsers;
 use App\Filament\Admin\Resources\Users\Users\RelationManagers\AddressRelationManager;
 use App\Models\User;
+use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
-use Filament\Forms;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -24,7 +25,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
     public static function form(Schema $schema): Schema
     {
@@ -34,7 +35,7 @@ class UserResource extends Resource
                     TextInput::make('id')
                         ->disabled()
                         ->label('ID'),
-                    Forms\Components\ToggleButtons::make('role')
+                    ToggleButtons::make('role')
                         ->inline()
                         ->required()
                         ->default(Role::Customer->value)

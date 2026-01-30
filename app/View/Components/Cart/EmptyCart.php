@@ -10,8 +10,6 @@ use Illuminate\View\Component;
 
 class EmptyCart extends Component
 {
-    public function __construct() {}
-
     public function render(): View|Closure|string
     {
         return view('components.cart.empty-cart');

@@ -1,18 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\User\Resources\Orders\Pages\ListOrders;
+use App\Filament\User\Resources\Orders\Pages\ViewOrder;
 use App\Models\Order;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Livewire;
 
-beforeEach(function () {
+beforeEach(function (): void {
     // Create an admin user for notifications
     test()->admin = User::factory()->admin_notifiable()->create();
     test()->user = User::factory()->create();
     test()->otherUser = User::factory()->create();
 });
 
-it('does not show edit order button', function () {
+it('does not show edit order button', function (): void {
     $user = test()->user;
     test()->actingAs($user);
     $order = Order::factory()->for($user)->create();
@@ -23,12 +27,12 @@ it('does not show edit order button', function () {
     $component->assertDontSee('Edit');
 
     // Check in the order view page
-    $component = Livewire::test(\App\Filament\User\Resources\Orders\Pages\ViewOrder::class, ['record' => $order->id])
+    $component = Livewire::test(ViewOrder::class, ['record' => $order->id])
         ->assertSuccessful();
     $component->assertDontSee('Edit');
 });
 
-it('shows only own orders', function () {
+it('shows only own orders', function (): void {
     $user = test()->user;
     $otherUser = test()->otherUser;
     test()->actingAs($user);
@@ -46,15 +50,15 @@ it('shows only own orders', function () {
     }
 });
 
-it('cannot view other users order', function () {
+it('cannot view other users order', function (): void {
     $user = test()->user;
     $otherUser = test()->otherUser;
     test()->actingAs($user);
     $otherOrder = Order::factory()->for($otherUser)->create();
 
-    expect(fn () => Livewire::test(\App\Filament\User\Resources\Orders\Pages\ViewOrder::class, ['record' => $otherOrder->id]))
-        ->toThrow(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+    expect(fn () => Livewire::test(ViewOrder::class, ['record' => $otherOrder->id]))
+        ->toThrow(ModelNotFoundException::class);
 
     expect(fn () => test()->get(route('filament.user.resources.orders.view', ['record' => $otherOrder->id])))
-        ->toThrow(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        ->toThrow(ModelNotFoundException::class);
 });

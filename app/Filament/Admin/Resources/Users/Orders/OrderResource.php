@@ -12,14 +12,17 @@ use App\Filament\Admin\Resources\Users\Orders\Pages\CreateOrder;
 use App\Filament\Admin\Resources\Users\Orders\Pages\EditOrder;
 use App\Filament\Admin\Resources\Users\Orders\Pages\ListOrders;
 use App\Models\Address;
+use App\Models\BaseProduct;
 use App\Models\Order;
 use App\Models\ProductSparePart;
 use App\Models\User;
 use App\Services\PriceCalculator;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
 use Filament\Actions\ExportAction;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -31,16 +34,17 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Number;
 
 class OrderResource extends Resource
 {
+    /**
+     * @var array<string, mixed>
+     */
+    public array $product_options = [];
+
     protected static ?string $model = Order::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-euro';
-
-    public array $product_options = [];
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-currency-euro';
 
     public static function form(Schema $schema): Schema
     {
@@ -57,9 +61,10 @@ class OrderResource extends Resource
                             Select::make('user_id')
                                 ->relationship('user', 'email')
                                 ->label(__('Customer email'))
+                                ->required()
                                 ->searchable()
                                 ->preload()
-                                ->afterStateUpdated(function (mixed $state, Set $set) {
+                                ->afterStateUpdated(function (mixed $state, Set $set): void {
                                     $user_id = $state;
 
                                     if ($user_id === null) {
@@ -82,15 +87,11 @@ class OrderResource extends Resource
                                 ),
                             Select::make('shipping_address_id')
                                 ->relationship('shippingAddress', 'address')
-                                ->disabled(function (Get $get) {
-                                    return ! filled($get('user_id'));
-                                })
+                                ->disabled(fn (Get $get): bool => blank($get('user_id')))
                                 ->options(
-                                    function (Get $get) {
-                                        return self::getAddressId($get);
-                                    }
+                                    fn (Get $get): ?array => self::getAddressId($get)
                                 )
-                                ->selectablePlaceholder(function (Get $get) {
+                                ->selectablePlaceholder(function (Get $get): bool {
                                     $user_id = $get('user_id');
                                     $order_id = $get('id');
 
@@ -105,15 +106,11 @@ class OrderResource extends Resource
                                 ->required(),
                             Select::make('billing_address_id')
                                 ->relationship('billingAddress', 'address')
-                                ->disabled(function (Get $get) {
-                                    return ! filled($get('user_id'));
-                                })
+                                ->disabled(fn (Get $get): bool => blank($get('user_id')))
                                 ->options(
-                                    function (Get $get) {
-                                        return self::getAddressId($get);
-                                    }
+                                    fn (Get $get): ?array => self::getAddressId($get)
                                 )
-                                ->selectablePlaceholder(function (Get $get) {
+                                ->selectablePlaceholder(function (Get $get): bool {
                                     $user_id = $get('user_id');
                                     $order_id = $get('id');
 
@@ -124,6 +121,7 @@ class OrderResource extends Resource
                                     };
                                 })
                                 ->columnSpanFull()
+                                ->required()
                                 ->label(__('Billing address')),
                         ]),
                 ])->columns(2),
@@ -135,19 +133,21 @@ class OrderResource extends Resource
                 Section::make(__('Payment'))
                     ->schema([
                         TextInput::make('purchase_cost')
-                            ->label(__('Price'))
+                            ->label(__('Price with taxes'))
                             ->required()
                             ->numeric()
+                            ->dehydrated()
                             ->disabled(),
 
                         TextInput::make('discount')
                             ->label(__('Discount (in percentage %)'))
                             ->hint(__('Will be applied after taxes'))
                             ->default(0)
-                            ->integer()
+                            ->minValue(0)
+                            ->numeric()
                             ->lazy()
                             ->afterStateUpdated(
-                                function (Get $get, Set $set) {
+                                function (Get $get, Set $set): void {
                                     self::updateTotals($get, $set);
                                 }
                             ),
@@ -156,6 +156,7 @@ class OrderResource extends Resource
                             ->label(__('Payment method'))
                             ->inline()
                             ->options(PaymentMethod::class)
+                            ->default(PaymentMethod::Card)
                             ->required()
                             ->columnSpan('full'),
 
@@ -163,6 +164,7 @@ class OrderResource extends Resource
                             ->label(__('Status'))
                             ->inline()
                             ->options(OrderStatus::class)
+                            ->default(OrderStatus::PaymentPending)
                             ->required()
                             ->columnSpan('full'),
 
@@ -236,7 +238,7 @@ class OrderResource extends Resource
             ->label(__('Order products'))
             ->relationship()
             ->schema([
-                Select::make('orderable_type')
+                Hidden::make('orderable_type')
                     // ->options([
                     //    ProductSparePart::class => 'Repuesto',
                     // ])
@@ -244,7 +246,6 @@ class OrderResource extends Resource
                     // ->afterStateUpdated(function (Set $set) {
                     //    $set('orderable_id', '');
                     // })
-                    ->hidden()
                     ->default(ProductSparePart::class)
                     ->required()
                     ->columnSpan([
@@ -253,14 +254,13 @@ class OrderResource extends Resource
 
                 Select::make('orderable_id')
                     ->label(__('Product'))
-                    ->disabled(function (Get $get) {
-                        return ! filled($get('orderable_type'));
-                    })
+                    ->disabled(fn (Get $get): bool => blank($get('orderable_type')))
                     ->options(function (Get $get) {
-                        if (! filled($get('orderable_type'))) {
+                        if (blank($get('orderable_type'))) {
                             return;
                         }
 
+                        /** @var BaseProduct */
                         $class_name = $get('orderable_type');
 
                         return $class_name::query()->pluck('name', 'id')->toArray();
@@ -269,9 +269,20 @@ class OrderResource extends Resource
                     ->required()
                     ->live()
                     ->distinct()
-                    ->afterStateUpdated(function (mixed $state, Get $get, Set $set) {
+                    ->afterStateUpdated(function (mixed $state, Get $get, Set $set): void {
+                        /** @var BaseProduct */
                         $class_name = $get('orderable_type');
-                        $product = $class_name::find($state);
+
+                        /** @var ?BaseProduct */
+                        $product = $class_name::query()->find($state);
+
+                        if (! $product) {
+                            $set('unit_price', 0);
+                            $set('retailer_price', 0);
+                            $set('quantity', 1);
+
+                            return;
+                        }
 
                         $set('unit_price', $product->price_with_discount);
                         $set('retailer_price', $product->price);
@@ -280,8 +291,10 @@ class OrderResource extends Resource
 
                 TextInput::make('quantity')
                     ->label(__('Quantity'))
+                    ->numeric()
                     ->integer()
                     ->default(1)
+                    ->minValue(1)
                     ->columnSpan([
                         'md' => 2,
                     ])
@@ -301,29 +314,26 @@ class OrderResource extends Resource
                 TextInput::make('retailer_price')
                     ->label(__('Price to retailer'))
                     ->disabled()
-                    ->dehydrated()
                     ->numeric()
-                    ->required()
                     ->suffix('€')
                     ->columnSpan([
                         'md' => 3,
                     ]),
             ])
-            ->defaultItems(0)
             ->columns([
                 'md' => 10,
             ])
             // @see: https://laraveldaily.com/post/filament-repeater-live-calculations-on-update
             ->live()
             ->afterStateUpdated(
-                function (Get $get, Set $set) {
+                function (Get $get, Set $set): void {
                     self::updateTotals($get, $set);
                 }
             )
             ->deleteAction(
-                function (Action $action) {
+                function (Action $action): void {
                     $action->after(
-                        function (Get $get, Set $set) {
+                        function (Get $get, Set $set): void {
                             self::updateTotals($get, $set);
                         }
                     );
@@ -333,9 +343,7 @@ class OrderResource extends Resource
 
     public static function getNavigationBadge(): ?string
     {
-        $modelClass = strval(static::$model);
-
-        return (string) $modelClass::whereNotIn('status', [OrderStatus::Cancelled, OrderStatus::Delivered])->count();
+        return (string) Order::query()->whereNotIn('status', [OrderStatus::Cancelled, OrderStatus::Delivered])->count();
     }
 
     public static function getNavigationGroup(): ?string
@@ -348,19 +356,42 @@ class OrderResource extends Resource
         return __('Orders');
     }
 
+    /**
+     * @return array<int|string, string>|null
+     */
     public static function getAddressId(Get $get): ?array
     {
+        /** @var ?int */
         $user_id = $get('user_id');
+
+        /** @var ?int */
         $order_id = $get('id');
 
         if ($user_id === null && $order_id !== null) {
-            return [Order::find(intval($order_id))?->shippingAddress?->address];
+            $address = Order::query()
+                ->find((int) $order_id)
+                ?->shippingAddress
+                ?->address;
+
+            return $address !== null ? [0 => (string) $address] : [];
         }
 
-        return match ($user_id) {
-            null => Address::select('address')->pluck('address')->toArray(),
-            default => User::find(intval($user_id))?->shippingAddresses->pluck('address', 'id')->toArray(),
-        };
+        if ($user_id === null) {
+            /** @var array<int, string> */
+            return Address::query()
+                ->select('address')
+                ->pluck('address')
+                ->toArray();
+        }
+
+        /** @var array<int|string, string>|null */
+        $ret = User::query()
+            ->find((int) $user_id)
+            ?->shippingAddresses
+            ->pluck('address', 'id')
+            ->toArray() ?? [];
+
+        return $ret;
     }
 
     public static function updateTotals(Get $get, Set $set): void
@@ -368,48 +399,53 @@ class OrderResource extends Resource
         /** @var array<int, array<string, mixed>> $raw_products */
         $raw_products = $get('orderProducts') ?? [];
 
-        /** @var Collection<int, array<string, mixed>> $selected_products */
-        $selected_products = collect($raw_products);
+        $order_products = collect();
 
-        /** @var Collection<int, OrderProductDTO> $order_products */
-        $order_products = new Collection;
-
-        foreach ($selected_products as $selected_product) {
-            if (! isset($selected_product['orderable_id'], $selected_product['orderable_type'])) {
+        foreach ($raw_products as $selected_product) {
+            // Skip empty rows or rows missing quantity
+            if (! isset(
+                $selected_product['orderable_type'],
+                $selected_product['orderable_id'],
+                $selected_product['quantity']
+            )) {
                 continue;
             }
 
-            $orderable_type = $selected_product['orderable_type'];
-
-            if (! is_string($orderable_type) || ! class_exists($orderable_type)) {
+            if (! is_string($selected_product['orderable_type'])) {
                 continue;
             }
 
-            $p = $orderable_type::find($selected_product['orderable_id']);
-
-            if ($p === null) {
+            if (! class_exists($selected_product['orderable_type'])) {
                 continue;
             }
 
-            $order_products->add(
-                new OrderProductDTO(
-                    $p->id,
-                    $orderable_type,
-                    $p->price_with_discount ?: $p->price,
-                    (int) $selected_product['quantity'],
-                    $p
-                )
-            );
+            /** @var ?BaseProduct */
+            $product = $selected_product['orderable_type']::find($selected_product['orderable_id']);
+
+            if (! $product) {
+                continue;
+            }
+
+            /** @var string */
+            $quantity = $selected_product['quantity'];
+
+            $order_products->add(new OrderProductDTO(
+                $product->id,
+                $selected_product['orderable_type'],
+                $product->price_with_discount ?: $product->price,
+                (int) $quantity,
+                $product
+            ));
         }
 
-        $price_calculator = new PriceCalculator;
+        /** @var float */
+        $discount = $get('discount') ?? 0;
 
-        $total_with_taxes = $price_calculator->getTotalCostForOrderWithTaxes($order_products);
-
-        // Apply discount
-        $discount = $get('discount');
-        $total = Number::format($total_with_taxes - ($total_with_taxes * $discount / 100), 2);
-
-        $set('purchase_cost', $total);
+        $price_calculator = new PriceCalculator();
+        $set('purchase_cost', $price_calculator->getTotalCostForOrderWithTaxesAndManualDiscount(
+            order_products: $order_products,
+            apply_discount: true,
+            percentage_discount: $discount
+        ));
     }
 }

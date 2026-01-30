@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Livewire\SearchBar;
 use App\Models\Product;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -7,12 +9,12 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-it('renders successfully', function () {
+it('renders successfully', function (): void {
     Livewire::test(SearchBar::class)
         ->assertStatus(200);
 });
 
-it('does not search with less than 3 characters', function () {
+it('does not search with less than 3 characters', function (): void {
     Product::factory()->create(['name' => 'iPhone 15', 'published' => true]);
 
     $component = Livewire::test(SearchBar::class)
@@ -22,7 +24,7 @@ it('does not search with less than 3 characters', function () {
     expect($component->viewData('results'))->toEqual([]);
 });
 
-it('returns empty results when no products match', function () {
+it('returns empty results when no products match', function (): void {
     Product::factory()->create(['name' => 'iPhone 15', 'published' => true]);
 
     $component = Livewire::test(SearchBar::class)
@@ -31,7 +33,7 @@ it('returns empty results when no products match', function () {
     expect($component->viewData('results'))->toEqual([]);
 });
 
-it('finds products by exact name match', function () {
+it('finds products by exact name match', function (): void {
     $product = Product::factory()->create(['name' => 'iPhone 15 Pro', 'published' => true]);
 
     $component = Livewire::test(SearchBar::class)
@@ -41,7 +43,7 @@ it('finds products by exact name match', function () {
     expect($results['products']->contains('id', $product->id))->toBeTrue();
 });
 
-it('finds products by partial name match', function () {
+it('finds products by partial name match', function (): void {
     $product = Product::factory()->create(['name' => 'iPhone 15 Pro Max', 'published' => true]);
 
     $component = Livewire::test(SearchBar::class)
@@ -51,7 +53,7 @@ it('finds products by partial name match', function () {
     expect($results['products']->contains('id', $product->id))->toBeTrue();
 });
 
-it('finds products case insensitively', function () {
+it('finds products case insensitively', function (): void {
     $product = Product::factory()->create(['name' => 'Samsung Galaxy S24', 'published' => true]);
 
     $component = Livewire::test(SearchBar::class)
@@ -61,7 +63,7 @@ it('finds products case insensitively', function () {
     expect($results['products']->contains('id', $product->id))->toBeTrue();
 });
 
-it('limits results to 5 products', function () {
+it('limits results to 5 products', function (): void {
     Product::factory(10)->sequence(
         ['name' => 'Test Product One', 'published' => true],
         ['name' => 'Test Product Two', 'published' => true],
@@ -82,7 +84,7 @@ it('limits results to 5 products', function () {
     expect($results['products']->count())->toBe(5);
 });
 
-it('returns correct products for multiple matches', function () {
+it('returns correct products for multiple matches', function (): void {
     $product1 = Product::factory()->create(['name' => 'Apple iPhone 15', 'published' => true]);
     $product2 = Product::factory()->create(['name' => 'Apple iPhone 14', 'published' => true]);
     $product3 = Product::factory()->create(['name' => 'Samsung Galaxy S24', 'published' => true]);
@@ -96,7 +98,7 @@ it('returns correct products for multiple matches', function () {
     expect($results['products']->contains('id', $product3->id))->toBeFalse();
 });
 
-it('handles special characters in search', function () {
+it('handles special characters in search', function (): void {
     $product = Product::factory()->create(['name' => 'USB-C Cable (2m)', 'published' => true]);
 
     $component = Livewire::test(SearchBar::class)
@@ -106,7 +108,7 @@ it('handles special characters in search', function () {
     expect($results['products']->contains('id', $product->id))->toBeTrue();
 });
 
-it('finds products with numbers in name', function () {
+it('finds products with numbers in name', function (): void {
     $product = Product::factory()->create(['name' => 'RTX 4090 Graphics Card', 'published' => true]);
 
     $component = Livewire::test(SearchBar::class)
@@ -116,7 +118,7 @@ it('finds products with numbers in name', function () {
     expect($results['products']->contains('id', $product->id))->toBeTrue();
 });
 
-it('search term updates dynamically', function () {
+it('search term updates dynamically', function (): void {
     $iPhone = Product::factory()->create(['name' => 'Apple iPhone 15', 'published' => true]);
     $samsung = Product::factory()->create(['name' => 'Samsung Galaxy S24', 'published' => true]);
 
@@ -133,7 +135,7 @@ it('search term updates dynamically', function () {
     expect($results2['products']->contains('id', $iPhone->id))->toBeFalse();
 });
 
-it('does not show unpublished products in search results', function () {
+it('does not show unpublished products in search results', function (): void {
     $publishedProduct = Product::factory()->create(['name' => 'Published iPhone', 'published' => true]);
     $unpublishedProduct = Product::factory()->create(['name' => 'Unpublished iPhone', 'published' => false]);
 
@@ -145,7 +147,7 @@ it('does not show unpublished products in search results', function () {
     expect($results['products']->contains('id', $unpublishedProduct->id))->toBeFalse();
 });
 
-it('prevents SQL injection attacks', function () {
+it('prevents SQL injection attacks', function (): void {
     $product = Product::factory()->create(['name' => 'Laptop Pro', 'published' => true]);
 
     // Test various SQL injection patterns
@@ -168,5 +170,5 @@ it('prevents SQL injection attacks', function () {
     }
 
     // Verify the original product is still intact
-    expect(Product::find($product->id))->not()->toBeNull();
+    expect(Product::query()->find($product->id))->not()->toBeNull();
 });

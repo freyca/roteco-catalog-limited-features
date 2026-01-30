@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Enums\AddressType;
+use App\Models\Address;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Address>
+ * @extends Factory<Address>
  */
 class AddressFactory extends Factory
 {
@@ -26,7 +29,7 @@ class AddressFactory extends Factory
             'phone' => fake()->phoneNumber(),
             'address' => fake()->streetAddress(),
             'city' => fake()->city(),
-            'state' => fake()->state(),
+            'state' => fake()->city(),
             'zip_code' => fake()->numberBetween(10000, 99999),
             'country' => fake()->country(),
         ];

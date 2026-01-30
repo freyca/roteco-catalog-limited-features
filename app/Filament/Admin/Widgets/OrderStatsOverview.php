@@ -13,10 +13,10 @@ class OrderStatsOverview extends BaseWidget
 {
     protected function getStats(): array
     {
-        $totalOrders = Order::count();
-        $totalRevenue = Order::sum('purchase_cost');
-        $pendingOrders = Order::where('status', OrderStatus::PaymentPending)->count();
-        $completedOrders = Order::where('status', OrderStatus::Delivered)->count();
+        $totalOrders = Order::query()->count();
+        $totalRevenue = Order::query()->sum('purchase_cost');
+        $pendingOrders = Order::query()->where('status', OrderStatus::PaymentPending)->count();
+        $completedOrders = Order::query()->where('status', OrderStatus::Delivered)->count();
 
         return [
             Stat::make(__('Total Orders'), $totalOrders)

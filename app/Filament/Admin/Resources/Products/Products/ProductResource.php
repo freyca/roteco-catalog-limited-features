@@ -10,6 +10,7 @@ use App\Filament\Admin\Resources\Products\Products\Pages\EditProduct;
 use App\Filament\Admin\Resources\Products\Products\Pages\ListProducts;
 use App\Filament\Admin\Resources\Products\Traits\FormBuilderTrait;
 use App\Models\Product;
+use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\EditAction;
@@ -32,7 +33,7 @@ class ProductResource extends Resource
 
     protected static ?string $model = Product::class;
 
-    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?int $navigationSort = 1;
 
@@ -67,14 +68,12 @@ class ProductResource extends Resource
                                         ->moveFiles()
                                         ->orientImagesFromExif(false)
                                         ->preserveFilenames()
-                                        ->directory('category-images'),
+                                        ->directory(config()->string('custom.category-image-storage')),
                                 ]
                             )
-                            ->createOptionAction(function (Action $action) {
-                                return $action
-                                    ->modalHeading(__('Create category'))
-                                    ->modalSubmitActionLabel('Create category');
-                            })->columnSpan(1),
+                            ->createOptionAction(fn (Action $action): Action => $action
+                                ->modalHeading(__('Create category'))
+                                ->modalSubmitActionLabel('Create category'))->columnSpan(1),
                     ]),
 
                 self::imagesSection(),
@@ -97,11 +96,10 @@ class ProductResource extends Resource
                                 ->moveFiles()
                                 ->orientImagesFromExif(false)
                                 ->preserveFilenames()
-                                ->directory(config('custom.product-image-storage')),
+                                ->directory(config()->string('custom.product-image-storage')),
                         ])
                         ->columns(2)
-                        ->collapsed()
-                        ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+                        ->collapsed(),
                 ]),
 
             ]);

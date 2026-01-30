@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Filament\User\Resources\Addresses\Pages\CreateAddress;
 use App\Filament\User\Resources\Addresses\Pages\EditAddress;
 use App\Models\Address;
 use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->user = User::factory()->create([
         'email' => 'test@example.com',
         'name' => 'Test',
@@ -18,7 +21,7 @@ beforeEach(function () {
     test()->actingAs(test()->user);
 });
 
-it('validates required fields on create', function () {
+it('validates required fields on create', function (): void {
     $user = test()->user;
     test()->actingAs($user);
     $component = Livewire::test(CreateAddress::class);
@@ -48,7 +51,7 @@ it('validates required fields on create', function () {
     ]);
 });
 
-it('can create address with livewire form with all fields', function () {
+it('can create address with livewire form with all fields', function (): void {
     $user = test()->user;
     test()->actingAs($user);
 
@@ -57,7 +60,7 @@ it('can create address with livewire form with all fields', function () {
         'name' => 'John Doe',
         'surname' => 'Smith',
         'address_type' => 'shipping',
-        'bussiness_name' => 'ACME Corp',
+        'business_name' => 'ACME Corp',
         'financial_number' => '12345678A',
         'phone' => '+34912345678',
         'email' => 'john@example.com',
@@ -69,16 +72,16 @@ it('can create address with livewire form with all fields', function () {
     ])->call('create');
     $component->assertHasNoFormErrors();
 
-    expect(Address::count())->toBe(1);
-    $address = Address::first();
+    expect(Address::query()->count())->toBe(1);
+    $address = Address::query()->first();
     expect($address->name)->toBe('John Doe');
     expect($address->surname)->toBe('Smith');
     expect($address->user_id)->toBe($user->id);
     expect($address->email)->toBe('john@example.com');
-    expect($address->bussiness_name)->toBe('ACME Corp');
+    expect($address->business_name)->toBe('ACME Corp');
 });
 
-it('can create address with optional fields empty', function () {
+it('can create address with optional fields empty', function (): void {
     $user = test()->user;
     test()->actingAs($user);
 
@@ -98,13 +101,13 @@ it('can create address with optional fields empty', function () {
         ->call('create')
         ->assertHasNoFormErrors();
 
-    expect(Address::count())->toBe(1);
-    $address = Address::first();
-    expect($address->bussiness_name)->toBeNull();
+    expect(Address::query()->count())->toBe(1);
+    $address = Address::query()->first();
+    expect($address->business_name)->toBeNull();
     expect($address->financial_number)->toBeNull();
 });
 
-it('can edit address through livewire form', function () {
+it('can edit address through livewire form', function (): void {
     $user = test()->user;
     test()->actingAs($user);
 
@@ -125,7 +128,7 @@ it('can edit address through livewire form', function () {
     expect($address->fresh()->address)->toBe('New Street 2');
 });
 
-it('can delete an address', function () {
+it('can delete an address', function (): void {
     $user = test()->user;
     $address = Address::factory()->for($user)->create();
     test()->actingAs($user);
@@ -133,7 +136,7 @@ it('can delete an address', function () {
     expect($address->fresh()->trashed())->toBeTrue();
 });
 
-it('user_cannot_access_another_users_address', function () {
+it('user_cannot_access_another_users_address', function (): void {
     $user = test()->user;
     $otherUser = User::factory()->create();
     $myAddress = Address::factory()->for($user)->create(['address' => 'User Own Address']);
@@ -149,5 +152,5 @@ it('user_cannot_access_another_users_address', function () {
     expect($userAddresses->first()->id)->toBe($myAddress->id);
 
     expect(fn () => Livewire::test(EditAddress::class, ['record' => $otherAddress->id]))
-        ->toThrow(\Illuminate\Database\Eloquent\ModelNotFoundException::class);
+        ->toThrow(ModelNotFoundException::class);
 });

@@ -1,13 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\Category;
+use App\Models\Product;
 use Database\Traits\WithProductDiscounts;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Product>
+ * @extends Factory<Product>
  */
 class ProductFactory extends Factory
 {
@@ -20,13 +24,13 @@ class ProductFactory extends Factory
      */
     public function definition(): array
     {
-        $price = fake()->randomFloat(2, 10, 3000);
+        fake()->randomFloat(2, 10, 3000);
 
-        $name = fake()->unique()->catchPhrase();
+        $name = fake()->unique()->sentence(3);
 
         return [
             'name' => $name,
-            'slug' => str()->slug($name),
+            'slug' => Str::slug($name),
             'reference' => fake()->unique()->bothify('REF-########'),
             // 'price' => $price,
             // 'price_with_discount' => $this->isProductDiscounted($price),
@@ -43,7 +47,7 @@ class ProductFactory extends Factory
             // 'meta_description' => fake()->realText(20),
             // 'short_description' => fake()->realText(200),
             // 'description' => fake()->realText(1000),
-            'category_id' => Category::inRandomOrder()->first()?->id ?? Category::factory()->create()->id,
+            'category_id' => Category::query()->inRandomOrder()->first()->id ?? Category::factory()->create()->id,
             'main_image' => 'product-images/sample-image.png',
         ];
     }

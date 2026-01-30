@@ -33,6 +33,8 @@ class Order extends Model
 
     use SoftDeletes;
 
+    public $incrementing = false;
+
     protected $fillable = [
         'purchase_cost',
         'discount',
@@ -41,22 +43,9 @@ class Order extends Model
         'user_id',
         'shipping_address_id',
         'billing_address_id',
+        'order_details',
         'payment_gateway_response',
     ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'purchase_cost' => MoneyCast::class,
-            'payment_method' => PaymentMethod::class,
-            'status' => OrderStatus::class,
-        ];
-    }
 
     protected $dispatchesEvents = [
         'created' => OrderCreated::class,
@@ -64,11 +53,9 @@ class Order extends Model
 
     protected $keyType = 'string';
 
-    public $incrementing = false;
-
     public static function booted(): void
     {
-        static::creating(function (Order $model) {
+        static::creating(function (Order $model): void {
             $model->id = (string) Str::ulid();
         });
     }
@@ -103,5 +90,19 @@ class Order extends Model
     public function orderProducts(): HasMany
     {
         return $this->hasMany(OrderProduct::class);
+    }
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'purchase_cost' => MoneyCast::class,
+            'payment_method' => PaymentMethod::class,
+            'status' => OrderStatus::class,
+        ];
     }
 }

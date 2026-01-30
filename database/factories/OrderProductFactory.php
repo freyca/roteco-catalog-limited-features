@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
+use App\Models\Disassembly;
+use App\Models\OrderProduct;
 use App\Models\ProductSparePart;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\OrderProduct>
+ * @extends Factory<OrderProduct>
  */
 class OrderProductFactory extends Factory
 {
@@ -18,10 +22,10 @@ class OrderProductFactory extends Factory
     public function definition(): array
     {
         // Create a ProductSparePart with its required Disassembly
-        $disassembly = \App\Models\Disassembly::factory()->create();
+        $disassembly = Disassembly::factory()->create();
         $product = ProductSparePart::factory()->for($disassembly)->create();
 
-        $price = ! is_null($product->price_with_discount) ? $product->price_with_discount : $product->price;
+        $price = is_null($product->price_with_discount) ? $product->price : $product->price_with_discount;
 
         return [
             'orderable_id' => $product->id,

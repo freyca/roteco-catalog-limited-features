@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
+use App\Models\Disassembly;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Disassembly>
+ * @extends Factory<Disassembly>
  */
 class DisassemblyFactory extends Factory
 {
@@ -18,7 +21,7 @@ class DisassemblyFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->unique()->catchPhrase(),
+            'name' => fake()->unique()->words(3, true),
             'main_image' => 'product-images/sample-image.png',
             'product_id' => Product::factory(),
         ];

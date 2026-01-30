@@ -46,28 +46,28 @@ class ProductSparePartImporter extends Importer
         ];
     }
 
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        $body = 'Your product spare part import has completed and '.Number::format($import->successful_rows).' '.str('row')->plural($import->successful_rows).' imported.';
+
+        if (($failedRowsCount = $import->getFailedRowsCount()) !== 0) {
+            $body .= ' '.Number::format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to import.';
+        }
+
+        return $body;
+    }
+
     public function resolveRecord(): ProductSparePart
     {
-        if (isset($this->data['id'])) {
+        if (! empty($this->data['id']) && is_numeric($this->data['id'])) {
             $id = (int) $this->data['id'];
-            $record = ProductSparePart::find($id);
+            $record = ProductSparePart::query()->find($id);
 
             if ($record !== null) {
                 return $record;
             }
         }
 
-        return ProductSparePart::firstOrNew(['name' => $this->data['name']]);
-    }
-
-    public static function getCompletedNotificationBody(Import $import): string
-    {
-        $body = 'Your product spare part import has completed and '.Number::format($import->successful_rows).' '.str('row')->plural($import->successful_rows).' imported.';
-
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
-            $body .= ' '.Number::format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to import.';
-        }
-
-        return $body;
+        return ProductSparePart::query()->firstOrNew(['name' => $this->data['name']]);
     }
 }

@@ -16,7 +16,7 @@ class OrderBuilder
 {
     private Order $order;
 
-    private ?User $user;
+    private ?User $user = null;
 
     private PaymentMethod $payment_method;
 
@@ -55,7 +55,7 @@ class OrderBuilder
             purchase_cost: (float) $this->cart->getTotalCost(),
             payment_method: $this->payment_method,
             status: OrderStatus::PaymentPending,
-            user: $this->user ? $this->user : null,
+            user: $this->user instanceof User ? $this->user : null,
             shipping_address: $this->shipping_address,
             billing_address: $this->billing_address,
             order_details: $this->order_details,

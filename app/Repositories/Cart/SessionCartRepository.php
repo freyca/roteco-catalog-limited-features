@@ -17,9 +17,9 @@ class SessionCartRepository implements CartRepositoryInterface
 {
     use CurrencyFormatter;
 
-    private Collection $session_content;
+    public const string SESSION = 'cart';
 
-    const SESSION = 'cart';
+    private Collection $session_content;
 
     public function __construct(
         private readonly PriceCalculator $price_calculator,
@@ -32,13 +32,11 @@ class SessionCartRepository implements CartRepositoryInterface
     /**
      * Functions for products
      */
-    public function add(BaseProduct $product, int $quantity): bool
+    public function add(BaseProduct $product, int $quantity): void
     {
         $order_products = $this->addProductToOrder($product, $quantity);
 
         $this->updateCart($order_products);
-
-        return true;
     }
 
     public function remove(BaseProduct $product): void
@@ -54,7 +52,7 @@ class SessionCartRepository implements CartRepositoryInterface
             $this->searchProductKey($product);
 
             return true;
-        } catch (Throwable $th) {
+        } catch (Throwable) {
             return false;
         }
     }
@@ -74,13 +72,19 @@ class SessionCartRepository implements CartRepositoryInterface
         Session::forget(self::SESSION);
     }
 
+    /**
+     * @return Collection<int, OrderProductDTO>
+     */
     public function getCart(): Collection
     {
         /**
          * Kind of cache to avoid repetitive queries
          */
         if (! isset($this->session_content)) {
-            $this->session_content = Session::get(self::SESSION);
+            /** @var Collection */
+            $session = Session::get(self::SESSION);
+
+            $this->session_content = $session;
         }
 
         return $this->session_content;
@@ -104,7 +108,7 @@ class SessionCartRepository implements CartRepositoryInterface
     {
         try {
             return $this->searchProductKey($product)['order_product_dto']->quantity();
-        } catch (Throwable $th) {
+        } catch (Throwable) {
             return 0;
         }
     }
@@ -179,11 +183,11 @@ class SessionCartRepository implements CartRepositoryInterface
             $is_present['order_product_dto']->setQuantity($is_present['order_product_dto']->quantity() + $quantity);
 
             $order_products->replace([$is_present['key'] => $is_present['order_product_dto']]);
-        } catch (Throwable $th) {
+        } catch (Throwable) {
             $order_product = new OrderProductDTO(
                 orderable_id: $product->id,
-                orderable_type: get_class($product),
-                unit_price: $product->price_with_discount ? $product->price_with_discount : $product->price,
+                orderable_type: $product::class,
+                unit_price: $product->price_with_discount ?: $product->price,
                 quantity: $quantity,
                 product: $product,
             );
@@ -211,8 +215,8 @@ class SessionCartRepository implements CartRepositoryInterface
     {
         $order_products = $this->getCart();
 
-        $match = $order_products->filter(function (OrderProductDTO $item) use ($product) {
-            $class = get_class($product);
+        $match = $order_products->filter(function (OrderProductDTO $item) use ($product): bool {
+            $class = $product::class;
             $id = $product->id;
 
             return $item->orderableType() === $class
@@ -225,9 +229,7 @@ class SessionCartRepository implements CartRepositoryInterface
 
         $key = $match->keys()->first();
 
-        if (is_null($key)) {
-            throw new Exception('This product is not in cart');
-        }
+        throw_if(is_null($key), Exception::class, 'This product is not in cart');
 
         /**
          * @var OrderProductDTO
@@ -235,7 +237,7 @@ class SessionCartRepository implements CartRepositoryInterface
         $order_product_dto = $order_products->get($key);
 
         return [
-            'key' => intval($key),
+            'key' => (int) $key,
             'order_product_dto' => $order_product_dto,
         ];
     }

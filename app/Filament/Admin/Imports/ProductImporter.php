@@ -37,28 +37,28 @@ class ProductImporter extends Importer
         ];
     }
 
+    public static function getCompletedNotificationBody(Import $import): string
+    {
+        $body = 'Your product import has completed and '.Number::format($import->successful_rows).' '.str('row')->plural($import->successful_rows).' imported.';
+
+        if (($failedRowsCount = $import->getFailedRowsCount()) !== 0) {
+            $body .= ' '.Number::format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to import.';
+        }
+
+        return $body;
+    }
+
     public function resolveRecord(): Product
     {
-        if (isset($this->data['id'])) {
+        if (! empty($this->data['id']) && is_numeric($this->data['id'])) {
             $id = (int) $this->data['id'];
-            $record = Product::find($id);
+            $record = Product::query()->find($id);
 
             if ($record !== null) {
                 return $record;
             }
         }
 
-        return Product::firstOrNew(['name' => $this->data['name']]);
-    }
-
-    public static function getCompletedNotificationBody(Import $import): string
-    {
-        $body = 'Your product import has completed and '.Number::format($import->successful_rows).' '.str('row')->plural($import->successful_rows).' imported.';
-
-        if ($failedRowsCount = $import->getFailedRowsCount()) {
-            $body .= ' '.Number::format($failedRowsCount).' '.str('row')->plural($failedRowsCount).' failed to import.';
-        }
-
-        return $body;
+        return Product::query()->firstOrNew(['name' => $this->data['name']]);
     }
 }

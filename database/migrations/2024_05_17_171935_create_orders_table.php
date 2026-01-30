@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Address;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
@@ -13,14 +15,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('orders', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table): void {
             $table->ulid('id')->primary();
             $table->integer('purchase_cost');
             $table->string('payment_method');
             $table->string('status');
             $table->foreignIdFor(User::class)->nullable()->constrained();
-            $table->foreignIdFor(Address::class)->name('shipping_address_id')->constrained();
-            $table->foreignIdFor(Address::class)->name('billing_address_id')->nullable()->constrained();
+            $table->foreignIdFor(Address::class, 'shipping_address_id')->constrained();
+            $table->foreignIdFor(Address::class, 'billing_address_id')->nullable()->constrained();
             $table->json('payment_gateway_response')->nullable();
             $table->timestamps();
         });

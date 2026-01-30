@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Enums\AddressType;
@@ -11,8 +13,11 @@ use App\Models\OrderProduct;
 use App\Models\Product;
 use App\Models\ProductSparePart;
 use App\Models\User;
+use GdImage;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Storage;
+use InvalidArgumentException;
+use RuntimeException;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,8 +26,15 @@ class DatabaseSeeder extends Seeder
         // For convenience, all categories and products has the same image
         // We hardcode it here and, if it not exists, we create it
         $imageName = 'sample-image.png';
-        $this->generateImage(config('custom.product-image-storage'), $imageName);
-        $this->generateImage(config('custom.category-image-storage'), $imageName);
+
+        $image_storage = config('custom.product-image-storage');
+        throw_unless(is_string($image_storage), RuntimeException::class, 'Invalid product image storage config');
+
+        $category_storage = config('custom.category-image-storage');
+        throw_unless(is_string($category_storage), RuntimeException::class, 'Invalid product image storage config');
+
+        $this->generateImage($image_storage, $imageName);
+        $this->generateImage($category_storage, $imageName);
 
         // Create minimal product catalog (fast seeding)
         // 2 categories × 3 products × 2 disassemblies × 3 spare parts = 36 total
@@ -39,7 +51,7 @@ class DatabaseSeeder extends Seeder
         // Create customers with addresses and minimal orders
         // 5 customers × 3 addresses × 2 orders × 1 product = fast
         // Disable Order events to prevent notifications during seeding
-        Order::withoutEvents(function () {
+        Order::withoutEvents(function (): void {
             for ($counter = 0; $counter < 5; $counter++) {
                 $user = User::factory()->customer()->create();
 
@@ -53,7 +65,7 @@ class DatabaseSeeder extends Seeder
         });
 
         // Create admin user if not exists
-        if (User::where('email', 'fran@gmail.com')->doesntExist()) {
+        if (User::query()->where('email', 'fran@gmail.com')->doesntExist()) {
             $admin = User::factory()
                 ->admin()
                 ->create([
@@ -93,19 +105,31 @@ class DatabaseSeeder extends Seeder
 
         // Save to temporary location
         $tempFile = tmpfile();
-        imagepng($image, stream_get_meta_data($tempFile)['uri']);
-        imagedestroy($image);
+
+        $meta = stream_get_meta_data($tempFile);
+        $uri = $meta['uri'] ?? null;
+
+        throw_unless($uri, RuntimeException::class, 'No se pudo obtener el URI del stream temporal.');
+
+        imagepng($image, $uri);
 
         // Put to Storage
-        $imageContent = file_get_contents(stream_get_meta_data($tempFile)['uri']);
+        $imageContent = file_get_contents($uri);
+
+        throw_if($imageContent === false, RuntimeException::class, "Failed to read temporary image file at $uri.");
+
         Storage::disk('public')->put($filePath, $imageContent);
     }
 
-    private function createPlaceholderImage(int $width = 200, int $height = 200): \GdImage
+    private function createPlaceholderImage(int $width = 200, int $height = 200): GdImage
     {
+        throw_if($width < 1 || $height < 1, InvalidArgumentException::class, 'Width and height must be greater than 0.');
+
         $image = imagecreatetruecolor($width, $height);
         $backgroundColor = imagecolorallocate($image, 220, 220, 220);
         $textColor = imagecolorallocate($image, 100, 100, 100);
+
+        throw_if($backgroundColor === false || $textColor === false, RuntimeException::class, 'Failed to allocate colors.');
 
         // Fill background
         imagefilledrectangle($image, 0, 0, $width, $height, $backgroundColor);
@@ -116,7 +140,7 @@ class DatabaseSeeder extends Seeder
         // Add placeholder text
         $text = 'Roteco';
         $fontSize = 5;
-        $textX = ($width - strlen($text) * imagefontwidth($fontSize)) / 2;
+        $textX = ($width - mb_strlen($text) * imagefontwidth($fontSize)) / 2;
         $textY = ($height - imagefontheight($fontSize)) / 2;
         imagestring($image, $fontSize, (int) $textX, (int) $textY, $text, $textColor);
 

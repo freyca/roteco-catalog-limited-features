@@ -160,8 +160,7 @@ trait FormBuilderTrait
                     ->moveFiles()
                     ->orientImagesFromExif(false)
                     ->preserveFilenames()
-                    ->directory(config('custom.product-image-storage')),
-
+                    ->directory(config()->string('custom.product-image-storage')),
             ])->columns(2);
     }
 

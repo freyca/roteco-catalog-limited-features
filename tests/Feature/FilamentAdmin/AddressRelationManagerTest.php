@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\AddressType;
 use App\Filament\Admin\Resources\Users\Users\Pages\EditUser;
 use App\Filament\Admin\Resources\Users\Users\RelationManagers\AddressRelationManager;
@@ -13,13 +15,13 @@ use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
     test()->customer = User::factory()->customer()->create();
     test()->actingAs(test()->admin);
 });
 
-it('admin can create address through relation manager', function () {
+it('admin can create address through relation manager', function (): void {
     $customer = test()->customer;
 
     $component = Livewire::test(AddressRelationManager::class, [
@@ -32,7 +34,7 @@ it('admin can create address through relation manager', function () {
         'name' => 'Shipping John',
         'surname' => 'Doe',
         'address_type' => AddressType::Shipping->value,
-        'bussiness_name' => 'Business Inc',
+        'business_name' => 'Business Inc',
         'financial_number' => 'B87654321',
         'phone' => '34911111111',
         'email' => 'shipping@example.com',
@@ -46,14 +48,14 @@ it('admin can create address through relation manager', function () {
     $component->callMountedTableAction();
     $component->assertHasNoTableActionErrors();
 
-    expect(Address::count())->toBe(1);
-    $address = Address::first();
+    expect(Address::query()->count())->toBe(1);
+    $address = Address::query()->first();
     expect($address->user_id)->toBe($customer->id);
     expect($address->name)->toBe('Shipping John');
     expect($address->email)->toBe('shipping@example.com');
 });
 
-it('admin can edit address through relation manager', function () {
+it('admin can edit address through relation manager', function (): void {
     $customer = test()->customer;
     $address = Address::factory()->for($customer)->create([
         'city' => 'Madrid',
@@ -70,7 +72,7 @@ it('admin can edit address through relation manager', function () {
         'name' => $address->name,
         'surname' => $address->surname,
         'address_type' => $address->address_type->value,
-        'bussiness_name' => $address->bussiness_name,
+        'business_name' => $address->business_name,
         'financial_number' => $address->financial_number,
         'phone' => $address->phone,
         'email' => $address->email,
@@ -88,7 +90,7 @@ it('admin can edit address through relation manager', function () {
     expect($address->fresh()->address)->toBe('New Street');
 });
 
-it('admin can delete address through relation manager', function () {
+it('admin can delete address through relation manager', function (): void {
     $customer = test()->customer;
     $address = Address::factory()->for($customer)->create();
 
@@ -102,7 +104,7 @@ it('admin can delete address through relation manager', function () {
     expect($address->fresh()->trashed())->toBeTrue();
 });
 
-it('validates required fields in create action', function () {
+it('validates required fields in create action', function (): void {
     $customer = test()->customer;
 
     $component = Livewire::test(AddressRelationManager::class, [
@@ -115,7 +117,7 @@ it('validates required fields in create action', function () {
         'name' => '',
         'surname' => '',
         'address_type' => '',
-        'bussiness_name' => '',
+        'business_name' => '',
         'financial_number' => '',
         'phone' => '',
         'email' => '',
@@ -141,7 +143,7 @@ it('validates required fields in create action', function () {
     ]);
 });
 
-it('can create address with optional fields empty', function () {
+it('can create address with optional fields empty', function (): void {
     $customer = test()->customer;
 
     $component = Livewire::test(AddressRelationManager::class, [
@@ -166,8 +168,8 @@ it('can create address with optional fields empty', function () {
     $component->callMountedTableAction();
     $component->assertHasNoTableActionErrors();
 
-    expect(Address::count())->toBe(1);
-    $address = Address::first();
-    expect($address->bussiness_name)->toBeNull();
+    expect(Address::query()->count())->toBe(1);
+    $address = Address::query()->first();
+    expect($address->business_name)->toBeNull();
     expect($address->financial_number)->toBeNull();
 });

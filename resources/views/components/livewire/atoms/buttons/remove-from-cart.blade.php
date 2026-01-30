@@ -1,7 +1,7 @@
 <form wire:submit.prevent="remove" class="m-0 inline-flex">
     <button
         type="submit"
-        class="group flex items-center justify-center w-9 h-9 rounded-xl text-slate-500 hover:text-red-600 hover:bg-red-50 transition-all focus:outline-none focus:ring-2 focus:ring-red-500/10"
+        class="group flex h-9 w-9 items-center justify-center rounded-xl text-slate-500 transition-all hover:bg-red-50 hover:text-red-600 focus:ring-2 focus:ring-red-500/10 focus:outline-none"
         aria-label="{{ __('Remove') }}"
         wire:loading.attr="disabled"
     >

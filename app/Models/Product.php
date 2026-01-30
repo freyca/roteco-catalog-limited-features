@@ -9,7 +9,6 @@ use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -24,7 +23,7 @@ class Product extends BaseProduct
     /**
      * Create a new Eloquent model instance.
      *
-     * @param  array<string>  $attributes
+     * @param  array<string, mixed>  $attributes
      */
     public function __construct(array $attributes = [])
     {
@@ -43,14 +42,6 @@ class Product extends BaseProduct
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
-    }
-
-    /**
-     * @return BelongsToMany<ProductSparePart, $this>
-     */
-    public function productSpareParts(): BelongsToMany
-    {
-        return $this->belongsToMany(ProductSparePart::class);
     }
 
     public function disassemblies(): HasMany

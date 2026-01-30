@@ -6,8 +6,10 @@ namespace App\Notifications;
 
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use LogicException;
 
 class OrderConfirmationNotification extends Notification
 {
@@ -28,14 +30,12 @@ class OrderConfirmationNotification extends Notification
         $order = $this->order->load(['user', 'shippingAddress', 'billingAddress']);
 
         $user = $order->user;
-        if ($user === null) {
-            throw new \LogicException('Order has no user.');
-        }
+        throw_if($user === null, LogicException::class, 'Order has no user.');
 
         // Load orderProducts with orderable relationship, bypassing PublishedScope
         // If we respect the scope, a product could be missing from the email
         $orderProducts = $order->orderProducts()
-            ->with(['orderable' => fn (mixed $query) => $query->withoutGlobalScopes()])
+            ->with(['orderable' => fn (Relation $query) => $query->withoutGlobalScopes()])
             ->get();
 
         return (new MailMessage)
@@ -45,7 +45,7 @@ class OrderConfirmationNotification extends Notification
             ->line(__('Order ID').': '.$order->id)
             ->line(__('Order Status').': '.$order->status->getLabel())
             ->line(__('Total Amount').': €'.number_format($order->purchase_cost / 100, 2))
-            ->line(__('Products'.':'))
+            ->line(__('Products:'))
             ->markdown('emails.order-confirmation', [
                 'order' => $order,
                 'products' => $orderProducts,

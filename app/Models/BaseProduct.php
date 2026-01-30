@@ -9,6 +9,7 @@ use App\Models\Scopes\PublishedScope;
 use App\Models\Traits\FormatsPrices;
 use App\Models\Traits\HasSlug;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -36,6 +37,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 abstract class BaseProduct extends Model
 {
     use FormatsPrices;
+    use HasFactory;
     use HasSlug;
 
     protected $fillable = [
@@ -59,6 +61,14 @@ abstract class BaseProduct extends Model
     ];
 
     /**
+     * @codeCoverageIgnore It is not used by now
+     */
+    final public function orders(): MorphMany
+    {
+        return $this->morphMany(OrderProduct::class, 'orderable');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
@@ -70,10 +80,5 @@ abstract class BaseProduct extends Model
             'price_with_discount' => MoneyCast::class,
             'images' => 'array',
         ];
-    }
-
-    public function orders(): MorphMany
-    {
-        return $this->morphMany(OrderProduct::class, 'orderable');
     }
 }

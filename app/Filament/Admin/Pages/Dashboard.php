@@ -13,12 +13,12 @@ class Dashboard extends BaseDashboard
 {
     protected static ?string $title = '';
 
-    public function getTitle(): string
+    public static function getNavigationLabel(): string
     {
         return __('Dashboard');
     }
 
-    public static function getNavigationLabel(): string
+    public function getTitle(): string
     {
         return __('Dashboard');
     }

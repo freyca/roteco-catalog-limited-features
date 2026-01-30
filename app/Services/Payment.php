@@ -9,13 +9,13 @@ use App\Repositories\Payment\BankTransferPaymentRepository;
 use App\Repositories\Payment\PaymentRepositoryInterface;
 use Illuminate\Http\Request;
 
-final class Payment
+final readonly class Payment
 {
-    private readonly PaymentRepositoryInterface $repository;
+    private PaymentRepositoryInterface $repository;
 
     public function __construct(private Order $order)
     {
-        $this->repository = app(BankTransferPaymentRepository::class);
+        $this->repository = resolve(BankTransferPaymentRepository::class);
     }
 
     public function payPurchase(): mixed

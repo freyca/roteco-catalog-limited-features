@@ -1,9 +1,7 @@
 <x-layouts.app>
-
     <x-bread-crumbs :breadcrumbs="$breadcrumbs" />
 
-    <div class="main-content transition-all duration-500 ease-in-out px-4 w-auto">
+    <div class="main-content w-auto px-4 transition-all duration-500 ease-in-out">
         @livewire('product.product-grid', key(md5('product.product-grid')), ['class_name' => \App\Models\Product::class])
     </div>
-
 </x-layouts.app>

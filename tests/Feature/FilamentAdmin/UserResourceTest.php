@@ -1,14 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\Role;
 use App\Filament\Admin\Resources\Users\Users\Pages\CreateUser;
 use App\Filament\Admin\Resources\Users\Users\Pages\EditUser;
 use App\Filament\Admin\Resources\Users\Users\Pages\ListUsers;
+use App\Filament\Admin\Resources\Users\Users\UserResource;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Livewire\Livewire;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
 
     Filament::setCurrentPanel(
@@ -16,14 +19,14 @@ beforeEach(function () {
     );
 });
 
-describe('UserResource', function () {
-    it('admin can access user list page', function () {
+describe('UserResource', function (): void {
+    it('admin can access user list page', function (): void {
         test()->actingAs(test()->admin);
         $component = Livewire::test(ListUsers::class);
         $component->assertSee(__('User'));
     });
 
-    it('can display users in list table', function () {
+    it('can display users in list table', function (): void {
         test()->actingAs(test()->admin);
         $users = User::factory(3)->create();
 
@@ -34,13 +37,13 @@ describe('UserResource', function () {
         }
     });
 
-    it('admin can access create user page', function () {
+    it('admin can access create user page', function (): void {
         test()->actingAs(test()->admin);
         $component = Livewire::test(CreateUser::class);
         $component->assertFormComponentExists('name');
     });
 
-    it('can create a new user via form', function () {
+    it('can create a new user via form', function (): void {
         test()->actingAs(test()->admin);
         Livewire::test(CreateUser::class)
             ->fillForm([
@@ -52,10 +55,10 @@ describe('UserResource', function () {
             ])
             ->call('create')
             ->assertHasNoFormErrors();
-        expect(User::where('email', 'newuser@test.com')->exists())->toBeTrue();
+        expect(User::query()->where('email', 'newuser@test.com')->exists())->toBeTrue();
     });
 
-    it('can create an admin user via form', function () {
+    it('can create an admin user via form', function (): void {
         test()->actingAs(test()->admin);
         Livewire::test(CreateUser::class)
             ->fillForm([
@@ -67,10 +70,10 @@ describe('UserResource', function () {
             ])
             ->call('create')
             ->assertHasNoFormErrors();
-        expect(User::where('email', 'adminuser@test.com')->where('role', Role::Admin->value)->exists())->toBeTrue();
+        expect(User::query()->where('email', 'adminuser@test.com')->where('role', Role::Admin->value)->exists())->toBeTrue();
     });
 
-    it('validates name is required on create', function () {
+    it('validates name is required on create', function (): void {
         test()->actingAs(test()->admin);
 
         Livewire::test(CreateUser::class)
@@ -85,7 +88,7 @@ describe('UserResource', function () {
             ->assertHasFormErrors(['name' => 'required']);
     });
 
-    it('validates email is required on create', function () {
+    it('validates email is required on create', function (): void {
         test()->actingAs(test()->admin);
 
         Livewire::test(CreateUser::class)
@@ -100,7 +103,7 @@ describe('UserResource', function () {
             ->assertHasFormErrors(['email' => 'required']);
     });
 
-    it('validates surname is required on create', function () {
+    it('validates surname is required on create', function (): void {
         test()->actingAs(test()->admin);
 
         Livewire::test(CreateUser::class)
@@ -115,7 +118,7 @@ describe('UserResource', function () {
             ->assertHasFormErrors(['surname' => 'required']);
     });
 
-    it('can create user without password', function () {
+    it('can create user without password', function (): void {
         test()->actingAs(test()->admin);
         Livewire::test(CreateUser::class)
             ->fillForm([
@@ -127,10 +130,10 @@ describe('UserResource', function () {
             ])
             ->call('create')
             ->assertHasNoFormErrors();
-        expect(User::where('email', 'test@test.com')->exists())->toBeTrue();
+        expect(User::query()->where('email', 'test@test.com')->exists())->toBeTrue();
     });
 
-    it('admin can access edit user page', function () {
+    it('admin can access edit user page', function (): void {
         test()->actingAs(test()->admin);
         $user = User::factory()->create();
 
@@ -138,7 +141,7 @@ describe('UserResource', function () {
             ->assertStatus(200);
     });
 
-    it('can update user via form', function () {
+    it('can update user via form', function (): void {
         test()->actingAs(test()->admin);
         $user = User::factory()->create(['name' => 'Old Name']);
         Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
@@ -146,10 +149,10 @@ describe('UserResource', function () {
                 'name' => 'Updated Name',
             ])
             ->call('save');
-        expect(User::find($user->id)->name)->toBe('Updated Name');
+        expect(User::query()->find($user->id)->name)->toBe('Updated Name');
     });
 
-    it('validates name is required on update', function () {
+    it('validates name is required on update', function (): void {
         test()->actingAs(test()->admin);
         $user = User::factory()->create();
         Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
@@ -160,28 +163,28 @@ describe('UserResource', function () {
             ->assertHasFormErrors(['name' => 'required']);
     });
 
-    it('user resource has correct navigation group', function () {
-        $group = \App\Filament\Admin\Resources\Users\Users\UserResource::getNavigationGroup();
+    it('user resource has correct navigation group', function (): void {
+        $group = UserResource::getNavigationGroup();
         expect($group)->toBe(__('Users'));
     });
 
-    it('user resource has correct model label', function () {
-        $label = \App\Filament\Admin\Resources\Users\Users\UserResource::getModelLabel();
+    it('user resource has correct model label', function (): void {
+        $label = UserResource::getModelLabel();
         expect($label)->toBe(__('User'));
     });
 
-    it('resource has index page', function () {
-        $pages = \App\Filament\Admin\Resources\Users\Users\UserResource::getPages();
+    it('resource has index page', function (): void {
+        $pages = UserResource::getPages();
         expect($pages)->toHaveKey('index');
     });
 
-    it('resource has create page', function () {
-        $pages = \App\Filament\Admin\Resources\Users\Users\UserResource::getPages();
+    it('resource has create page', function (): void {
+        $pages = UserResource::getPages();
         expect($pages)->toHaveKey('create');
     });
 
-    it('resource has edit page', function () {
-        $pages = \App\Filament\Admin\Resources\Users\Users\UserResource::getPages();
+    it('resource has edit page', function (): void {
+        $pages = UserResource::getPages();
         expect($pages)->toHaveKey('edit');
     });
 });

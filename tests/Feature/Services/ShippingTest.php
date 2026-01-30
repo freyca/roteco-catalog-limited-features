@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Repositories\Shipping\ShippingRepositoryInterface;
 use App\Services\Shipping;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->repository = mock(ShippingRepositoryInterface::class);
     test()->shipping = new Shipping(test()->repository);
 });
 
-describe('Shipping Service', function () {
-    it('gets track status', function () {
+describe('Shipping Service', function (): void {
+    it('gets track status', function (): void {
         test()->repository
             ->shouldReceive('getTrackStatus')
             ->once()
@@ -20,7 +22,7 @@ describe('Shipping Service', function () {
         expect($status)->toBe('In Transit');
     });
 
-    it('gets track status as delivered', function () {
+    it('gets track status as delivered', function (): void {
         test()->repository
             ->shouldReceive('getTrackStatus')
             ->once()
@@ -31,7 +33,7 @@ describe('Shipping Service', function () {
         expect($status)->toBe('Delivered');
     });
 
-    it('checks if shipment is shipped', function () {
+    it('checks if shipment is shipped', function (): void {
         test()->repository
             ->shouldReceive('isShipped')
             ->once()
@@ -42,7 +44,7 @@ describe('Shipping Service', function () {
         expect($isShipped)->toBeTrue();
     });
 
-    it('checks if shipment is not shipped', function () {
+    it('checks if shipment is not shipped', function (): void {
         test()->repository
             ->shouldReceive('isShipped')
             ->once()
@@ -53,7 +55,7 @@ describe('Shipping Service', function () {
         expect($isShipped)->toBeFalse();
     });
 
-    it('gets track information url', function () {
+    it('gets track information url', function (): void {
         $url = 'https://tracking.courier.com/track/ABC123';
 
         test()->repository

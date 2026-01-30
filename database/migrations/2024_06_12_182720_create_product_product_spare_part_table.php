@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Product;
 use App\Models\ProductSparePart;
 use Illuminate\Database\Migrations\Migration;
@@ -13,7 +15,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('product_product_spare_part', function (Blueprint $table) {
+        Schema::create('product_product_spare_part', function (Blueprint $table): void {
             $table->id();
             $table->foreignIdFor(Product::class)->constrained();
             $table->foreignIdFor(ProductSparePart::class)->constrained();

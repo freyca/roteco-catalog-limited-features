@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\Role;
 use App\Filament\User\Pages\Auth\EditProfile;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Livewire\Livewire;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->user = User::factory()->create(['role' => Role::Customer]);
 
     Filament::setCurrentPanel(
@@ -14,14 +16,14 @@ beforeEach(function () {
     );
 });
 
-describe('EditProfile Page', function () {
-    it('user can access edit profile page', function () {
+describe('EditProfile Page', function (): void {
+    it('user can access edit profile page', function (): void {
         test()->actingAs(test()->user);
         $component = Livewire::test(EditProfile::class);
         $component->assertFormComponentExists('name');
     });
 
-    it('user can update profile name', function () {
+    it('user can update profile name', function (): void {
         test()->actingAs(test()->user);
         $component = Livewire::test(EditProfile::class);
         $component->fillForm([
@@ -32,7 +34,7 @@ describe('EditProfile Page', function () {
         expect(test()->user->fresh()->name)->toBe('Updated Name');
     });
 
-    it('user can update profile surname', function () {
+    it('user can update profile surname', function (): void {
         test()->actingAs(test()->user);
 
         $component = Livewire::test(EditProfile::class);
@@ -44,7 +46,7 @@ describe('EditProfile Page', function () {
         expect(test()->user->fresh()->surname)->toBe('Updated Surname');
     });
 
-    it('user can update profile email', function () {
+    it('user can update profile email', function (): void {
         test()->actingAs(test()->user);
 
         $component = Livewire::test(EditProfile::class);
@@ -56,7 +58,7 @@ describe('EditProfile Page', function () {
         expect(test()->user->fresh()->email)->toBe('newemail@example.com');
     });
 
-    it('user can update profile password', function () {
+    it('user can update profile password', function (): void {
         test()->actingAs(test()->user);
         $oldPassword = test()->user->password;
 
@@ -71,7 +73,7 @@ describe('EditProfile Page', function () {
         expect(test()->user->fresh()->password)->not()->toBe($oldPassword);
     });
 
-    it('validates name is required', function () {
+    it('validates name is required', function (): void {
         test()->actingAs(test()->user);
 
         $component = Livewire::test(EditProfile::class);
@@ -83,7 +85,7 @@ describe('EditProfile Page', function () {
         $component->assertHasFormErrors(['name' => 'required']);
     });
 
-    it('validates surname is required', function () {
+    it('validates surname is required', function (): void {
         test()->actingAs(test()->user);
 
         $component = Livewire::test(EditProfile::class);
@@ -95,7 +97,7 @@ describe('EditProfile Page', function () {
         $component->assertHasFormErrors(['surname' => 'required']);
     });
 
-    it('validates email is required', function () {
+    it('validates email is required', function (): void {
         test()->actingAs(test()->user);
 
         $component = Livewire::test(EditProfile::class);
@@ -107,7 +109,7 @@ describe('EditProfile Page', function () {
         $component->assertHasFormErrors(['email' => 'required']);
     });
 
-    it('validates email format', function () {
+    it('validates email format', function (): void {
         test()->actingAs(test()->user);
 
         Livewire::test(EditProfile::class)
@@ -120,7 +122,7 @@ describe('EditProfile Page', function () {
             ->assertHasFormErrors(['email']);
     });
 
-    it('password and confirmation can be different when no password change', function () {
+    it('password and confirmation can be different when no password change', function (): void {
         test()->actingAs(test()->user);
 
         Livewire::test(EditProfile::class)
@@ -135,35 +137,35 @@ describe('EditProfile Page', function () {
             ->assertHasNoFormErrors();
     });
 
-    it('form has name component', function () {
+    it('form has name component', function (): void {
         test()->actingAs(test()->user);
 
         Livewire::test(EditProfile::class)
             ->assertFormComponentExists('name');
     });
 
-    it('form has surname component', function () {
+    it('form has surname component', function (): void {
         test()->actingAs(test()->user);
 
         Livewire::test(EditProfile::class)
             ->assertFormComponentExists('surname');
     });
 
-    it('form has email component', function () {
+    it('form has email component', function (): void {
         test()->actingAs(test()->user);
 
         Livewire::test(EditProfile::class)
             ->assertFormComponentExists('email');
     });
 
-    it('form has password component', function () {
+    it('form has password component', function (): void {
         test()->actingAs(test()->user);
 
         Livewire::test(EditProfile::class)
             ->assertFormComponentExists('password');
     });
 
-    it('form has password confirmation component', function () {
+    it('form has password confirmation component', function (): void {
         test()->actingAs(test()->user);
 
         Livewire::test(EditProfile::class)

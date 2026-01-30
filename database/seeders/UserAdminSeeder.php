@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Enums\Role;
@@ -13,10 +15,8 @@ class UserAdminSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(1)->create();
-
-        $user = User::first();
-        $user->role = Role::Admin;
-        $user->save();
+        User::factory()->create([
+            'role' => Role::Admin,
+        ]);
     }
 }

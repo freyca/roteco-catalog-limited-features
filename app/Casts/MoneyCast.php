@@ -6,6 +6,7 @@ namespace App\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 
 class MoneyCast implements CastsAttributes
 {
@@ -16,10 +17,12 @@ class MoneyCast implements CastsAttributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?float
     {
+        throw_if(! is_scalar($value) && ! is_null($value), InvalidArgumentException::class, 'Invalid argument', 1);
+
         // Transform the integer stored in the database into a float.
-        return ($value === null || floatval($value) === floatval(0))
+        return ((float) $value === (float) 0)
             ? null
-            : round(floatval($value) / 100, precision: 2);
+            : round((float) $value / 100, precision: 2);
     }
 
     /**
@@ -29,9 +32,11 @@ class MoneyCast implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?float
     {
+        throw_if(! is_scalar($value) && ! is_null($value), InvalidArgumentException::class, 'Invalid argument', 1);
+
         // Transform the float into an integer for storage.
         return $value === null
             ? null
-            : round(floatval($value) * 100);
+            : round((float) $value * 100);
     }
 }

@@ -12,11 +12,17 @@ use App\Models\User;
 
 class EloquentOrderRepository implements OrderRepositoryInterface
 {
+    /**
+     * @codeCoverageIgnore Not used by now
+     */
     public function save(Order $order): bool
     {
         return $order->save();
     }
 
+    /**
+     * @codeCoverageIgnore Not used by now
+     */
     public function changeStatus(Order $order, OrderStatus $order_status): bool
     {
         $order->status = $order_status;
@@ -33,22 +39,28 @@ class EloquentOrderRepository implements OrderRepositoryInterface
         Address $billing_address,
         string $order_details,
     ): Order {
-        return Order::create([
+        return Order::query()->create([
             'purchase_cost' => $purchase_cost,
             'payment_method' => $payment_method,
             'status' => $status,
-            'user_id' => $user ? $user->id : null,
+            'user_id' => $user instanceof User ? $user->id : null,
             'shipping_address_id' => $shipping_address->id,
             'billing_address_id' => $billing_address->id,
             'order_details' => $order_details,
         ]);
     }
 
+    /**
+     * @codeCoverageIgnore Not used by now
+     */
     public function find(string $id): ?Order
     {
-        return Order::find($id);
+        return Order::query()->find($id);
     }
 
+    /**
+     * @codeCoverageIgnore Not used by now
+     */
     public function paymentGatewayResponse(Order $order, string $response): bool
     {
         $order->payment_gateway_response = $response;

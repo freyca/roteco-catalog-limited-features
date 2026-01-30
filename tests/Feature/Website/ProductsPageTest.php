@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Enums\Role;
 use App\Models\Product;
 use App\Models\User;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->user = User::factory()->create(['role' => Role::Customer]);
 });
 
-describe('Products Page - ProductCard Component', function () {
-    it('renders product cards on products page', function () {
+describe('Products Page - ProductCard Component', function (): void {
+    it('renders product cards on products page', function (): void {
         $product = Product::factory()->create(['published' => true]);
 
         $response = test()->actingAs(test()->user)->get('/productos');
@@ -18,7 +20,7 @@ describe('Products Page - ProductCard Component', function () {
         $response->assertSee($product->name);
     });
 
-    it('displays product information in card', function () {
+    it('displays product information in card', function (): void {
         $product = Product::factory()->create(['name' => 'Test Product', 'published' => true]);
 
         $response = test()->actingAs(test()->user)->get('/productos');
@@ -26,7 +28,7 @@ describe('Products Page - ProductCard Component', function () {
         $response->assertSee('Test Product');
     });
 
-    it('displays product with price', function () {
+    it('displays product with price', function (): void {
         $product = Product::factory()->create(['published' => true]);
 
         $response = test()->actingAs(test()->user)->get('/productos');
@@ -34,7 +36,7 @@ describe('Products Page - ProductCard Component', function () {
         expect($response->status())->toBe(200);
     });
 
-    it('handles multiple products on page', function () {
+    it('handles multiple products on page', function (): void {
         Product::factory()->count(3)->create(['published' => true]);
 
         $response = test()->actingAs(test()->user)->get('/productos');
@@ -42,7 +44,7 @@ describe('Products Page - ProductCard Component', function () {
         expect($response->status())->toBe(200);
     });
 
-    it('renders product cards correctly', function () {
+    it('renders product cards correctly', function (): void {
         $product1 = Product::factory()->create(['name' => 'Product 1', 'published' => true]);
         $product2 = Product::factory()->create(['name' => 'Product 2', 'published' => true]);
 
@@ -53,7 +55,7 @@ describe('Products Page - ProductCard Component', function () {
         expect($response->content())->toContain('Product 2');
     });
 
-    it('shows page with single product', function () {
+    it('shows page with single product', function (): void {
         $product = Product::factory()->create(['published' => true]);
 
         $response = test()->actingAs(test()->user)->get('/productos');

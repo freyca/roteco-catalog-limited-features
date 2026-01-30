@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\Disassembly;
 use App\Models\Order;
 use App\Models\Product;
@@ -7,16 +9,17 @@ use App\Models\ProductSparePart;
 use App\Models\User;
 use App\Notifications\AdminOrderNotification;
 use App\Notifications\OrderConfirmationNotification;
+use App\Services\Cart;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 
 use function Pest\Laravel\get;
 
-beforeEach(function () {
+beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
 });
 
-test('user can visit home and login', function () {
+test('user can visit home and login', function (): void {
     // Visit home page (may redirect if not authenticated)
     $response = get('/');
     expect($response->status())->toBeIn([200, 302]);
@@ -30,7 +33,7 @@ test('user can visit home and login', function () {
     expect($response->status())->toBeIn([200, 302]);
 });
 
-test('product page displays only published disassemblies and their spare parts', function () {
+test('product page displays only published disassemblies and their spare parts', function (): void {
     // Create a published product
     $product = Product::factory()->create(['published' => true]);
 
@@ -56,17 +59,17 @@ test('product page displays only published disassemblies and their spare parts',
     $response->assertSee($publishedDisassembly->name);
 
     // Assert published spare parts are visible
-    $publishedSpareParts->each(function ($sparePart) use ($response) {
+    $publishedSpareParts->each(function ($sparePart) use ($response): void {
         $response->assertSee($sparePart->name);
     });
 
     // Assert unpublished spare parts are NOT visible
-    $unpublishedSpareParts->each(function ($sparePart) use ($response) {
+    $unpublishedSpareParts->each(function ($sparePart) use ($response): void {
         $response->assertDontSee($sparePart->name);
     });
 });
 
-test('user can add random spare parts to cart', function () {
+test('user can add random spare parts to cart', function (): void {
     // Create a published product
     $product = Product::factory()->create(['published' => true]);
 
@@ -90,22 +93,22 @@ test('user can add random spare parts to cart', function () {
     }
 
     // Get the cart and verify the correct spare parts are in it
-    $cart = app(\App\Services\Cart::class);
+    $cart = resolve(Cart::class);
 
     // Verify selected spare parts are in cart
     foreach ($selectedSpareParts as $sparePart) {
-        expect($cart->hasProduct($sparePart, false, null))->toBeTrue();
-        expect($cart->getTotalQuantityForProduct($sparePart, false, null))->toBe(1);
+        expect($cart->hasProduct($sparePart))->toBeTrue();
+        expect($cart->getTotalQuantityForProduct($sparePart))->toBe(1);
     }
 
     // Verify unselected spare parts are NOT in cart
     $unselectedSpareParts = $spareParts->diff($selectedSpareParts);
     foreach ($unselectedSpareParts as $sparePart) {
-        expect($cart->hasProduct($sparePart, false, null))->toBeFalse();
+        expect($cart->hasProduct($sparePart))->toBeFalse();
     }
 });
 
-test('user can complete checkout by submitting the checkout form', function () {
+test('user can complete checkout by submitting the checkout form', function (): void {
     // Setup: Fake notifications
     Notification::fake();
 
@@ -134,7 +137,7 @@ test('user can complete checkout by submitting the checkout form', function () {
     $response->assertSee('Shipping address');
 
     // Get the cart to verify items before checkout
-    $cart = app(\App\Services\Cart::class);
+    $cart = resolve(Cart::class);
     expect($cart->getTotalQuantity())->toBe(3);
 
     // Submit the checkout form via Livewire (the "place order" button)
@@ -154,7 +157,7 @@ test('user can complete checkout by submitting the checkout form', function () {
         ->assertHasNoFormErrors();
 
     // Verify order was created in database
-    $order = Order::where('user_id', $user->id)->latest()->first();
+    $order = Order::query()->where('user_id', $user->id)->latest()->first();
     expect($order)->not->toBeNull();
     expect($order->user_id)->toBe($user->id);
     expect($order->purchase_cost)->toBeGreaterThan(0);

@@ -1,9 +1,11 @@
-<div class="max-w-4xl mx-auto px-1 sm:px-4 py-2 sm:py-8">
-    @if($cart->isEmpty())
-        @php redirect(route('checkout.cart')); @endphp
+<div class="mx-auto max-w-4xl px-1 py-2 sm:px-4 sm:py-8">
+    @if ($cart->isEmpty())
+        @php
+            redirect(route('checkout.cart'));
+        @endphp
     @endif
 
-    <h2 class="mb-4 sm:mb-8 text-lg sm:text-2xl font-black text-center text-slate-900 uppercase tracking-tighter">
+    <h2 class="mb-4 text-center text-lg font-black tracking-tighter text-slate-900 uppercase sm:mb-8 sm:text-2xl">
         {{ __('Products') }}
     </h2>
 
