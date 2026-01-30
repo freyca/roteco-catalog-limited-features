@@ -84,8 +84,8 @@
         "update-application": [
             "git pull",
             "@php artisan migrate",
-            "composer update",
-            "npm update",
+            "composer  --no-dev",
+            "npm update --omit-dev",
             "npm run build",
             "@php artisan optimize"
         ],
