@@ -145,7 +145,6 @@ class OrderResource extends Resource
                             ->default(0)
                             ->minValue(0)
                             ->numeric()
-                            ->decimalPlaces(2)
                             ->lazy()
                             ->afterStateUpdated(
                                 function (Get $get, Set $set): void {
