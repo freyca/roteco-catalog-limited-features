@@ -15,7 +15,7 @@
                                 {{ __('Pos.') }}
                             </span>
                             <span
-                                class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-[10px] font-black text-white shadow-lg ring-4 shadow-slate-200 ring-white transition-transform group-hover:scale-110"
+                                class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-[10px] font-black text-white shadow-lg ring-4 shadow-slate-200 ring-white transition-transform"
                             >
                                 {{ $spare_part->number_in_image }}
                             </span>
