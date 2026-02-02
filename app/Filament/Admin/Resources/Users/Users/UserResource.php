@@ -4,21 +4,16 @@ declare(strict_types=1);
 
 namespace App\Filament\Admin\Resources\Users\Users;
 
-use App\Enums\Role;
 use App\Filament\Admin\Resources\Users\Users\Pages\CreateUser;
 use App\Filament\Admin\Resources\Users\Users\Pages\EditUser;
 use App\Filament\Admin\Resources\Users\Users\Pages\ListUsers;
 use App\Filament\Admin\Resources\Users\Users\RelationManagers\AddressRelationManager;
+use App\Filament\Admin\Resources\Users\Users\Schemas\UserForm;
+use App\Filament\Admin\Resources\Users\Users\Tables\UsersTable;
 use App\Models\User;
 use BackedEnum;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class UserResource extends Resource
@@ -29,67 +24,12 @@ class UserResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                Section::make([
-                    TextInput::make('id')
-                        ->disabled()
-                        ->label('ID'),
-                    ToggleButtons::make('role')
-                        ->inline()
-                        ->required()
-                        ->default(Role::Customer->value)
-                        ->options(Role::class),
-                    TextInput::make('name')
-                        ->required()
-                        ->label(__('Name')),
-                    TextInput::make('surname')
-                        ->required()
-                        ->label(__('Surname')),
-                    TextInput::make('email')
-                        ->required()
-                        ->email(),
-                    TextInput::make('password')
-                        ->label(__('Password'))
-                        ->password(),
-                ])->columns(2),
-            ]);
+        return UserForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->label(__('Name'))
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('surname')
-                    ->label(__('Surname'))
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('email')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('role')
-                    ->label(__('Role'))
-                    ->searchable()
-                    ->sortable()
-                    ->badge(),
-                TextColumn::make('created_at')
-                    ->sortable()
-                    ->date()
-                    ->label(__('Registered date')),
-            ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([]),
-            ]);
+        return UsersTable::configure($table);
     }
 
     public static function getRelations(): array
