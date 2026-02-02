@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\User\Resources\Addresses\Pages;
 
 use App\Filament\User\Resources\Addresses\AddressResource;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditAddress extends EditRecord
@@ -13,6 +14,8 @@ class EditAddress extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return [];
+        return [
+            DeleteAction::make(),
+        ];
     }
 }
