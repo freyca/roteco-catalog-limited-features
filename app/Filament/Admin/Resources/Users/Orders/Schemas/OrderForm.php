@@ -348,9 +348,9 @@ class OrderForm
 
             /**
              * Billing address could be null, in that case we take shipping
-             * address as billing address
+             * address as billing address, which can't be null
              *
-             * @var Address|null $orderAddress
+             * @var Address $orderAddress
              */
             $orderAddress = $order->$relationMethod ?? $order->shippingAddress;
 
