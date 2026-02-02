@@ -4,24 +4,15 @@ declare(strict_types=1);
 
 namespace App\Filament\Admin\Resources\Features\Categories;
 
-use App\Filament\Admin\Imports\CategoryImporter;
+use App\Filament\Admin\Resources\Features\Categories\Forms\CategoryForm;
 use App\Filament\Admin\Resources\Features\Categories\Pages\CreateCategory;
 use App\Filament\Admin\Resources\Features\Categories\Pages\EditCategory;
 use App\Filament\Admin\Resources\Features\Categories\Pages\ListCategories;
+use App\Filament\Admin\Resources\Features\Categories\Schemas\CategoriesTable;
 use App\Models\Category;
 use BackedEnum;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\EditAction;
-use Filament\Actions\ImportAction;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ImageColumn;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
 class CategoryResource extends Resource
@@ -32,71 +23,17 @@ class CategoryResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                Section::make([
-                    TextInput::make('id')
-                        ->disabled(),
-                    TextInput::make('name')
-                        ->label(__('Name'))
-                        ->required()
-                        ->maxLength(255),
-                ])->columns(2),
-
-                FileUpload::make('big_image')
-                    ->label(__('Big image'))
-                    ->required()
-                    ->moveFiles()
-                    ->preserveFilenames()
-                    ->orientImagesFromExif(false)
-                    ->directory(config()->string('custom.category-image-storage')),
-
-                // Published toggle
-                Toggle::make('published')
-                    ->label(__('Published')),
-            ]);
+        return CategoryForm::configure($schema);
     }
 
     public static function table(Table $table): Table
     {
-        return $table
-            ->headerActions([
-                ImportAction::make()
-                    ->importer(CategoryImporter::class),
-            ])
-            ->columns([
-                TextColumn::make('id')
-                    ->sortable(),
-
-                ImageColumn::make('big_image')
-                    ->circular()
-                    ->label(__('Image')),
-
-                TextColumn::make('name')
-                    ->label(__('Name'))
-                    ->sortable()
-                    ->searchable(),
-
-                IconColumn::make('published')
-                    ->boolean()
-                    ->label(__('Published')),
-            ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([]),
-            ]);
+        return CategoriesTable::configure($table);
     }
 
     public static function getRelations(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public static function getPages(): array
