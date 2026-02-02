@@ -12,8 +12,7 @@
         "andreiio/blade-remix-icon": "^3.6",
         "blade-ui-kit/blade-heroicons": "^2.3",
         "creagia/redsys-php": "^3.0",
-        "dutchcodingcompany/filament-socialite": "^3.0",
-        "filament/filament": "^4.0",
+        "filament/filament": "^5.0",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.9",
         "nunomaduro/essentials": "^1.0",
@@ -37,8 +36,7 @@
         "pestphp/pest-plugin-type-coverage": "^4.0.3",
         "rector/rector": "^2.3",
         "spatie/laravel-ignition": "^2.4",
-        "spatie/laravel-web-tinker": "^1.9",
-        "wire-elements/wire-spy": "^0.0.12"
+        "spatie/laravel-web-tinker": "^1.9"
     },
     "autoload": {
         "psr-4": {
@@ -94,7 +92,7 @@
             "pint --parallel",
             "npm run lint"
         ],
-        "test:type-coverage": "pest --type-coverage --min=100",
+        "test:type-coverage": "pest --type-coverage --parallel --min=100",
         "test:lint": [
             "pint --parallel --test",
             "rector --dry-run",
@@ -104,9 +102,9 @@
         "test:types": "phpstan",
         "test": [
             "@test:type-coverage",
-            "@test:unit",
             "@test:lint",
-            "@test:types"
+            "@test:types",
+            "@test:unit"
         ]
     },
     "extra": {

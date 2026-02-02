@@ -59,19 +59,9 @@ class UserPanelProvider extends PanelProvider
                     ->sort(1),
 
             ])
-            ->discoverResources(
-                in: app_path('Filament/User/Resources'),
-                for: 'App\\Filament\\User\\Resources'
-            )
-            ->discoverPages(
-                in: app_path('Filament/User/Pages'),
-                for: 'App\\Filament\\User\\Pages'
-            )
-            ->pages([])
-            ->discoverWidgets(
-                in: app_path('Filament/User/Widgets'),
-                for: 'App\\Filament\\User\\Widgets'
-            )
+            ->discoverResources(in: app_path('Filament/User/Resources'), for: 'App\\Filament\\User\\Resources')
+            ->discoverPages(in: app_path('Filament/User/Pages'), for: 'App\\Filament\\User\\Pages')
+            ->discoverWidgets(in: app_path('Filament/User/Widgets'), for: 'App\\Filament\\User\\Widgets')
             ->widgets([
                 AccountWidget::class,
             ])
