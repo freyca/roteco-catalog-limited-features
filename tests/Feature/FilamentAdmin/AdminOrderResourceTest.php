@@ -48,7 +48,18 @@ describe('AdminOrderResource', function (): void {
     });
 
     it('admin can access edit order page', function (): void {
-        $order = Order::factory()->create();
+        $user = User::factory()->create();
+
+        $address = Address::factory()
+            ->for($user)
+            ->create([
+                'address_type' => AddressType::ShippingAndBilling,
+            ]);
+
+        $order = Order::factory()
+            ->for($user)
+            ->for($address, 'shippingAddress')
+            ->create();
 
         Livewire::test(EditOrder::class, ['record' => $order->getRouteKey()])
             ->assertStatus(200)
