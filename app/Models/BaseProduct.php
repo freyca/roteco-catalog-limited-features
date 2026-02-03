@@ -64,14 +64,6 @@ abstract class BaseProduct extends Model
     ];
 
     /**
-     * @return MorphMany<OrderProduct, $this>
-     */
-    final public function orders(): MorphMany
-    {
-        return $this->morphMany(OrderProduct::class, 'orderable');
-    }
-
-    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>
