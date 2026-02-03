@@ -15,7 +15,7 @@ class PriceCalculator
     public function getTotalCostForProduct(OrderProductDTO $product, int $quantity, bool $apply_discount = true): float
     {
         if ($apply_discount) {
-            $price = $product->priceWithDiscount() === floatval(0) ? $product->priceWithoutDiscount() : $product->priceWithDiscount();
+            $price = $product->priceWithDiscount() === (float) 0 ? $product->priceWithoutDiscount() : $product->priceWithDiscount();
         } else {
             $price = $product->priceWithoutDiscount();
         }

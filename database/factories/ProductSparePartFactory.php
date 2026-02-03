@@ -37,6 +37,7 @@ class ProductSparePartFactory extends Factory
             'price_with_discount' => function () use ($price): float {
                 // Discount 10%–30% below price
                 $discountPercentage = fake()->numberBetween(10, 30);
+
                 return round($price * (1 - $discountPercentage / 100), 2);
             },
             'published' => fake()->boolean(75),
@@ -64,7 +65,7 @@ class ProductSparePartFactory extends Factory
      */
     public function published(): static
     {
-        return $this->state(fn(array $attributes): array => [
+        return $this->state(fn (array $attributes): array => [
             'published' => true,
         ]);
     }
