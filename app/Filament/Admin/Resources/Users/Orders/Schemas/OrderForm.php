@@ -239,22 +239,42 @@ class OrderForm
                     ->label(__('Product'))
                     ->disabled(fn (Get $get): bool => blank($get('orderable_type')))
                     ->options(function (Get $get) {
-                        if (blank($get('orderable_type'))) {
+                        $class_name = $get('orderable_type');
+
+                        if (! is_string($class_name)) {
                             return;
                         }
 
-                        /** @var BaseProduct */
-                        $class_name = $get('orderable_type');
+                        if (! class_exists($class_name)) {
+                            return;
+                        }
 
-                        return $class_name::query()->pluck('name', 'id')->toArray();
+                        /**
+                         * @var BaseProduct
+                         */
+                        $builder = $class_name;
+
+                        /**
+                         * @var array<int, string>
+                         */
+                        $products = $builder::query()->pluck('name', 'id')->toArray();
+
+                        return $products;
                     })
                     ->searchable()
                     ->required()
                     ->live()
                     ->distinct()
                     ->afterStateUpdated(function (mixed $state, Get $get, Set $set): void {
-                        /** @var BaseProduct */
                         $class_name = $get('orderable_type');
+
+                        if (! is_string($class_name)) {
+                            return;
+                        }
+
+                        if (! class_exists($class_name)) {
+                            return;
+                        }
 
                         /** @var ?BaseProduct */
                         $product = $class_name::query()->find($state);

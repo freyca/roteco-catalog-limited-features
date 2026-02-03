@@ -119,6 +119,7 @@ describe('AdminOrderResource', function (): void {
                 }
             }
         }
+
         expect($dataCsvFiles)->not->toBeEmpty();
         $csv = Storage::disk('local')->get($dataCsvFiles[0]);
         // Check CSV contains at least one order code
@@ -315,6 +316,60 @@ describe('AdminOrderResource', function (): void {
         );
 
         expect($order->purchase_cost)->toBe($expectedTotal);
+    });
+
+    it('fails creating an order if some field is incorrect', function (): void {
+        $user = User::factory()->create();
+        $address = Address::factory(['address_type' => AddressType::ShippingAndBilling])->for(test()->admin)->create();
+
+        $product = ProductSparePart::factory()->create([
+            'price' => 100,
+            'price_with_discount' => 90,
+        ]);
+
+        $orderData = [
+            'user_id' => $user->id,
+            'shipping_address_id' => $address->id,
+            'billing_address_id' => $address->id,
+            'discount' => 10,
+            'payment_method' => PaymentMethod::Card,
+            'status' => OrderStatus::Paid,
+            'orderProducts' => [
+                0 => [
+                    'orderable_id' => $product->id,
+                    'quantity' => 2,
+                    'unit_price' => $product->price_with_discount,
+                ],
+                1 => [
+                    'orderable_type' => ProductSparePart::class,
+                    'orderable_id' => 10,
+                    'quantity' => 2,
+                    'unit_price' => $product->price_with_discount,
+                ],
+                2 => [
+                    'orderable_type' => 'somerandomtext',
+                    'orderable_id' => 10,
+                    'quantity' => 2,
+                    'unit_price' => $product->price_with_discount,
+                ],
+                3 => [
+                    'orderable_type' => 5,
+                    'orderable_id' => 10,
+                    'quantity' => 2,
+                    'unit_price' => $product->price_with_discount,
+                ],
+            ],
+        ];
+
+        $undoRepeaterFake = Repeater::fake();
+        Filament::setCurrentPanel(Filament::getPanel('admin'));
+
+        Livewire::test(CreateOrder::class)
+            ->fillForm($orderData)
+            ->call('create')
+            ->assertHasFormErrors();
+
+        $undoRepeaterFake();
     });
 
     it('resets addresses when user_id is null', function (): void {
