@@ -149,7 +149,53 @@ describe('CategoryResource', function (): void {
             ])->callMountedTableAction()
             ->assertHasNoTableActionErrors();
 
+        expect(Category::query()->count())->toBe(2);
+
         expect(Category::query()->where('name', 'Imported Electronics')->where('slug', 'imported-electronics')->exists())->toBeTrue();
         expect(Category::query()->where('name', 'Imported Clothing')->where('slug', 'imported-clothing')->exists())->toBeTrue();
+    });
+
+    it('can import categories from CSV via Livewire action with ids and overwrites previous ones', function (): void {
+        Storage::fake('local');
+        test()->actingAs(test()->admin);
+
+        $category1 = Category::factory()->create();
+        $category2 = Category::factory()->create();
+
+        // Create a fake CSV file with correct headers and data
+        $csvContent = "id,name,big_image\n{$category1->id},Imported Electronics,electronics.jpg\n{$category2->id},Imported Clothing,imported-clothing,clothing.jpg\n";
+        $fileOnDisk = UploadedFile::fake()->createWithContent('cat.csv', $csvContent);
+
+        // Test the import action through Livewire
+        Livewire::test(ListCategories::class)
+            ->mountTableAction('import')
+            ->setTableActionData([
+                'file' => $fileOnDisk,
+            ])->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        expect(Category::query()->count())->toBe(2);
+
+        expect(Category::query()->where('name', 'Imported Electronics')->where('slug', 'imported-electronics')->exists())->toBeTrue();
+        expect(Category::query()->where('name', 'Imported Clothing')->where('slug', 'imported-clothing')->exists())->toBeTrue();
+    });
+
+    it('fails importing categories when some field is invalid', function (): void {
+        Storage::fake('local');
+        test()->actingAs(test()->admin);
+
+        // Create a fake CSV file with correct headers and data
+        $csvContent = "id,name,big_image\nnot-an-id,Imported Electronics,electronics.jpg\n";
+        $fileOnDisk = UploadedFile::fake()->createWithContent('cat.csv', $csvContent);
+
+        // Test the import action through Livewire
+        Livewire::test(ListCategories::class)
+            ->mountTableAction('import')
+            ->setTableActionData([
+                'file' => $fileOnDisk,
+            ])->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        expect(Category::query()->count())->toBe(0);
     });
 });

@@ -17,6 +17,8 @@ class ProductImporter extends Importer
     public static function getColumns(): array
     {
         return [
+            ImportColumn::make('id')
+                ->rules(['nullable', 'integer']),
             ImportColumn::make('reference')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),

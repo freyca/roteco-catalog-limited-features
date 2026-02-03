@@ -214,13 +214,16 @@ describe('ProductSparePartResource', function (): void {
     it('can import product spare parts from CSV via table action', function (): void {
         Storage::fake('local');
         test()->actingAs(test()->admin);
+
         $category = Category::factory()->create();
-        $product = Product::factory()->create([
-            'category_id' => $category->id,
-        ]);
-        $disassembly = Disassembly::factory()->create([
-            'product_id' => $product->id,
-        ]);
+
+        $product = Product::factory()
+            ->for($category)
+            ->create();
+
+        $disassembly = Disassembly::factory()
+            ->for($product)
+            ->create();
 
         // Create a fake CSV file with correct headers and data matching ProductSparePartImporter
         $csvContent = "reference,name,number_in_image,self_reference,price,price_with_discount,published,disassembly_id\nREF-1111,Imported Spare 1,1,,100.2,80.6,1,{$disassembly->id}\nREF-2222,Imported Spare 2,2,,200,180,1,{$disassembly->id}\n";
@@ -234,7 +237,85 @@ describe('ProductSparePartResource', function (): void {
             ])->callMountedTableAction()
             ->assertHasNoTableActionErrors();
 
+        expect(ProductSparePart::query()->count())->toBe(2);
+
         expect(ProductSparePart::query()->where('name', 'Imported Spare 1')->where('disassembly_id', $disassembly->id)->exists())->toBeTrue();
         expect(ProductSparePart::query()->where('name', 'Imported Spare 2')->where('disassembly_id', $disassembly->id)->exists())->toBeTrue();
+    });
+
+    it('can import product spare parts from CSV via table action with ids and overwrite previous ones', function (): void {
+        Storage::fake('local');
+        test()->actingAs(test()->admin);
+
+        $category = Category::factory()->create();
+
+        $product = Product::factory()
+            ->for($category)
+            ->create();
+
+        $disassembly = Disassembly::factory()
+            ->for($product)
+            ->create();
+
+        $product_spare_part1 = ProductSparePart::factory()
+            ->for($disassembly)
+            ->create();
+
+        $product_spare_part2 = ProductSparePart::factory()
+            ->for($disassembly)
+            ->create();
+
+        // Create a fake CSV file with correct headers and data matching ProductSparePartImporter
+        $csvContent = "id,reference,name,number_in_image,self_reference,price,price_with_discount,published,disassembly_id\n{$product_spare_part1->id},REF-1111,Imported Spare 1,1,,100.2,80.6,1,{$disassembly->id}\n{$product_spare_part2->id},REF-2222,Imported Spare 2,2,,200,180,1,{$disassembly->id}\n";
+        $fileOnDisk = UploadedFile::fake()->createWithContent('sp.csv', $csvContent);
+
+        // Test the import action through Livewire
+        Livewire::test(ListProductSpareParts::class)
+            ->mountTableAction('import')
+            ->setTableActionData([
+                'file' => $fileOnDisk,
+            ])->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        expect(ProductSparePart::query()->count())->toBe(2);
+
+        expect(ProductSparePart::query()->where('name', 'Imported Spare 1')->where('disassembly_id', $disassembly->id)->exists())->toBeTrue();
+        expect(ProductSparePart::query()->where('name', 'Imported Spare 2')->where('disassembly_id', $disassembly->id)->exists())->toBeTrue();
+    });
+
+    it('fails importing product spare parts when some field is invalid', function (): void {
+        Storage::fake('local');
+        test()->actingAs(test()->admin);
+
+        $category = Category::factory()->create();
+
+        $product = Product::factory()
+            ->for($category)
+            ->create();
+
+        $disassembly = Disassembly::factory()
+            ->for($product)
+            ->create();
+
+        $product_spare_part = ProductSparePart::factory()
+            ->for($disassembly)
+            ->create();
+
+        // Create a fake CSV file with correct headers and data matching ProductSparePartImporter
+        $csvContent = "id,reference,name,number_in_image,self_reference,price,price_with_discount,published,disassembly_id\nnot-an-id,REF-1111,Imported Spare 1,1,,100.2,80.6,1,{$disassembly->id}\n{$product_spare_part->id},REF-2222,Imported Spare 2,2,,200,180,1,not-an-id\n";
+        $fileOnDisk = UploadedFile::fake()->createWithContent('sp.csv', $csvContent);
+
+        // Test the import action through Livewire
+        Livewire::test(ListProductSpareParts::class)
+            ->mountTableAction('import')
+            ->setTableActionData([
+                'file' => $fileOnDisk,
+            ])->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        // Only the factory should exist
+        expect(ProductSparePart::query()->count())->toBe(1);
+
+        expect(ProductSparePart::query()->first()->name)->toBe($product_spare_part->name);
     });
 });

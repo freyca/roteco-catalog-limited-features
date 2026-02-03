@@ -172,7 +172,102 @@ describe('ProductResource', function (): void {
             ])->callMountedTableAction()
             ->assertHasNoTableActionErrors();
 
-        expect(Product::query()->where('name', 'Imported Product 1')->where('main_image', 'product1.jpg')->where('category_id', $category->id)->exists())->toBeTrue();
-        expect(Product::query()->where('name', 'Imported Product 2')->where('main_image', 'product2.jpg')->where('category_id', $category->id)->exists())->toBeTrue();
+        expect(Product::query()->count())->toBe(2);
+
+        expect(
+            Product::query()
+                ->where('name', 'Imported Product 1')
+                ->where('main_image', 'product1.jpg')
+                ->where('category_id', $category->id)
+                ->exists()
+        )
+            ->toBeTrue();
+
+        expect(
+            Product::query()
+                ->where('name', 'Imported Product 2')
+                ->where('main_image', 'product2.jpg')
+                ->where('category_id', $category->id)
+                ->exists()
+        )->toBeTrue();
+    });
+
+    it('can import products from CSV via Livewire action and overwrite products with same ids', function (): void {
+        Storage::fake('local');
+        test()->actingAs(test()->admin);
+        $category = Category::factory()->create();
+
+        $product1 = Product::factory()->create();
+        $product2 = Product::factory()->create();
+
+        // One of the products has the id of previously created products, the other is null
+        $csvContent = "id,reference,name,published,main_image,category\n{$product1->id},REF-0001,Imported Product 1,1,product1.jpg,{$category->id}\n,REF-0002,Imported Product 2,1,product2.jpg,{$category->id}\n";
+        $fileOnDisk = UploadedFile::fake()->createWithContent('prod.csv', $csvContent);
+
+        // Test the import action through Livewire (queue processes synchronously by default in tests)
+        Livewire::test(ListProducts::class)
+            ->mountTableAction('import')
+            ->setTableActionData([
+                'file' => $fileOnDisk,
+            ])->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        // There should be 3 products:
+        // - factory 1, updated with csv
+        // - factory 2
+        // - imported product with null id
+        expect(Product::query()->count())->toBe(3);
+
+        expect(
+            Product::query()
+                ->where('name', 'Imported Product 1')
+                ->where('main_image', 'product1.jpg')
+                ->where('category_id', $category->id)
+                ->exists()
+        )
+            ->toBeTrue();
+
+        expect(
+            Product::query()
+                ->where('name', $product2->name)
+                ->where('main_image', $product2->main_image)
+                ->where('category_id', $product2->category->id)
+                ->exists()
+        )
+            ->toBeTrue();
+
+        expect(
+            Product::query()
+                ->where('name', 'Imported Product 2')
+                ->where('main_image', 'product2.jpg')
+                ->where('category_id', $category->id)
+                ->exists()
+        )->toBeTrue();
+    });
+
+    it('fails importing products when some field is invalid', function (): void {
+        Storage::fake('local');
+        test()->actingAs(test()->admin);
+        $category = Category::factory()->create();
+
+        $product1 = Product::factory()->create();
+
+        // One of the products has the id of previously created products, the other is null
+        $csvContent = "id,reference,name,published,main_image,category\nnot-an-id,REF-0001,Imported Product 1,1,product1.jpg,{$category->id}\n$product1->id,REF-0002,Imported Product 2,1,product2.jpg,not-an-id\n";
+        $fileOnDisk = UploadedFile::fake()->createWithContent('prod.csv', $csvContent);
+
+        // Test the import action through Livewire (queue processes synchronously by default in tests)
+        Livewire::test(ListProducts::class)
+            ->mountTableAction('import')
+            ->setTableActionData([
+                'file' => $fileOnDisk,
+            ])->callMountedTableAction()
+            ->assertHasNoTableActionErrors();
+
+        // There should be only the factory product
+        expect(Product::query()->count())->toBe(1);
+
+        expect(Product::query()->find(1)->category_id)->toBe($product1->category_id);
+        expect(Product::query()->find(1)->reference)->toBe($product1->reference);
     });
 });

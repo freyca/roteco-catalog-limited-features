@@ -17,6 +17,8 @@ class CategoryImporter extends Importer
     public static function getColumns(): array
     {
         return [
+            ImportColumn::make('id')
+                ->rules(['nullable', 'integer']),
             ImportColumn::make('name')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
