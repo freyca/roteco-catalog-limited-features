@@ -11,55 +11,35 @@ beforeEach(function (): void {
 });
 
 describe('Products Page - ProductCard Component', function (): void {
-    it('renders product cards on products page', function (): void {
-        $product = Product::factory()->create(['published' => true]);
+    it('user cannot access product page if it is not published', function (): void {
+        $product = Product::factory()->create(['published' => false]);
 
-        $response = test()->actingAs(test()->user)->get('/productos');
+        test()->actingAs(test()->user);
+
+        $response = test()->get(route('product', $product->slug));
+
+        expect($response->status())->toBe(404);
+    });
+
+    it('admin can access product page if it is not published', function (): void {
+        $product = Product::factory()->create(['published' => false]);
+
+        test()->actingAs(User::factory()->create(['role' => Role::Admin]));
+
+        $response = test()->get(route('product', $product->slug));
 
         expect($response->status())->toBe(200);
         $response->assertSee($product->name);
     });
 
-    it('displays product information in card', function (): void {
-        $product = Product::factory()->create(['name' => 'Test Product', 'published' => true]);
-
-        $response = test()->actingAs(test()->user)->get('/productos');
-
-        $response->assertSee('Test Product');
-    });
-
-    it('displays product with price', function (): void {
-        $product = Product::factory()->create(['published' => true]);
-
-        $response = test()->actingAs(test()->user)->get('/productos');
-
-        expect($response->status())->toBe(200);
-    });
-
     it('handles multiple products on page', function (): void {
-        Product::factory()->count(3)->create(['published' => true]);
+        $products = Product::factory()->count(3)->create(['published' => true]);
 
-        $response = test()->actingAs(test()->user)->get('/productos');
-
-        expect($response->status())->toBe(200);
-    });
-
-    it('renders product cards correctly', function (): void {
-        $product1 = Product::factory()->create(['name' => 'Product 1', 'published' => true]);
-        $product2 = Product::factory()->create(['name' => 'Product 2', 'published' => true]);
-
-        $response = test()->actingAs(test()->user)->get('/productos');
+        $response = test()->actingAs(test()->user)->get(route('product-list'));
 
         expect($response->status())->toBe(200);
-        expect($response->content())->toContain('Product 1');
-        expect($response->content())->toContain('Product 2');
-    });
-
-    it('shows page with single product', function (): void {
-        $product = Product::factory()->create(['published' => true]);
-
-        $response = test()->actingAs(test()->user)->get('/productos');
-
-        expect($response->status())->toBe(200);
+        foreach ($products as $product) {
+            $response->assertSee($product->name);
+        }
     });
 });

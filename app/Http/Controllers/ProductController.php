@@ -45,13 +45,12 @@ class ProductController extends Controller
 
     private function canAccessPrivateProducts(): bool
     {
-        /** @var ?User */
+        /** @var User */
         $user = Auth::user();
 
         return match (true) {
-            $user === null => false,
-            $user->role !== Role::Admin => false,
-            default => true
+            $user->role === Role::Admin => true,
+            default => false
         };
     }
 }
