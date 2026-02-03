@@ -19,6 +19,9 @@ class SessionCartRepository implements CartRepositoryInterface
 
     public const string SESSION = 'cart';
 
+    /**
+     * @var Collection <int, OrderProductDTO>
+     */
     private Collection $session_content;
 
     public function __construct(
@@ -81,7 +84,9 @@ class SessionCartRepository implements CartRepositoryInterface
          * Kind of cache to avoid repetitive queries
          */
         if (! isset($this->session_content)) {
-            /** @var Collection */
+            /**
+             * @var Collection<int, OrderProductDTO>
+             */
             $session = Session::get(self::SESSION);
 
             $this->session_content = $session;
@@ -173,6 +178,10 @@ class SessionCartRepository implements CartRepositoryInterface
     /**
      * Cart logic
      */
+
+    /**
+     * @return Collection<int, OrderProductDTO>
+     */
     private function addProductToOrder(BaseProduct $product, int $quantity): Collection
     {
         $order_products = $this->getCart();
@@ -198,6 +207,9 @@ class SessionCartRepository implements CartRepositoryInterface
         return $order_products;
     }
 
+    /**
+     * @return Collection<int, OrderProductDTO>
+     */
     private function removeProductFromOrder(BaseProduct $product): Collection
     {
         $order_products = $this->getCart();

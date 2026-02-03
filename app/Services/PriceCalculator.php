@@ -36,26 +36,42 @@ class PriceCalculator
     /**
      * Order calculations
      */
+
+    /**
+     * @param  Collection<int, OrderProductDTO>  $order_products
+     */
     public function getTotaCostForOrderWithoutDiscount(Collection $order_products): float
     {
         return $this->getTotalCostForOrder($order_products, apply_discount: false);
     }
 
-    public function getTotalDiscountForOrder(Collection $order): float
+    /**
+     * @param  Collection<int, OrderProductDTO>  $order_products
+     */
+    public function getTotalDiscountForOrder(Collection $order_products): float
     {
-        return $this->getTotaCostForOrderWithoutDiscount($order) - $this->getTotalCostForOrder($order);
+        return $this->getTotaCostForOrderWithoutDiscount($order_products) - $this->getTotalCostForOrder($order_products);
     }
 
+    /**
+     * @param  Collection<int, OrderProductDTO>  $order_products
+     */
     public function getTotalCostForOrderWithoutTaxes(Collection $order_products): float
     {
         return $this->getTotalCostForOrder($order_products);
     }
 
+    /**
+     * @param  Collection<int, OrderProductDTO>  $order_products
+     */
     public function getTotalCostForOrderWithTaxes(Collection $order_products, bool $apply_discount = true): float
     {
         return $this->getTotalCostForOrder($order_products, $apply_discount) * (1 + config()->float('custom.tax_iva'));
     }
 
+    /**
+     * @param  Collection<int, OrderProductDTO>  $order_products
+     */
     public function getTotalCostForOrderWithTaxesAndManualDiscount(Collection $order_products, bool $apply_discount = true, float $percentage_discount = 0): float
     {
         $total_with_taxes = $this->getTotalCostForOrderWithTaxes($order_products, $apply_discount);
@@ -64,7 +80,7 @@ class PriceCalculator
     }
 
     /**
-     * @paran Collection<int, OrderProductDTO> $order_products
+     * @param  Collection<int, OrderProductDTO>  $order_products
      */
     private function getTotalCostForOrder(Collection $order_products, bool $apply_discount = true): float
     {

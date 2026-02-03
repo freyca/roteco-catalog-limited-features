@@ -11,24 +11,24 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class EloquentCategoryRepository implements CategoryRepositoryInterface
 {
+    /**
+     * @return Collection<int, Category>
+     */
     public function getAll(): Collection
     {
-        /**
-         * @var Collection<int, Category>
-         */
         return Category::query()->where('published', true)->get();
     }
 
+    /**
+     * @return LengthAwarePaginator<int, Product>
+     */
     public function getProducts(Category $category): LengthAwarePaginator
     {
-        /**
-         * @var LengthAwarePaginator<Product>
-         */
         return $category->products()->paginate(8);
     }
 
     /**
-     * @codeCoverageIgnore It is not used by now
+     * @return Collection<int, Category>
      */
     public function featured(): Collection
     {

@@ -9,11 +9,17 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class EloquentProductRepository implements ProductRepositoryInterface
 {
+    /**
+     * @return LengthAwarePaginator<int, Product>
+     */
     public function getAll(): LengthAwarePaginator
     {
         return Product::query()->paginate(16);
     }
 
+    /**
+     * @return LengthAwarePaginator<int, Product>
+     */
     public function featured(): LengthAwarePaginator
     {
         $featured_products = config()->array('custom.featured-products');

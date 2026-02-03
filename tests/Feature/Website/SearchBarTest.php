@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Livewire\SearchBar;
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 
@@ -30,7 +31,7 @@ it('returns empty results when no products match', function (): void {
     $component = Livewire::test(SearchBar::class)
         ->set('searchTerm', 'Samsung');
 
-    expect($component->viewData('results'))->toEqual([]);
+    expect($component->viewData('results'))->toEqual(['products' => new Collection()]);
 });
 
 it('finds products by exact name match', function (): void {
@@ -166,7 +167,7 @@ it('prevents SQL injection attacks', function (): void {
 
         $results = $component->viewData('results');
         // Should return empty array (no match), not throw an error or execute the injection
-        expect($results)->toEqual([]);
+        expect($results)->toEqual(['products' => new Collection()]);
     }
 
     // Verify the original product is still intact

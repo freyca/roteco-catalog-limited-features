@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\DTO\OrderProductDTO;
 use App\Models\BaseProduct;
 use App\Repositories\Cart\CartRepositoryInterface;
 use Illuminate\Support\Collection;
@@ -69,6 +70,9 @@ final readonly class Cart implements CartRepositoryInterface
         return $this->repository->hasProduct($product);
     }
 
+    /**
+     * @return Collection<int, OrderProductDTO>
+     */
     public function getCart(): Collection
     {
         return $this->repository->getCart();

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Repositories\Cart;
 
+use App\DTO\OrderProductDTO;
 use App\Models\BaseProduct;
 use Illuminate\Support\Collection;
 
@@ -24,6 +25,9 @@ interface CartRepositoryInterface
 
     public function clear(): void;
 
+    /**
+     * @return Collection<int, OrderProductDTO>
+     */
     public function getCart(): Collection;
 
     /**

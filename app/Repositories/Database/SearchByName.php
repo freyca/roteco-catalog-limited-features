@@ -6,47 +6,31 @@ namespace App\Repositories\Database;
 
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class SearchByName
 {
     private static int $limit_results = 5;
 
     /**
-     * @return array{products: Collection<int, Product>}|array{}
+     * @return array{products: Collection<int, Product>}
      */
     public static function search(string $search_term): array
     {
-        $results['products'] = self::queryProducts($search_term);
+        $products = self::query($search_term);
 
-        // Return empty array if no results found
-        if ($results['products']->count() === 0) {
-            return [];
-        }
-
-        return $results;
-    }
-
-    private static function queryProducts(string $search_term): Collection
-    {
-        return self::query(Product::class, $search_term);
+        return [
+            'products' => $products,
+        ];
     }
 
     /**
-     * @template TModel of Model
-     *
-     * @param  class-string<TModel>  $class_name
-     * @return Collection<int, TModel>
+     * @return Collection<int, Product>
      */
-    private static function query(string $class_name, string $search_term): Collection
+    private static function query(string $search_term): Collection
     {
-
-        /** @var Collection<int, TModel> */
-        $results = $class_name::query()
+        return Product::query()
             ->where('name', 'like', "%{$search_term}%")
             ->limit(self::$limit_results)
             ->get();
-
-        return $results;
     }
 }

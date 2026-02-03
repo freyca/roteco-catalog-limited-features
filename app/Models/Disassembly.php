@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\DisassemblyFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Disassembly extends Model
 {
+    /** @use HasFactory<DisassemblyFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     protected $fillable = [
@@ -22,11 +25,17 @@ class Disassembly extends Model
         'main_image',
     ];
 
+    /**
+     * @return HasMany<ProductSparePart, $this>
+     */
     public function productSpareParts(): HasMany
     {
         return $this->hasMany(ProductSparePart::class);
     }
 
+    /**
+     * @return BelongsTo<Product, $this>
+     */
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

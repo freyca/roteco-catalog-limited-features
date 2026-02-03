@@ -13,7 +13,7 @@ use Illuminate\View\Component;
 class ProductGrid extends Component
 {
     /**
-     * @param  Collection|LengthAwarePaginator<BaseProduct>  $products
+     * @param  Collection<int, BaseProduct>|LengthAwarePaginator<int, BaseProduct>  $products
      */
     public function __construct(
         public Collection|LengthAwarePaginator $products

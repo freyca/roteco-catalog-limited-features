@@ -7,6 +7,7 @@ namespace App\Models;
 use App\Casts\MoneyCast;
 use Database\Factories\OrderProductFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -31,6 +32,9 @@ class OrderProduct extends Pivot
         'quantity',
     ];
 
+    /**
+     * @return MorphTo<Model, $this>
+     */
     public function orderable(): MorphTo
     {
         return $this->morphTo()->withTrashed();

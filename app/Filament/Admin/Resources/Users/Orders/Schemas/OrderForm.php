@@ -162,6 +162,7 @@ class OrderForm
         /** @var array<int, array<string, mixed>> $raw_products */
         $raw_products = $get('orderProducts') ?? [];
 
+        /** @var Collection<int, OrderProductDTO> $order_products */
         $order_products = collect();
 
         foreach ($raw_products as $selected_product) {

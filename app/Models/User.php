@@ -73,11 +73,17 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Order::class);
     }
 
+    /**
+     * @return HasMany<Address, $this>
+     */
     public function shippingAddresses(): HasMany
     {
         return $this->addresses()->whereNot('address_type', AddressType::Billing);
     }
 
+    /**
+     * @return HasMany<Address, $this>
+     */
     public function billingAddresses(): HasMany
     {
         return $this->addresses()->whereNot('address_type', AddressType::Shipping);

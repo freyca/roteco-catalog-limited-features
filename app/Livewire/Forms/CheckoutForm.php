@@ -118,6 +118,9 @@ class CheckoutForm extends Component implements HasActions, HasForms
             ]);
     }
 
+    /**
+     * @param  Collection<(int|string), mixed>  $shipping_addresses
+     */
     private function getShippingForm(Collection $shipping_addresses = new Collection): Section
     {
         return Section::make(__('Shipping address'))
@@ -151,6 +154,9 @@ class CheckoutForm extends Component implements HasActions, HasForms
             ]);
     }
 
+    /**
+     * @param  Collection<(int|string), mixed>  $billing_addresses
+     */
     private function getBillingForm(Collection $billing_addresses = new Collection): Section
     {
         return Section::make(__('Billing address'))

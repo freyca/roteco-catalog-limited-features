@@ -44,6 +44,9 @@ class Product extends BaseProduct
         return $this->belongsTo(Category::class);
     }
 
+    /**
+     * @return HasMany<Disassembly, $this>
+     */
     public function disassemblies(): HasMany
     {
         return $this->hasMany(Disassembly::class);

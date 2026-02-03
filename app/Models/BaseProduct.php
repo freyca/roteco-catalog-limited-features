@@ -37,7 +37,10 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 abstract class BaseProduct extends Model
 {
     use FormatsPrices;
+
+    /** @use HasFactory<never> */
     use HasFactory;
+
     use HasSlug;
 
     protected $fillable = [
@@ -61,7 +64,7 @@ abstract class BaseProduct extends Model
     ];
 
     /**
-     * @codeCoverageIgnore It is not used by now
+     * @return MorphMany<OrderProduct, $this>
      */
     final public function orders(): MorphMany
     {
