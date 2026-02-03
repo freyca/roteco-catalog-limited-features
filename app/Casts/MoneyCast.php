@@ -20,12 +20,10 @@ class MoneyCast implements CastsAttributes
      */
     public function get(Model $model, string $key, mixed $value, array $attributes): ?float
     {
-        throw_if(! is_scalar($value) && ! is_null($value), InvalidArgumentException::class, 'Invalid argument', 1);
+        throw_if(! is_scalar($value), InvalidArgumentException::class, 'Invalid argument', 1);
 
         // Transform the integer stored in the database into a float.
-        return ((float) $value === (float) 0)
-            ? null
-            : round((float) $value / 100, precision: 2);
+        return round((float) $value / 100, precision: 2);
     }
 
     /**
@@ -35,10 +33,6 @@ class MoneyCast implements CastsAttributes
      */
     public function set(Model $model, string $key, mixed $value, array $attributes): ?float
     {
-        if ($value === null) {
-            return null;
-        }
-
         return (int) round((float) $value * 100);
     }
 }
