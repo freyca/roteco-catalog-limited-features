@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Filament\User\Resources\Addresses\AddressResource;
 use App\Filament\User\Resources\Addresses\Pages\CreateAddress;
 use App\Filament\User\Resources\Addresses\Pages\EditAddress;
 use App\Models\Address;
@@ -19,6 +20,11 @@ beforeEach(function (): void {
         'surname' => 'User',
     ]);
     test()->actingAs(test()->user);
+});
+
+test('address resource has correct navigation group', function (): void {
+    $group = AddressResource::getNavigationGroup();
+    expect($group)->toBe(__('User'));
 });
 
 it('validates required fields on create', function (): void {

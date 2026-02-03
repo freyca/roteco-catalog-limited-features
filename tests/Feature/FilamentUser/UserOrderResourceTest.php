@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Filament\User\Resources\Orders\OrderResource;
 use App\Filament\User\Resources\Orders\Pages\ListOrders;
 use App\Filament\User\Resources\Orders\Pages\ViewOrder;
 use App\Models\Order;
@@ -14,6 +15,11 @@ beforeEach(function (): void {
     test()->admin = User::factory()->admin_notifiable()->create();
     test()->user = User::factory()->create();
     test()->otherUser = User::factory()->create();
+});
+
+test('order resource has correct navigation group', function (): void {
+    $group = OrderResource::getNavigationGroup();
+    expect($group)->toBe(__('User'));
 });
 
 it('does not show edit order button', function (): void {
