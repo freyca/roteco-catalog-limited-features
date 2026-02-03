@@ -26,14 +26,4 @@ class EloquentCategoryRepository implements CategoryRepositoryInterface
     {
         return $category->products()->paginate(8);
     }
-
-    /**
-     * @return Collection<int, Category>
-     */
-    public function featured(): Collection
-    {
-        $featured_categories = config()->array('custom.featured-categories');
-
-        return Category::query()->whereIn('id', $featured_categories)->get();
-    }
 }

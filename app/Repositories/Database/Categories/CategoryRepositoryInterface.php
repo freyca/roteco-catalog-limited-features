@@ -20,9 +20,4 @@ interface CategoryRepositoryInterface
      * @return LengthAwarePaginator<int, Product>
      */
     public function getProducts(Category $category): LengthAwarePaginator;
-
-    /**
-     * @return Collection<int, Category>
-     */
-    public function featured(): Collection;
 }
