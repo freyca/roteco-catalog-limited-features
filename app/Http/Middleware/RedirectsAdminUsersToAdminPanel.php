@@ -24,7 +24,6 @@ class RedirectsAdminUsersToAdminPanel
         $user = Auth::getUser();
 
         return match (true) {
-            $user === null => $next($request),
             $user->role === Role::Admin => redirect('/admin'),
             default => $next($request),
         };
