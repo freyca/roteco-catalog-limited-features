@@ -22,7 +22,8 @@ beforeEach(function (): void {
 test('user can visit home and login', function (): void {
     // Visit home page (may redirect if not authenticated)
     $response = get('/');
-    expect($response->status())->toBeIn([200, 302]);
+    expect($response->status())->toBe(302);
+    expect($response->assertRedirect(route('filament.user.auth.login')));
 
     // Create and login as a user
     $user = User::factory()->create();
@@ -30,20 +31,27 @@ test('user can visit home and login', function (): void {
 
     // Verify user is authenticated by visiting home again
     $response = get('/');
-    expect($response->status())->toBeIn([200, 302]);
+    expect($response->status())->toBe(302);
+    expect($response->assertRedirect(route('category-list')));
+
+    $response = get(route('category-list'));
+    expect($response->status())->toBe(200);
 });
 
 test('product page displays only published disassemblies and their spare parts', function (): void {
-    // Create a published product
     $product = Product::factory()->create(['published' => true]);
 
     // Create published disassembly with spare parts
-    $publishedDisassembly = Disassembly::factory()->create(['product_id' => $product->id]);
+    $publishedDisassembly = Disassembly::factory()
+        ->create(['product_id' => $product->id]);
+
     $publishedSpareParts = ProductSparePart::factory(2)
         ->create(['disassembly_id' => $publishedDisassembly->id, 'published' => true]);
 
     // Create unpublished disassembly with spare parts
-    $unpublishedDisassembly = Disassembly::factory()->create(['product_id' => $product->id]);
+    $unpublishedDisassembly = Disassembly::factory()
+        ->create(['product_id' => $product->id]);
+
     $unpublishedSpareParts = ProductSparePart::factory(2)
         ->create(['disassembly_id' => $unpublishedDisassembly->id, 'published' => false]);
 
@@ -52,7 +60,7 @@ test('product page displays only published disassemblies and their spare parts',
     test()->actingAs($user);
 
     // Visit the product page
-    $response = get('/producto/'.$product->slug);
+    $response = get(route('product', ['product' => $product->slug]));
     $response->assertStatus(200);
 
     // Assert published disassembly is visible
@@ -74,7 +82,9 @@ test('user can add random spare parts to cart', function (): void {
     $product = Product::factory()->create(['published' => true]);
 
     // Create disassembly with spare parts
-    $disassembly = Disassembly::factory()->create(['product_id' => $product->id]);
+    $disassembly = Disassembly::factory()
+        ->create(['product_id' => $product->id]);
+
     $spareParts = ProductSparePart::factory(5)
         ->create(['disassembly_id' => $disassembly->id, 'published' => true]);
 
@@ -104,6 +114,68 @@ test('user can add random spare parts to cart', function (): void {
     // Verify unselected spare parts are NOT in cart
     $unselectedSpareParts = $spareParts->diff($selectedSpareParts);
     foreach ($unselectedSpareParts as $sparePart) {
+        expect($cart->hasProduct($sparePart))->toBeFalse();
+    }
+});
+
+test('user can delete spare parts from cart', function (): void {
+    // Create a published product
+    $product = Product::factory()->create(['published' => true]);
+
+    // Create disassembly with spare parts
+    $disassembly = Disassembly::factory()
+        ->create(['product_id' => $product->id]);
+
+    $spareParts = ProductSparePart::factory(2)
+        ->create(['disassembly_id' => $disassembly->id, 'published' => true]);
+
+    // Create a user and login
+    $user = User::factory()->create();
+    test()->actingAs($user);
+
+    // Add selected spare parts to cart by testing the Livewire component
+    foreach ($spareParts as $sparePart) {
+        Livewire::test('buttons.product-cart-buttons', ['product' => $sparePart, 'variants' => collect()])
+            ->call('add')
+            ->assertDispatched('refresh-cart');
+
+        // We test we can increment and decrement the product in cart, and the product stills to be one
+        Livewire::test('buttons.product-cart-buttons', ['product' => $sparePart, 'variants' => collect()])
+            ->call('increment')
+            ->assertDispatched('refresh-cart');
+    }
+
+    // Get the cart and verify the correct spare parts are in it
+    $cart = resolve(Cart::class);
+
+    // Verify selected spare parts are in cart
+    foreach ($spareParts as $sparePart) {
+        expect($cart->hasProduct($sparePart))->toBeTrue();
+        expect($cart->getTotalQuantityForProduct($sparePart))->toBe(2);
+    }
+
+    // Decrement spare parts from cart
+    foreach ($spareParts as $sparePart) {
+        Livewire::test('buttons.product-cart-buttons', ['product' => $sparePart, 'variants' => collect()])
+            ->call('decrement')
+            ->assertDispatched('refresh-cart');
+    }
+
+    // Verify selected spare parts still in cart, but once this time
+    foreach ($spareParts as $sparePart) {
+        expect($cart->hasProduct($sparePart))->toBeTrue();
+        expect($cart->getTotalQuantityForProduct($sparePart))->toBe(1);
+    }
+
+    // Decrement spare parts from cart
+    foreach ($spareParts as $sparePart) {
+        Livewire::test('buttons.product-cart-buttons', ['product' => $sparePart, 'variants' => collect()])
+            ->call('remove')
+            ->assertDispatched('refresh-cart');
+    }
+
+    // Verify selected spare parts are gone from
+    foreach ($spareParts as $sparePart) {
         expect($cart->hasProduct($sparePart))->toBeFalse();
     }
 });
