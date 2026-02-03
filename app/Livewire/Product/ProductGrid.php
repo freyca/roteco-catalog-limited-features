@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Product;
 
-use App\Models\BaseProduct;
+use App\Models\Product;
 use App\Repositories\Database\Product\Product\EloquentProductRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\View\View;
@@ -17,7 +17,7 @@ class ProductGrid extends Component
     use WithoutUrlPagination, WithPagination;
 
     /**
-     * @var LengthAwarePaginator<int, BaseProduct>
+     * @var LengthAwarePaginator<int, Product>
      */
     private LengthAwarePaginator $products;
 
