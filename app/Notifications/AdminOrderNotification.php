@@ -52,14 +52,4 @@ class AdminOrderNotification extends Notification
                 'products' => $orderProducts,
             ]);
     }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [
-            'order_id' => $this->order->id,
-        ];
-    }
 }
