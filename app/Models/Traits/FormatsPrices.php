@@ -23,11 +23,4 @@ trait FormatsPrices
 
         return $this->formatCurrency($price_with_discount);
     }
-
-    public function getFormattedSavings(): string
-    {
-        $savings = (float) ($this->price - $this->price_with_discount);
-
-        return $this->formatCurrency($savings);
-    }
 }
