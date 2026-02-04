@@ -14,7 +14,7 @@ beforeEach(function (): void {
 
 describe('CategoryController', function (): void {
     it('an authenticated user can access the list of categories', function (): void {
-        $categories = Category::factory(3)->create();
+        $categories = Category::factory(3)->create(['published' => true]);
 
         $response = test()->get(route('category-list'));
 
@@ -33,7 +33,7 @@ describe('CategoryController', function (): void {
     });
 
     it('returns category detail view', function (): void {
-        $category = Category::factory()->create();
+        $category = Category::factory()->create(['published' => true]);
 
         $response = test()->actingAs(test()->user)->get(route('category', $category));
 
@@ -61,5 +61,32 @@ describe('CategoryController', function (): void {
         $breadcrumbs = $response->viewData('breadcrumbs');
         expect($breadcrumbs)->not()->toBeNull();
         $response->assertViewHas('breadcrumbs');
+    });
+
+    test('categories page does not show hidden categories', function (): void {
+        $published = Category::factory()->create(['published' => true, 'name' => 'Published Category']);
+        $notPublished = Category::factory()->create(['published' => false, 'name' => 'Not Published Category']);
+
+        $response = test()->get(route('category-list'));
+
+        $response->assertOk();
+        $response->assertSee($published->name);
+        $response->assertDontSee($notPublished->name);
+    });
+
+    test('category page does not show hidden products', function (): void {
+        $category = Category::factory()->create(['published' => true, 'name' => 'Published Category']);
+        Product::factory(3)->for($category)->create(['published' => false]);
+
+        $response = test()->get(route('category', $category));
+
+        $products_in_view = $response->viewData('products');
+
+        expect($products_in_view)->count()->toBe(0);
+        $response->assertViewHas('products');
+
+        foreach ($products_in_view as $product) {
+            expect($products_in_view->pluck('name')->not->contains((string) $product->name))->toBeTrue();
+        }
     });
 });
