@@ -11,6 +11,7 @@ use App\Models\User;
 use Exception;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
+use RuntimeException;
 
 class AddressBuilder
 {
@@ -78,9 +79,7 @@ class AddressBuilder
         $form_data = $schema->getState();
 
         $user = Auth::user();
-        if (!$user) {
-            throw new \RuntimeException('User not authenticated');
-        }
+        throw_unless($user, RuntimeException::class, 'User not authenticated');
         $this->user = $user;
 
         // Shipping values
