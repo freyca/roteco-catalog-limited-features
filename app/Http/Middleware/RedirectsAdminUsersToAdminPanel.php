@@ -20,11 +20,11 @@ class RedirectsAdminUsersToAdminPanel
      */
     public function handle(Request $request, Closure $next): Response
     {
-        /** @var User */
+        /** @var ?User */
         $user = Auth::getUser();
 
         return match (true) {
-            $user->role === Role::Admin => redirect('/admin'),
+            $user?->role === Role::Admin => redirect('/admin'),
             default => $next($request),
         };
     }
