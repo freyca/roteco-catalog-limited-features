@@ -204,7 +204,7 @@ describe('AdminOrderResource', function (): void {
         expect($order->purchase_cost)->toBe($expectedTotal);
     });
 
-    it('can update an order adding a product and then delete it', function (): void {
+    it('can update an order adding a product', function (): void {
         $user = User::factory()->create();
         $address = Address::factory(['address_type' => AddressType::ShippingAndBilling])
             ->for($user)
@@ -266,14 +266,6 @@ describe('AdminOrderResource', function (): void {
                     ->toHaveCount(2);
             });
 
-        $orderProduct = $order->orderProducts->first();
-
-        Livewire::test(EditOrder::class, ['record' => $order->getKey()])
-            ->callAction(TestAction::make('delete')->schemaComponent('orderProducts')->arguments([
-                'item' => "record-{$orderProduct->getKey()}",
-            ]))
-            ->assertHasNoFormErrors();
-
         $undoRepeaterFake();
 
         // Refresh order & fetch products (only product2 should exist)
@@ -327,6 +319,106 @@ describe('AdminOrderResource', function (): void {
             ]),
             apply_discount: true,
             percentage_discount: 20.0
+        );
+
+        expect($order->purchase_cost)->toBe($expectedTotal);
+    });
+
+    it('can update an order deleting a product', function (): void {
+        $user = User::factory()->create();
+        $address = Address::factory(['address_type' => AddressType::ShippingAndBilling])
+            ->for($user)
+            ->create();
+
+        // Create products
+        $product1 = ProductSparePart::factory()->create([
+            'price' => 100,
+            'price_with_discount' => 90,
+        ]);
+        $product2 = ProductSparePart::factory()->create([
+            'price' => 200,
+            'price_with_discount' => 180,
+        ]);
+
+        // Create initial order
+        $order = Order::factory()->for($user)->create([
+            'shipping_address_id' => $address->id,
+            'billing_address_id' => $address->id,
+            'discount' => 0,
+            'payment_method' => PaymentMethod::Card,
+            'status' => OrderStatus::Paid,
+            'purchase_cost' => ($product1->price_with_discount + $product2->price_with_discount) * (1 + config()->float('custom.tax_iva')),
+        ]);
+
+        $order->orderProducts()->createMany([
+            [
+                'orderable_type' => ProductSparePart::class,
+                'orderable_id' => $product1->id,
+                'quantity' => 1,
+                'unit_price' => $product1->price_with_discount,
+            ],
+            [
+                'orderable_type' => ProductSparePart::class,
+                'orderable_id' => $product2->id,
+                'quantity' => 1,
+                'unit_price' => $product2->price_with_discount,
+            ],
+        ]);
+
+        // Fake repeater UUIDs
+        $undoRepeaterFake = Repeater::fake();
+
+        Filament::setCurrentPanel(Filament::getPanel('admin'));
+
+        Livewire::test(EditOrder::class, ['record' => $order->getKey()])
+            ->assertSchemaStateSet(function (array $state): void {
+                expect($state['orderProducts'])
+                    ->toHaveCount(2);
+            });
+
+        $orderProduct = $order->orderProducts->first();
+
+        Livewire::test(EditOrder::class, ['record' => $order->getKey()])
+            ->callAction(TestAction::make('delete')->schemaComponent('orderProducts')->arguments([
+                'item' => "record-{$orderProduct->getKey()}",
+            ]))
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        Livewire::test(EditOrder::class, ['record' => $order->getKey()])
+            ->assertSchemaStateSet(function (array $state): void {
+                expect($state['orderProducts'])
+                    ->toHaveCount(1);
+            });
+
+        $undoRepeaterFake();
+
+        // Refresh order & fetch products (only product2 should exist)
+        $order->refresh();
+        $products = $order->orderProducts;
+
+        // Assert old product is still present
+        expect($products->pluck('orderable_id'))->not->toContain($product1->id);
+
+        // Assert only product2 exists
+        expect($products->pluck('orderable_id'))->toContain($product2->id);
+
+        // Assert there are two products
+        expect($products->count())->toBe(1);
+
+        // Assert recalculated purchase_cost
+        $expectedTotal = new PriceCalculator()->getTotalCostForOrderWithTaxesAndManualDiscount(
+            order_products: collect([
+                new OrderProductDTO(
+                    $product2->id,
+                    ProductSparePart::class,
+                    $product2->price_with_discount,
+                    1,
+                    $product2
+                ),
+            ]),
+            apply_discount: true,
+            percentage_discount: 0.0
         );
 
         expect($order->purchase_cost)->toBe($expectedTotal);
