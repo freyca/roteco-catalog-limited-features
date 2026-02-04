@@ -24,7 +24,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
-use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\On;
@@ -63,15 +62,8 @@ class CheckoutForm extends Component implements HasActions, HasForms
 
     public function create(): void
     {
-        try {
-            $addressBuilder = new AddressBuilder($this->form);
-            $addressBuilder->build();
-        } catch (UniqueConstraintViolationException) {
-            session()->flash('email_account_exists');
-            redirect('/user/login');
-
-            return;
-        }
+        $addressBuilder = new AddressBuilder($this->form);
+        $addressBuilder->buildRegisteredUserOrder();
 
         $orderBuilder = resolve(OrderBuilder::class);
         $orderBuilder->build($addressBuilder);

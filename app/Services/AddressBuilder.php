@@ -6,18 +6,15 @@ namespace App\Services;
 
 use App\Enums\AddressType;
 use App\Enums\PaymentMethod;
-use App\Enums\Role;
 use App\Models\Address;
 use App\Models\User;
 use Exception;
 use Filament\Schemas\Schema;
-use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class AddressBuilder
 {
-    private ?User $user;
+    private readonly User $user;
 
     private Address $shipping_address;
 
@@ -71,8 +68,6 @@ class AddressBuilder
 
     private readonly string $order_details;
 
-    private readonly bool $purchase_as_guest;
-
     private readonly bool $use_shipping_address_as_billing_address;
 
     // Payment method
@@ -117,9 +112,6 @@ class AddressBuilder
         // Same billing and shipping address
         $this->use_shipping_address_as_billing_address = (bool) (data_get($form_data, 'use_shipping_address_as_billing_address'));
 
-        // User does not wants to register
-        $this->purchase_as_guest = (bool) (data_get($form_data, 'purchase_as_guest'));
-
         // Comments for the order
         $this->order_details = $this->get_string($form_data, 'order_details');
     }
@@ -149,19 +141,7 @@ class AddressBuilder
         return $this->order_details;
     }
 
-    /**
-     * @throws UniqueConstraintViolationException
-     */
-    public function build(): void
-    {
-        if (! $this->user instanceof User) {
-            $this->buildNotRegisteredUserOrder();
-        } else {
-            $this->buildRegisteredUserOrder();
-        }
-    }
-
-    private function buildRegisteredUserOrder(): void
+    public function buildRegisteredUserOrder(): void
     {
         // shipping_address_id is 0 when user selects "New address"
         if ($this->shipping_address_id === 0) {
@@ -180,39 +160,6 @@ class AddressBuilder
         } else {
             $this->buildBillingAddressFromUserInput();
         }
-    }
-
-    /**
-     * @throws UniqueConstraintViolationException
-     */
-    private function buildNotRegisteredUserOrder(): void
-    {
-        if ($this->purchase_as_guest === false) {
-            $this->createUserAccount();
-        }
-
-        $this->buildShippingAddressFromUserInput();
-
-        // If user uses same shipping and billing adddress
-        if ($this->use_shipping_address_as_billing_address) {
-            $this->billing_address = $this->shipping_address;
-        } else {
-            $this->buildBillingAddressFromUserInput();
-        }
-    }
-
-    /**
-     * @throws UniqueConstraintViolationException
-     */
-    private function createUserAccount(): void
-    {
-        $this->user = User::query()->create([
-            'name' => $this->shipping_name,
-            'surname' => $this->shipping_surname,
-            'email' => $this->shipping_email,
-            'password' => Str::password(),
-            'role' => Role::Customer,
-        ]);
     }
 
     private function buildShippingAddressFromId(): void
