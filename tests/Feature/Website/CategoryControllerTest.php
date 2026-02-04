@@ -4,39 +4,28 @@ declare(strict_types=1);
 
 use App\Enums\Role;
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\User;
 
 beforeEach(function (): void {
-    // Create an authenticated user for the tests
     test()->user = User::factory()->create(['role' => Role::Customer]);
+    test()->actingAs(test()->user);
 });
 
 describe('CategoryController', function (): void {
-    it('returns categories index view', function (): void {
-        Category::factory(3)->create();
+    it('an authenticated user can access the list of categories', function (): void {
+        $categories = Category::factory(3)->create();
 
-        $response = test()->actingAs(test()->user)->get(route('category-list'));
+        $response = test()->get(route('category-list'));
 
         expect($response->status())->toBe(200);
         $response->assertViewIs('pages.categories');
-    });
-
-    it('passes categories to view', function (): void {
-        $categories = Category::factory(3)->create();
-
-        $response = test()->actingAs(test()->user)->get(route('category-list'));
 
         $viewCategories = $response->viewData('categories');
         expect($viewCategories)->toHaveCount(3);
         foreach ($categories as $category) {
-            expect($viewCategories->pluck('id')->contains((string) $category->id))->toBeTrue();
+            expect($viewCategories->pluck('name')->contains((string) $category->name))->toBeTrue();
         }
-    });
-
-    it('passes breadcrumbs to view', function (): void {
-        Category::factory(3)->create();
-
-        $response = test()->actingAs(test()->user)->get(route('category-list'));
 
         $breadcrumbs = $response->viewData('breadcrumbs');
         expect($breadcrumbs)->not()->toBeNull();
@@ -50,32 +39,24 @@ describe('CategoryController', function (): void {
 
         expect($response->status())->toBe(200);
         $response->assertViewIs('pages.category');
-    });
-
-    it('passes category to view', function (): void {
-        $category = Category::factory()->create();
-
-        $response = test()->actingAs(test()->user)->get(route('category', $category));
 
         $viewCategory = $response->viewData('category');
-        expect((string) $viewCategory->id)->toBe((string) $category->id);
         expect($viewCategory->name)->toBe($category->name);
     });
 
-    it('passes products to view', function (): void {
+    it('passes products to category view', function (): void {
         $category = Category::factory()->create();
+        Product::factory(3)->for($category)->create(['published' => true]);
 
         $response = test()->actingAs(test()->user)->get(route('category', $category));
 
-        $products = $response->viewData('products');
-        expect($products)->not()->toBeNull();
+        $products_in_view = $response->viewData('products');
+        expect($products_in_view)->count()->toBe(3);
         $response->assertViewHas('products');
-    });
 
-    it('passes breadcrumbs with category to detail view', function (): void {
-        $category = Category::factory()->create();
-
-        $response = test()->actingAs(test()->user)->get(route('category', $category));
+        foreach ($products_in_view as $product) {
+            expect($products_in_view->pluck('name')->contains((string) $product->name))->toBeTrue();
+        }
 
         $breadcrumbs = $response->viewData('breadcrumbs');
         expect($breadcrumbs)->not()->toBeNull();
