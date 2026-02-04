@@ -12,9 +12,11 @@ use App\Filament\Admin\Resources\Users\Orders\Pages\EditOrder;
 use App\Filament\Admin\Resources\Users\Orders\Pages\ListOrders;
 use App\Models\Address;
 use App\Models\Order;
+use App\Models\OrderProduct;
 use App\Models\ProductSparePart;
 use App\Models\User;
 use App\Services\PriceCalculator;
+use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\Storage;
@@ -202,7 +204,7 @@ describe('AdminOrderResource', function (): void {
         expect($order->purchase_cost)->toBe($expectedTotal);
     });
 
-    it('can update an order adding a product', function (): void {
+    it('can update an order adding a product and then delete it', function (): void {
         $user = User::factory()->create();
         $address = Address::factory(['address_type' => AddressType::ShippingAndBilling])
             ->for($user)
@@ -253,11 +255,23 @@ describe('AdminOrderResource', function (): void {
 
         Filament::setCurrentPanel(Filament::getPanel('admin'));
 
-        Livewire::test(EditOrder::class, [
-            'record' => $order->getKey(),
-        ])
+        Livewire::test(EditOrder::class, ['record' => $order->getKey()])
             ->fillForm($updateData)
             ->call('save')
+            ->assertHasNoFormErrors();
+
+        Livewire::test(EditOrder::class, ['record' => $order->getKey()])
+            ->assertSchemaStateSet(function (array $state): void {
+                expect($state['orderProducts'])
+                    ->toHaveCount(2);
+            });
+
+        $orderProduct = $order->orderProducts->first();
+
+        Livewire::test(EditOrder::class, ['record' => $order->getKey()])
+            ->callAction(TestAction::make('delete')->schemaComponent('orderProducts')->arguments([
+                'item' => "record-{$orderProduct->getKey()}",
+            ]))
             ->assertHasNoFormErrors();
 
         $undoRepeaterFake();
@@ -347,14 +361,26 @@ describe('AdminOrderResource', function (): void {
                     'unit_price' => $product->price_with_discount,
                 ],
                 2 => [
-                    'orderable_type' => 'somerandomtext',
+                    'orderable_type' => OrderProduct::class,
                     'orderable_id' => 10,
                     'quantity' => 2,
                     'unit_price' => $product->price_with_discount,
                 ],
                 3 => [
+                    'orderable_type' => 'somerandomtext',
+                    'orderable_id' => 10,
+                    'quantity' => 2,
+                    'unit_price' => $product->price_with_discount,
+                ],
+                4 => [
                     'orderable_type' => 5,
                     'orderable_id' => 10,
+                    'quantity' => 2,
+                    'unit_price' => $product->price_with_discount,
+                ],
+                5 => [
+                    'orderable_type' => ProductSparePart::class,
+                    'orderable_id' => 'randomstring',
                     'quantity' => 2,
                     'unit_price' => $product->price_with_discount,
                 ],
