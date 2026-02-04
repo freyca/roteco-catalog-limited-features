@@ -249,8 +249,12 @@ class OrderForm
                             return;
                         }
 
+                        if (! is_subclass_of($class_name, BaseProduct::class)) {
+                            return;
+                        }
+
                         /**
-                         * @var BaseProduct
+                         * @var class-string<BaseProduct> $builder
                          */
                         $builder = $class_name;
 
@@ -276,7 +280,22 @@ class OrderForm
                             return;
                         }
 
-                        /** @var ?BaseProduct */
+                        if (! is_subclass_of($class_name, BaseProduct::class)) {
+                            return;
+                        }
+
+                        if (
+                            ! is_int($state)
+                            && ! (is_string($state) && ctype_digit($state))
+                        ) {
+                            return;
+                        }
+
+                        $state = (int) $state;
+
+                        /**
+                         * @var BaseProduct|null $product
+                         */
                         $product = $class_name::query()->find($state);
 
                         if (! $product) {
