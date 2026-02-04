@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Http\Responses\FilamentLoginResponse;
 use App\Models\User;
-use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -14,10 +13,14 @@ beforeEach(function (): void {
 });
 
 describe('FilamentLoginResponse', function (): void {
-    it('is instance of LoginResponse contract', function (): void {
+    it('redirects non logged in user to login page', function (): void {
         $response = new FilamentLoginResponse;
+        $request = Request::create('/admin', 'GET');
 
-        expect($response)->toBeInstanceOf(LoginResponse::class);
+        $result = $response->toResponse($request);
+
+        expect($result)->toBeInstanceOf(RedirectResponse::class);
+        expect($result->getTargetUrl())->toBe(url('/'));
     });
 
     it('redirects admin to admin panel', function (): void {
@@ -27,7 +30,8 @@ describe('FilamentLoginResponse', function (): void {
 
         $result = $response->toResponse($request);
 
-        expect($result->getTargetUrl())->toContain('/admin');
+        expect($result)->toBeInstanceOf(RedirectResponse::class);
+        expect($result->getTargetUrl())->toBe(url('/admin'));
     });
 
     it('redirects customer to home', function (): void {
@@ -37,36 +41,7 @@ describe('FilamentLoginResponse', function (): void {
 
         $result = $response->toResponse($request);
 
-        expect($result->getTargetUrl())->not()->toContain('/admin');
-    });
-
-    it('returns redirect response', function (): void {
-        test()->actingAs(test()->customer);
-        $response = new FilamentLoginResponse;
-        $request = Request::create('/login', 'POST');
-
-        $result = $response->toResponse($request);
-
         expect($result)->toBeInstanceOf(RedirectResponse::class);
-    });
-
-    it('redirects correctly for admin user', function (): void {
-        auth()->login(test()->admin);
-        $response = new FilamentLoginResponse;
-        $request = Request::create('/login', 'POST');
-
-        $result = $response->toResponse($request);
-
-        expect($result->getTargetUrl())->toContain('/admin');
-    });
-
-    it('redirects correctly for customer user', function (): void {
-        auth()->login(test()->customer);
-        $response = new FilamentLoginResponse;
-        $request = Request::create('/login', 'POST');
-
-        $result = $response->toResponse($request);
-
-        expect($result->getTargetUrl())->not()->toContain('/admin');
+        expect($result->getTargetUrl())->toBe(url('/'));
     });
 });
