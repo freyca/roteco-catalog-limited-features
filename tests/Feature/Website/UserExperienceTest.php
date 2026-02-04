@@ -66,6 +66,9 @@ test('product page displays only published disassemblies and their spare parts',
     // Assert published disassembly is visible
     $response->assertSee($publishedDisassembly->name);
 
+    // Assert unpublished disassembly is visible
+    $response->assertDontSee($unpublishedDisassembly->name);
+
     // Assert published spare parts are visible
     $publishedSpareParts->each(function ($sparePart) use ($response): void {
         $response->assertSee($sparePart->name);
@@ -180,7 +183,7 @@ test('user can delete spare parts from cart', function (): void {
     }
 });
 
-test('user can complete checkout by submitting the checkout form', function (): void {
+test('user can complete checkout', function (): void {
     // Setup: Fake notifications
     Notification::fake();
 
@@ -224,7 +227,6 @@ test('user can complete checkout by submitting the checkout form', function (): 
         ->set('checkoutFormData.shipping_zip_code', '12345')
         ->set('checkoutFormData.shipping_country', 'ES')
         ->set('checkoutFormData.use_shipping_address_as_billing_address', true)
-        ->set('checkoutFormData.purchase_as_guest', false)
         ->call('create')
         ->assertHasNoFormErrors();
 
