@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire\Forms;
 
-use App\Enums\PaymentMethod;
 use App\Http\Controllers\PaymentController;
 use App\Models\Address;
 use App\Models\User;
@@ -16,7 +15,6 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Schemas\Components\Group;
@@ -49,15 +47,11 @@ class CheckoutForm extends Component implements HasActions, HasForms
 
     public function form(Schema $schema): Schema
     {
-        /** @var ?User */
+        /** @var User */
         $user = Auth::user();
 
-        $schema = match ($user) {
-            null => $this->buildFormForNotLoggedInUser($schema),
-            default => $this->buildFormForLoggedInUser($user, $schema),
-        };
-
-        return $schema->statePath('checkoutFormData');
+        return $this->buildFormForLoggedInUser($user, $schema)
+            ->statePath('checkoutFormData');
     }
 
     public function create(): void
@@ -95,18 +89,6 @@ class CheckoutForm extends Component implements HasActions, HasForms
                 $this->getShippingForm($shipping_addresses),
                 $this->getBillingForm($shipping_addresses),
                 $this->getOrderDetails(),
-                // $this->getPaymentDetails(),
-            ]);
-    }
-
-    private function buildFormForNotLoggedInUser(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                $this->getShippingForm(),
-                $this->getBillingForm(),
-                $this->getOrderDetails(),
-                $this->getPaymentDetails(),
             ]);
     }
 
@@ -278,19 +260,6 @@ class CheckoutForm extends Component implements HasActions, HasForms
                 ->prefixIcon('heroicon-s-globe-europe-africa')
                 ->maxLength(255)
                 ->required(),
-            Checkbox::make('purchase_as_guest')
-                ->live()
-                ->default(false)
-                ->label(__('Purchase as guest'))
-                ->hidden(function () use ($form_field_name, $is_guest): bool {
-                    // Hidden on billing
-                    if ($form_field_name === 'billing') {
-                        return true;
-                    }
-
-                    // Hidden if user is registered
-                    return $is_guest === false;
-                }),
         ]);
     }
 
@@ -301,19 +270,6 @@ class CheckoutForm extends Component implements HasActions, HasForms
                 Textarea::make('order_details')
                     ->hiddenLabel()
                     ->placeholder(__('If you have any special requirement, let us know')),
-            ]);
-    }
-
-    private function getPaymentDetails(): Section
-    {
-        return Section::make(__('Payment method'))
-            ->schema([
-                ToggleButtons::make('payment_method')
-                    ->hiddenLabel()
-                    ->options(PaymentMethod::class)
-                    ->inline()
-                    ->required()
-                    ->default(PaymentMethod::Card),
             ]);
     }
 }

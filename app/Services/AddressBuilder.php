@@ -76,7 +76,12 @@ class AddressBuilder
     public function __construct(Schema $schema)
     {
         $form_data = $schema->getState();
-        $this->user = Auth::user();
+
+        $user = Auth::user();
+        if (!$user) {
+            throw new \RuntimeException('User not authenticated');
+        }
+        $this->user = $user;
 
         // Shipping values
         $this->shipping_name = $this->get_string($form_data, 'shipping_name');
@@ -186,13 +191,10 @@ class AddressBuilder
     private function buildShippingAddressFromUserInput(): void
     {
         // If not set email value (user is registered but selects new address), we get user email
-        $email = $this->shipping_email !== '' ? $this->shipping_email : $this->user?->email;
-
-        // If user is registered, we associate the address to the user
-        $user_id = $this->user instanceof User ? $this->user->id : null;
+        $email = $this->shipping_email !== '' ? $this->shipping_email : $this->user->email;
 
         $this->shipping_address = Address::query()->create([
-            'user_id' => $user_id,
+            'user_id' => $this->user->id,
             'email' => $email,
             'address_type' => AddressType::Shipping,
             'name' => $this->shipping_name,
@@ -210,15 +212,9 @@ class AddressBuilder
 
     private function buildBillingAddressFromUserInput(): void
     {
-        // We do not allow users to use two different emails
-        $email = $this->shipping_address->email;
-
-        // If user is registered, we associate the address to the user
-        $user_id = $this->user instanceof User ? $this->user->id : null;
-
         $this->billing_address = Address::query()->create([
-            'user_id' => $user_id,
-            'email' => $email,
+            'user_id' => $this->user->id,
+            'email' => $this->shipping_address->email,
             'address_type' => AddressType::Shipping,
             'name' => $this->billing_name,
             'surname' => $this->billing_surname,
@@ -235,10 +231,6 @@ class AddressBuilder
 
     private function validateAddressBelongsToUser(Address $address): bool
     {
-        if (is_null($this->user)) {
-            return false;
-        }
-
         return $this->user->addresses->pluck('id')->contains($address->id);
     }
 

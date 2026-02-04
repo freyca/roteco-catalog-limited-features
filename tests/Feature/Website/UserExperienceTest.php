@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Enums\AddressType;
+use App\Models\Address;
 use App\Models\Disassembly;
 use App\Models\Order;
 use App\Models\Product;
@@ -195,6 +197,7 @@ test('user can complete checkout', function (): void {
         'email' => 'checkout-test@example.com',
         'name' => 'Checkout Test User',
     ]);
+
     test()->actingAs($user);
 
     // Add all spare parts to cart
@@ -212,17 +215,12 @@ test('user can complete checkout', function (): void {
     $cart = resolve(Cart::class);
     expect($cart->getTotalQuantity())->toBe(3);
 
+    // Create address for the form
+    $address = Address::factory()->for($user)->create(['address_type' => AddressType::ShippingAndBilling]);
+
     // Submit the checkout form via Livewire (the "place order" button)
     Livewire::test('forms.checkout-form')
-        ->set('checkoutFormData.shipping_name', $user->name)
-        ->set('checkoutFormData.shipping_surname', 'Test')
-        ->set('checkoutFormData.shipping_email', $user->email)
-        ->set('checkoutFormData.shipping_phone', '1234567890')
-        ->set('checkoutFormData.shipping_address', '123 Test Street')
-        ->set('checkoutFormData.shipping_city', 'Test City')
-        ->set('checkoutFormData.shipping_state', 'Test State')
-        ->set('checkoutFormData.shipping_zip_code', '12345')
-        ->set('checkoutFormData.shipping_country', 'ES')
+        ->set('checkoutFormData.shipping_address_id', $address->id)
         ->set('checkoutFormData.use_shipping_address_as_billing_address', true)
         ->call('create')
         ->assertHasNoFormErrors();
