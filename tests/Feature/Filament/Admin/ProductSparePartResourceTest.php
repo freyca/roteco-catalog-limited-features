@@ -241,6 +241,12 @@ describe('ProductSparePartResource', function (): void {
 
         expect(ProductSparePart::query()->where('name', 'Imported Spare 1')->where('disassembly_id', $disassembly->id)->exists())->toBeTrue();
         expect(ProductSparePart::query()->where('name', 'Imported Spare 2')->where('disassembly_id', $disassembly->id)->exists())->toBeTrue();
+
+        expect(ProductSparePart::query()->where('name', 'Imported Spare 1')->where('disassembly_id', $disassembly->id)->first()->price)->toBe(100.2);
+        expect(ProductSparePart::query()->where('name', 'Imported Spare 1')->where('disassembly_id', $disassembly->id)->first()->price_with_discount)->toBe(80.6);
+
+        expect(ProductSparePart::query()->where('name', 'Imported Spare 2')->where('disassembly_id', $disassembly->id)->first()->price)->toBe(200.0);
+        expect(ProductSparePart::query()->where('name', 'Imported Spare 2')->where('disassembly_id', $disassembly->id)->first()->price_with_discount)->toBe(180.0);
     });
 
     it('can import product spare parts from CSV via table action with ids and overwrite previous ones', function (): void {
