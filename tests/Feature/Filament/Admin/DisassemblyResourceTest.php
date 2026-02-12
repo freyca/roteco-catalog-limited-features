@@ -171,7 +171,7 @@ describe('DisassemblyResource', function (): void {
         $disassembly2 = Disassembly::factory()->create();
 
         // Create a fake CSV file with correct headers and data matching DisassemblyImporter
-        $csvContent = "id,name,main_image,product\n{$disassembly1->id},Imported Disassembly 1,disasm1.jpg,{$product->id}\n{$disassembly2->id},Imported Disassembly 2,disasm2.jpg,{$product->id}\n";
+        $csvContent = "name,main_image,product\n{$disassembly1->name},disasm1.jpg,{$product->id}\n{$disassembly2->name},disasm2.jpg,{$product->id}\n";
         $fileOnDisk = UploadedFile::fake()->createWithContent('d.csv', $csvContent);
 
         // Test the import action through Livewire
@@ -185,8 +185,8 @@ describe('DisassemblyResource', function (): void {
         expect(Disassembly::query()->count())->toBe(2);
 
         // Assert imported disassemblies exist in DB
-        expect(Disassembly::query()->where('name', 'Imported Disassembly 1')->where('main_image', 'disasm1.jpg')->where('product_id', $product->id)->exists())->toBeTrue();
-        expect(Disassembly::query()->where('name', 'Imported Disassembly 2')->where('main_image', 'disasm2.jpg')->where('product_id', $product->id)->exists())->toBeTrue();
+        expect(Disassembly::query()->where('main_image', 'disasm1.jpg')->where('product_id', $product->id)->exists())->toBeTrue();
+        expect(Disassembly::query()->where('main_image', 'disasm2.jpg')->where('product_id', $product->id)->exists())->toBeTrue();
     });
 
     it('fails importing disassemblies from CSV when fields are invalid', function (): void {
@@ -195,7 +195,7 @@ describe('DisassemblyResource', function (): void {
         $product = Product::factory()->create();
 
         // Create a fake CSV file with correct headers and data matching DisassemblyImporter
-        $csvContent = "id,name,main_image,product\nnot-an-id,Imported Disassembly 1,disasm1.jpg,{$product->id}\n1,Imported Disassembly 2,disasm2.jpg,not-an-id\n";
+        $csvContent = "name,main_image,product\nImported Disassembly 2,disasm2.jpg,not-an-id\n";
         $fileOnDisk = UploadedFile::fake()->createWithContent('d.csv', $csvContent);
 
         // Test the import action through Livewire

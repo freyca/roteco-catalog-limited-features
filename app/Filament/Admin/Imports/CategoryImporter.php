@@ -17,8 +17,6 @@ class CategoryImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('id')
-                ->rules(['nullable', 'integer']),
             ImportColumn::make('name')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
@@ -41,15 +39,6 @@ class CategoryImporter extends Importer
 
     public function resolveRecord(): Category
     {
-        if (! empty($this->data['id']) && is_numeric($this->data['id'])) {
-            $id = (int) $this->data['id'];
-            $record = Category::query()->find($id);
-
-            if ($record !== null) {
-                return $record;
-            }
-        }
-
         return Category::query()->firstOrNew(['name' => $this->data['name']]);
     }
 }

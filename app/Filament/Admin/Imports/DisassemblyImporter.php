@@ -17,8 +17,6 @@ class DisassemblyImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('id')
-                ->rules(['nullable', 'integer']),
             ImportColumn::make('name')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
@@ -45,15 +43,6 @@ class DisassemblyImporter extends Importer
 
     public function resolveRecord(): Disassembly
     {
-        if (! empty($this->data['id']) && is_numeric($this->data['id'])) {
-            $id = (int) $this->data['id'];
-            $record = Disassembly::query()->find($id);
-
-            if ($record !== null) {
-                return $record;
-            }
-        }
-
         return Disassembly::query()->firstOrNew(['name' => $this->data['name']]);
     }
 }

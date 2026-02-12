@@ -272,7 +272,7 @@ describe('ProductSparePartResource', function (): void {
             ->create();
 
         // Create a fake CSV file with correct headers and data matching ProductSparePartImporter
-        $csvContent = "id,reference,name,number_in_image,self_reference,price,price_with_discount,published,disassembly_id\n{$product_spare_part1->id},REF-1111,Imported Spare 1,1,,100.2,80.6,1,{$disassembly->id}\n{$product_spare_part2->id},REF-2222,Imported Spare 2,2,,200,180,1,{$disassembly->id}\n";
+        $csvContent = "reference,name,number_in_image,self_reference,price,price_with_discount,published,disassembly_id\n{$product_spare_part1->reference},Imported Spare 1,1,,100.2,80.6,1,{$disassembly->id}\n{$product_spare_part2->reference},Imported Spare 2,2,,200,180,1,{$disassembly->id}\n";
         $fileOnDisk = UploadedFile::fake()->createWithContent('sp.csv', $csvContent);
 
         // Test the import action through Livewire
@@ -308,7 +308,7 @@ describe('ProductSparePartResource', function (): void {
             ->create();
 
         // Create a fake CSV file with correct headers and data matching ProductSparePartImporter
-        $csvContent = "id,reference,name,number_in_image,self_reference,price,price_with_discount,published,disassembly_id\nnot-an-id,REF-1111,Imported Spare 1,1,,100.2,80.6,1,{$disassembly->id}\n{$product_spare_part->id},REF-2222,Imported Spare 2,2,,200,180,1,not-an-id\n";
+        $csvContent = "reference,name,number_in_image,self_reference,price,price_with_discount,published,disassembly_id\nREF-2222,Imported Spare 2,2,,200,180,1,not-an-id\n";
         $fileOnDisk = UploadedFile::fake()->createWithContent('sp.csv', $csvContent);
 
         // Test the import action through Livewire

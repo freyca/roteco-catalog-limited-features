@@ -163,7 +163,7 @@ describe('CategoryResource', function (): void {
         $category2 = Category::factory()->create();
 
         // Create a fake CSV file with correct headers and data
-        $csvContent = "id,name,big_image\n{$category1->id},Imported Electronics,electronics.jpg\n{$category2->id},Imported Clothing,imported-clothing,clothing.jpg\n";
+        $csvContent = "name,big_image\n{$category1->name},electronics.jpg\n{$category2->name},clothing.jpg\n";
         $fileOnDisk = UploadedFile::fake()->createWithContent('cat.csv', $csvContent);
 
         // Test the import action through Livewire
@@ -176,8 +176,8 @@ describe('CategoryResource', function (): void {
 
         expect(Category::query()->count())->toBe(2);
 
-        expect(Category::query()->where('name', 'Imported Electronics')->where('slug', 'imported-electronics')->exists())->toBeTrue();
-        expect(Category::query()->where('name', 'Imported Clothing')->where('slug', 'imported-clothing')->exists())->toBeTrue();
+        expect(Category::query()->where('big_image', 'electronics.jpg')->exists())->toBeTrue();
+        expect(Category::query()->where('big_image', 'clothing.jpg')->exists())->toBeTrue();
     });
 
     it('fails importing categories when some field is invalid', function (): void {
@@ -185,7 +185,7 @@ describe('CategoryResource', function (): void {
         test()->actingAs(test()->admin);
 
         // Create a fake CSV file with correct headers and data
-        $csvContent = "id,name,big_image\nnot-an-id,Imported Electronics,electronics.jpg\n";
+        $csvContent = "name,big_image\nImported Electronics,\n";
         $fileOnDisk = UploadedFile::fake()->createWithContent('cat.csv', $csvContent);
 
         // Test the import action through Livewire

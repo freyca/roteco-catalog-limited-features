@@ -17,8 +17,6 @@ class ProductImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('id')
-                ->rules(['nullable', 'integer']),
             ImportColumn::make('reference')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
@@ -52,15 +50,6 @@ class ProductImporter extends Importer
 
     public function resolveRecord(): Product
     {
-        if (! empty($this->data['id']) && is_numeric($this->data['id'])) {
-            $id = (int) $this->data['id'];
-            $record = Product::query()->find($id);
-
-            if ($record !== null) {
-                return $record;
-            }
-        }
-
-        return Product::query()->firstOrNew(['name' => $this->data['name']]);
+        return Product::query()->firstOrNew(['reference' => $this->data['reference']]);
     }
 }

@@ -201,7 +201,7 @@ describe('ProductResource', function (): void {
         $product2 = Product::factory()->create();
 
         // One of the products has the id of previously created products, the other is null
-        $csvContent = "id,reference,name,published,main_image,category\n{$product1->id},REF-0001,Imported Product 1,1,product1.jpg,{$category->id}\n,REF-0002,Imported Product 2,1,product2.jpg,{$category->id}\n";
+        $csvContent = "reference,name,published,main_image,category\n{$product1->reference},Imported Product 1,1,product1.jpg,{$category->id}\nREF-0002,Imported Product 2,1,product2.jpg,{$category->id}\n";
         $fileOnDisk = UploadedFile::fake()->createWithContent('prod.csv', $csvContent);
 
         // Test the import action through Livewire (queue processes synchronously by default in tests)
@@ -253,7 +253,7 @@ describe('ProductResource', function (): void {
         $product1 = Product::factory()->create();
 
         // One of the products has the id of previously created products, the other is null
-        $csvContent = "id,reference,name,published,main_image,category\nnot-an-id,REF-0001,Imported Product 1,1,product1.jpg,{$category->id}\n$product1->id,REF-0002,Imported Product 2,1,product2.jpg,not-an-id\n";
+        $csvContent = "reference,name,published,main_image,category\n$product1->id,REF-0002,Imported Product 2,1,product2.jpg,not-an-id\n";
         $fileOnDisk = UploadedFile::fake()->createWithContent('prod.csv', $csvContent);
 
         // Test the import action through Livewire (queue processes synchronously by default in tests)

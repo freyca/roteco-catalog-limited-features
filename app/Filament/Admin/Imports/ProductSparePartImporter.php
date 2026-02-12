@@ -17,8 +17,6 @@ class ProductSparePartImporter extends Importer
     public static function getColumns(): array
     {
         return [
-            ImportColumn::make('id')
-                ->rules(['nullable', 'integer']),
             ImportColumn::make('reference')
                 ->requiredMapping()
                 ->rules(['required', 'max:255']),
@@ -61,15 +59,6 @@ class ProductSparePartImporter extends Importer
 
     public function resolveRecord(): ProductSparePart
     {
-        if (! empty($this->data['id']) && is_numeric($this->data['id'])) {
-            $id = (int) $this->data['id'];
-            $record = ProductSparePart::query()->find($id);
-
-            if ($record !== null) {
-                return $record;
-            }
-        }
-
-        return ProductSparePart::query()->firstOrNew(['name' => $this->data['name']]);
+        return ProductSparePart::query()->firstOrNew(['reference' => $this->data['reference']]);
     }
 }
